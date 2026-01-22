@@ -1,0 +1,213 @@
+<% content_for :title, "Zwrot ##{@return.id}" %>
+<% content_for :breadcrumb, "Zwrot ##{@return.id}" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Zwrot #<%= @return.id %></h1>
+      <p class="text-gray-600 dark:text-gray-400">Zgłoszony: <%= @return.created_at.strftime("%d.%m.%Y %H:%M") %></p>
+    </div>
+    <%= link_to leader_returns_path, class: "inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors" do %>
+      <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Powrót do listy
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Return Details -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Szczegóły zwrotu</h2>
+      <dl class="space-y-4">
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Status</dt>
+          <dd><%= status_badge(@return.status) %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Ilość pakietów</dt>
+          <dd class="text-sm font-semibold text-gray-900 dark:text-white"><%= @return.quantity %> szt.</dd>
+        </div>
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+          <dt class="text-sm text-gray-500 dark:text-gray-400 mb-2">Powód zwrotu</dt>
+          <dd class="text-sm text-gray-900 dark:text-white"><%= @return.reason %></dd>
+        </div>
+        <% if @return.notes.present? %>
+          <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <dt class="text-sm text-gray-500 dark:text-gray-400 mb-2">Uwagi</dt>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= @return.notes %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+
+    <!-- Status Timeline -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Status zwrotu</h2>
+
+      <div class="relative">
+        <!-- Vertical line -->
+        <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+
+        <div class="space-y-6">
+          <!-- Requested -->
+          <div class="relative flex items-start">
+            <div class="flex items-center justify-center h-8 w-8 rounded-full <%= @return.status_requested? || @return.status_approved? || @return.status_shipped? || @return.status_received? ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600' %> z-10">
+              <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div class="ml-4 flex-1">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">Zgłoszono</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400"><%= @return.created_at.strftime("%d.%m.%Y %H:%M") %></p>
+            </div>
+          </div>
+
+          <!-- Approved -->
+          <div class="relative flex items-start">
+            <div class="flex items-center justify-center h-8 w-8 rounded-full <%= @return.status_approved? || @return.status_shipped? || @return.status_received? ? 'bg-green-500' : (@return.status_rejected? ? 'bg-red-500' : 'bg-gray-300 dark:bg-gray-600') %> z-10">
+              <% if @return.status_approved? || @return.status_shipped? || @return.status_received? %>
+                <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              <% elsif @return.status_rejected? %>
+                <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              <% else %>
+                <div class="h-3 w-3 rounded-full bg-white"></div>
+              <% end %>
+            </div>
+            <div class="ml-4 flex-1">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                <%= @return.status_rejected? ? 'Odrzucono' : 'Zatwierdzono' %>
+              </p>
+              <% if @return.approved_at.present? %>
+                <p class="text-xs text-gray-500 dark:text-gray-400"><%= @return.approved_at.strftime("%d.%m.%Y %H:%M") %></p>
+              <% elsif @return.status_rejected? %>
+                <p class="text-xs text-gray-500 dark:text-gray-400"><%= @return.updated_at.strftime("%d.%m.%Y %H:%M") %></p>
+              <% else %>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Oczekuje na akceptację</p>
+              <% end %>
+            </div>
+          </div>
+
+          <% unless @return.status_rejected? %>
+            <!-- Shipped -->
+            <div class="relative flex items-start">
+              <div class="flex items-center justify-center h-8 w-8 rounded-full <%= @return.status_shipped? || @return.status_received? ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600' %> z-10">
+                <% if @return.status_shipped? || @return.status_received? %>
+                  <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                <% else %>
+                  <div class="h-3 w-3 rounded-full bg-white"></div>
+                <% end %>
+              </div>
+              <div class="ml-4 flex-1">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">Wysłano</p>
+                <% if @return.shipped_at.present? %>
+                  <p class="text-xs text-gray-500 dark:text-gray-400"><%= @return.shipped_at.strftime("%d.%m.%Y %H:%M") %></p>
+                <% else %>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Oczekuje</p>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Received -->
+            <div class="relative flex items-start">
+              <div class="flex items-center justify-center h-8 w-8 rounded-full <%= @return.status_received? ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600' %> z-10">
+                <% if @return.status_received? %>
+                  <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                <% else %>
+                  <div class="h-3 w-3 rounded-full bg-white"></div>
+                <% end %>
+              </div>
+              <div class="ml-4 flex-1">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">Otrzymano</p>
+                <% if @return.received_at.present? %>
+                  <p class="text-xs text-gray-500 dark:text-gray-400"><%= @return.received_at.strftime("%d.%m.%Y %H:%M") %></p>
+                  <p class="text-xs text-green-600 dark:text-green-400 mt-1">Zwrot zakończony, rozliczenie zaktualizowane</p>
+                <% else %>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Oczekuje</p>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <% if @return.status_rejected? && @return.rejection_reason.present? %>
+      <!-- Rejection Reason -->
+      <div class="bg-red-50 dark:bg-red-900/30 rounded-xl p-6 lg:col-span-2">
+        <h3 class="text-sm font-semibold text-red-900 dark:text-red-200 mb-2 flex items-center">
+          <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+          Powód odrzucenia
+        </h3>
+        <p class="text-sm text-red-800 dark:text-red-300"><%= @return.rejection_reason %></p>
+        <p class="text-xs text-red-600 dark:text-red-400 mt-2">
+          W razie pytań skontaktuj się z koordynatorem. Możesz zgłosić nowy zwrot.
+        </p>
+      </div>
+    <% end %>
+
+    <% if @return.admin_response.present? %>
+      <!-- Admin Response -->
+      <div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-6 lg:col-span-2">
+        <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2">Odpowiedź koordynatora</h3>
+        <p class="text-sm text-blue-800 dark:text-blue-300"><%= @return.admin_response %></p>
+      </div>
+    <% end %>
+
+    <% if @return.shipment.present? %>
+      <!-- Shipment Info -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 lg:col-span-2">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informacje o wysyłce</h2>
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <dt class="text-sm text-gray-500 dark:text-gray-400">Status wysyłki</dt>
+            <dd class="mt-1"><%= status_badge(@return.shipment.status) %></dd>
+          </div>
+          <% if @return.shipment.waybill_number.present? %>
+            <div>
+              <dt class="text-sm text-gray-500 dark:text-gray-400">Numer listu przewozowego</dt>
+              <dd class="mt-1 text-sm font-mono text-gray-900 dark:text-white"><%= @return.shipment.waybill_number %></dd>
+            </div>
+          <% end %>
+          <% if @return.shipment.tracking_url.present? %>
+            <div class="md:col-span-2">
+              <%= link_to @return.shipment.tracking_url, target: "_blank", class: "inline-flex items-center text-brand-500 hover:text-brand-600 text-sm font-medium" do %>
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+                Śledź przesyłkę
+              <% end %>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Help Section -->
+  <% if @return.status_requested? || @return.status_approved? %>
+    <div class="bg-yellow-50 dark:bg-yellow-900/30 rounded-xl p-6">
+      <h3 class="text-sm font-semibold text-yellow-900 dark:text-yellow-200 mb-2">Co dalej?</h3>
+      <% if @return.status_requested? %>
+        <p class="text-sm text-yellow-800 dark:text-yellow-300">
+          Twoje zgłoszenie zwrotu oczekuje na akceptację koordynatora. Otrzymasz e-mail z informacją o decyzji.
+        </p>
+      <% elsif @return.status_approved? %>
+        <p class="text-sm text-yellow-800 dark:text-yellow-300">
+          Twój zwrot został zatwierdzony. Wkrótce otrzymasz etykietę wysyłkową na e-mail wraz z instrukcją pakowania i wysyłki.
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

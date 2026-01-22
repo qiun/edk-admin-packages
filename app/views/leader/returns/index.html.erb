@@ -1,0 +1,147 @@
+<% content_for :title, "Moje zwroty" %>
+<% content_for :breadcrumb, "Zwroty" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Zwroty pakietów</h1>
+      <p class="text-gray-600 dark:text-gray-400">Zarządzaj zwrotami niesprzedanych pakietów</p>
+    </div>
+    <% if @can_create_return %>
+      <%= link_to new_leader_return_path, class: "inline-flex items-center px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors" do %>
+        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Zgłoś zwrot
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-lg bg-yellow-100 dark:bg-yellow-900/30">
+          <svg class="h-6 w-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Oczekujące</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white"><%= @summary[:pending] %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+          <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Zwracane pakiety</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white"><%= @summary[:total_quantity] %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
+          <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Otrzymane</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white"><%= @summary[:received] %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+    <div class="flex flex-wrap gap-2">
+      <%= link_to "Wszystkie", leader_returns_path,
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status].blank? ? 'bg-brand-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Oczekujące", leader_returns_path(status: :requested),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'requested' ? 'bg-yellow-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Zatwierdzone", leader_returns_path(status: :approved),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'approved' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "W drodze", leader_returns_path(status: :shipped),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'shipped' ? 'bg-purple-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Otrzymane", leader_returns_path(status: :received),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'received' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Odrzucone", leader_returns_path(status: :rejected),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'rejected' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+    </div>
+  </div>
+
+  <!-- Returns Table -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">#</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Ilość</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Powód</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data zgłoszenia</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Akcje</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          <% @returns.each do |return_item| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+              <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">#<%= return_item.id %></td>
+              <td class="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">
+                <%= return_item.quantity %> szt.
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                <%= truncate(return_item.reason, length: 60) %>
+              </td>
+              <td class="px-6 py-4"><%= status_badge(return_item.status) %></td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= return_item.created_at.strftime("%d.%m.%Y") %>
+              </td>
+              <td class="px-6 py-4 text-right text-sm font-medium">
+                <%= link_to "Zobacz", leader_return_path(return_item), class: "text-brand-500 hover:text-brand-600" %>
+              </td>
+            </tr>
+          <% end %>
+          <% if @returns.empty? %>
+            <tr>
+              <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                <% if params[:status].present? %>
+                  Brak zwrotów o wybranym statusie
+                <% else %>
+                  Nie masz jeszcze żadnych zwrotów
+                  <% if @can_create_return %>
+                    <br>
+                    <%= link_to "Zgłoś pierwszy zwrot", new_leader_return_path, class: "text-brand-500 hover:text-brand-600 mt-2 inline-block" %>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Info Box -->
+  <div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-6">
+    <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2">Informacje o zwrotach</h3>
+    <ul class="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+      <li>• Zwracaj tylko pakiety, które nie zostały sprzedane</li>
+      <li>• Zwroty wymagają zatwierdzenia przez koordynatora</li>
+      <li>• Po zatwierdzeniu otrzymasz etykietę wysyłkową na e-mail</li>
+      <li>• Zwrócone pakiety zostaną odjęte od Twojego rozliczenia</li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,174 @@
+<% content_for :title, "Nowy zwrot" %>
+<% content_for :breadcrumb, "Nowy zwrot" %>
+
+<div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+  <%= form_with model: [:leader, @return] do |f| %>
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <!-- Header -->
+      <div class="px-5 py-4 sm:px-6 sm:py-5">
+        <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+          Zgłoszenie zwrotu pakietów
+        </h3>
+      </div>
+
+      <!-- Form Content -->
+      <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+        <!-- Info Alert -->
+        <div class="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/30">
+          <div class="flex items-start">
+            <svg class="mt-0.5 mr-3 h-5 w-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-blue-900 dark:text-blue-200">
+                Możesz zwrócić maksymalnie: <strong><%= @max_returnable %> pakietów</strong>
+              </p>
+              <p class="mt-1 text-xs text-blue-800 dark:text-blue-300">
+                (Dostarczone pakiety - już sprzedane - oczekujące zwroty)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Messages -->
+        <% if @return.errors.any? %>
+          <div class="rounded-lg bg-red-50 p-4 dark:bg-red-900/30">
+            <div class="flex items-start">
+              <svg class="mt-0.5 mr-3 h-5 w-5 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              </svg>
+              <div class="flex-1">
+                <h3 class="text-sm font-medium text-red-900 dark:text-red-200">
+                  Błędy w formularzu:
+                </h3>
+                <ul class="mt-2 space-y-1 text-sm text-red-800 dark:text-red-300">
+                  <% @return.errors.full_messages.each do |message| %>
+                    <li class="flex items-start">
+                      <span class="mr-2">•</span>
+                      <span><%= message %></span>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Quantity -->
+        <div>
+          <%= f.label :quantity, "Ilość pakietów do zwrotu", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.number_field :quantity,
+              min: 1,
+              max: @max_returnable,
+              step: 1,
+              required: true,
+              placeholder: "Podaj liczbę pakietów",
+              class: "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" %>
+          <p class="mt-1.5 text-xs text-gray-600 dark:text-gray-400">
+            Podaj dokładną liczbę pakietów, które chcesz zwrócić
+          </p>
+        </div>
+
+        <!-- Reason -->
+        <div>
+          <%= f.label :reason, "Powód zwrotu", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_area :reason,
+              rows: 4,
+              required: true,
+              placeholder: "Opisz krótko powód zwrotu (np. niska sprzedaż, nadmiar pakietów)...",
+              class: "w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" %>
+          <p class="mt-1.5 text-xs text-gray-600 dark:text-gray-400">
+            Informacja dla koordynatora - pomoże w szybszej akceptacji zwrotu
+          </p>
+        </div>
+
+        <!-- Notes (Optional) -->
+        <div>
+          <%= f.label :notes, "Dodatkowe uwagi (opcjonalne)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_area :notes,
+              rows: 3,
+              placeholder: "Dodatkowe informacje...",
+              class: "w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" %>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex items-center justify-end gap-3 pt-4">
+          <%= link_to leader_returns_path, class: "inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-hidden focus:ring-3 focus:ring-gray-300/30 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700" do %>
+            Anuluj
+          <% end %>
+          <%= f.submit "Zgłoś zwrot", class: "inline-flex h-11 items-center justify-center rounded-lg bg-brand-500 px-6 text-sm font-medium text-white transition-colors hover:bg-brand-600 focus:outline-hidden focus:ring-3 focus:ring-brand-500/30" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Process Info -->
+  <div class="mt-6 rounded-2xl border border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-yellow-900 dark:text-yellow-200">
+        Proces zwrotu
+      </h3>
+    </div>
+    <div class="border-t border-yellow-100 p-5 sm:p-6 dark:border-yellow-800">
+      <ol class="space-y-2 text-sm text-yellow-800 dark:text-yellow-300">
+        <li class="flex items-start">
+          <span class="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-yellow-200 text-xs font-semibold text-yellow-900 dark:bg-yellow-800 dark:text-yellow-200 mr-3">1</span>
+          <span class="pt-0.5">Zgłoś zwrot podając ilość i powód</span>
+        </li>
+        <li class="flex items-start">
+          <span class="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-yellow-200 text-xs font-semibold text-yellow-900 dark:bg-yellow-800 dark:text-yellow-200 mr-3">2</span>
+          <span class="pt-0.5">Koordynator zatwierdzi lub odrzuci zgłoszenie</span>
+        </li>
+        <li class="flex items-start">
+          <span class="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-yellow-200 text-xs font-semibold text-yellow-900 dark:bg-yellow-800 dark:text-yellow-200 mr-3">3</span>
+          <span class="pt-0.5">Po zatwierdzeniu otrzymasz etykietę wysyłkową</span>
+        </li>
+        <li class="flex items-start">
+          <span class="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-yellow-200 text-xs font-semibold text-yellow-900 dark:bg-yellow-800 dark:text-yellow-200 mr-3">3</span>
+          <span class="pt-0.5">Wyślij pakiety według instrukcji</span>
+        </li>
+        <li class="flex items-start">
+          <span class="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-yellow-200 text-xs font-semibold text-yellow-900 dark:bg-yellow-800 dark:text-yellow-200 mr-3">5</span>
+          <span class="pt-0.5">Po otrzymaniu zwrotu zostanie zaktualizowane Twoje rozliczenie</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Warning -->
+  <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-red-900 dark:text-red-200">
+        Ważne przypomnienie
+      </h3>
+    </div>
+    <div class="border-t border-red-100 p-5 sm:p-6 dark:border-red-800">
+      <ul class="space-y-2 text-sm text-red-800 dark:text-red-300">
+        <li class="flex items-start">
+          <svg class="mr-2 mt-0.5 h-4 w-4 flex-shrink-0 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span>Zwracaj tylko oryginalne, nieotwierane pakiety</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="mr-2 mt-0.5 h-4 w-4 flex-shrink-0 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span>Nie możesz edytować zwrotu po wysłaniu zgłoszenia</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="mr-2 mt-0.5 h-4 w-4 flex-shrink-0 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span>Fałszywe zgłoszenia mogą skutkować zablokowaniem konta</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="mr-2 mt-0.5 h-4 w-4 flex-shrink-0 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span>W razie pytań skontaktuj się z koordynatorem</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

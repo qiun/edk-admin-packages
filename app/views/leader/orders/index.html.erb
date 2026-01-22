@@ -1,0 +1,74 @@
+<% content_for :title, "Moje zamówienia" %>
+<% content_for :breadcrumb, "Zamówienia" %>
+
+<div class="space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Moje zamówienia</h1>
+      <p class="text-gray-600 dark:text-gray-400">Historia zamówień pakietów EDK</p>
+    </div>
+    <% if @can_order %>
+      <%= link_to new_leader_order_path, class: "inline-flex items-center px-4 py-2 bg-brand-500 text-white text-sm font-medium rounded-lg hover:bg-brand-600 transition-colors" do %>
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nowe zamówienie
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">#</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Ilość</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Cena/szt</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Suma</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Wysyłka</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Akcje</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          <% @orders.each do |order| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+              <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">#<%= order.id %></td>
+              <td class="px-6 py-4 text-center text-sm font-medium text-gray-900 dark:text-white"><%= order.quantity %></td>
+              <td class="px-6 py-4 text-right text-sm text-gray-900 dark:text-white">
+                <%= number_to_currency(order.price_per_unit, unit: "zł", format: "%n %u") %>
+              </td>
+              <td class="px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">
+                <%= number_to_currency(order.total_amount, unit: "zł", format: "%n %u") %>
+              </td>
+              <td class="px-6 py-4"><%= status_badge(order.status) %></td>
+              <td class="px-6 py-4">
+                <% if order.shipment.present? %>
+                  <%= status_badge(order.shipment.status) %>
+                <% else %>
+                  <span class="text-xs text-gray-400">—</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= order.created_at.strftime("%d.%m.%Y") %>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <%= link_to "Zobacz", leader_order_path(order), class: "text-brand-500 hover:text-brand-600 text-sm" %>
+              </td>
+            </tr>
+          <% end %>
+          <% if @orders.empty? %>
+            <tr>
+              <td colspan="8" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                Brak zamówień. <%= link_to "Złóż pierwsze zamówienie", new_leader_order_path, class: "text-brand-500 hover:text-brand-600" if @can_order %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

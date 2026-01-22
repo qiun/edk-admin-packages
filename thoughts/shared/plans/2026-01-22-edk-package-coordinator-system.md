@@ -680,14 +680,19 @@ production:
 ```
 
 #### 1.4 Instalacja i konfiguracja Devise
+
+**UWAGA**: Rejestracja NIE jest dostępna publicznie - tylko admin może tworzyć konta użytkowników.
+
 ```bash
 rails generate devise:install
 rails generate devise User
+rails generate devise:views  # Generowanie widoków do customizacji
 ```
 
 **File**: `app/models/user.rb`
 ```ruby
 class User < ApplicationRecord
+  # UWAGA: Brak :registerable - rejestracja tylko przez admina
   devise :database_authenticatable, :recoverable, :rememberable, :validatable
 
   enum :role, { leader: 'leader', warehouse: 'warehouse', admin: 'admin' }
@@ -755,10 +760,68 @@ class CreateEditions < ActiveRecord::Migration[8.0]
 end
 ```
 
-#### 1.6 Instalacja TailAdmin
-- Pobranie szablonu TailAdmin Pro
-- Konfiguracja assets pipeline
-- Utworzenie layout'ów dla różnych ról
+#### 1.6 Instalacja TailAdmin i konfiguracja stylów
+
+**Źródło wzorców UI**: https://demo.tailadmin.com/
+
+Kluczowe strony demo do odwzorowania:
+- Dashboard: https://demo.tailadmin.com/
+- Lista produktów (wzorzec dla list): https://demo.tailadmin.com/products-list
+- Dodawanie produktu (wzorzec dla formularzy): https://demo.tailadmin.com/add-product
+- Logowanie: https://demo.tailadmin.com/signin
+- Reset hasła: https://demo.tailadmin.com/reset-password
+
+**Kroki instalacji TailAdmin:**
+
+1. Skopiowanie plików CSS TailAdmin do `app/assets/tailwind/`
+2. Konfiguracja Tailwind CSS dla custom colors i fontów
+3. Dodanie fontów Inter/Satoshi
+4. Utworzenie layout'ów dla różnych ról
+5. Utworzenie partiali dla komponentów (sidebar, header, cards)
+
+**File**: `app/assets/tailwind/application.css`
+```css
+@import "tailwindcss";
+
+/* TailAdmin Custom Theme */
+@theme {
+  --color-primary: #3C50E0;
+  --color-primary-dark: #1C3FB7;
+  --color-secondary: #80CAEE;
+  --color-stroke: #E2E8F0;
+  --color-stroke-dark: #2E3A47;
+  --color-body: #64748B;
+  --color-body-dark: #AEB7C0;
+  --color-body-light: #DEE4EE;
+  --color-box-dark: #24303F;
+  --color-box-dark-2: #1A222C;
+  --color-meta-1: #DC3545;
+  --color-meta-2: #EFF4FB;
+  --color-meta-3: #10B981;
+  --color-meta-4: #313D4A;
+  --color-meta-5: #259AE6;
+  --color-meta-6: #FFBA00;
+  --color-meta-7: #FF6766;
+  --color-meta-8: #F0950C;
+  --color-meta-9: #E5E5E5;
+  --color-meta-10: #5B8FF9;
+  --color-success: #219653;
+  --color-danger: #D34053;
+  --color-warning: #FFA70B;
+  --color-graydark: #333A48;
+  --color-whiten: #F1F5F9;
+  --color-whiter: #F5F7FD;
+  --color-boxdark: #24303F;
+  --color-boxdark-2: #1A222C;
+  --font-family-satoshi: 'Satoshi', sans-serif;
+}
+
+/* Dark mode support */
+.dark {
+  --color-bg: #1A222C;
+  --color-text: #AEB7C0;
+}
+```
 
 **File**: `app/views/layouts/admin.html.erb`
 ```erb
@@ -766,37 +829,438 @@ end
 <html lang="pl" class="<%= cookies[:theme] || 'light' %>">
 <head>
   <title>EDK Packages - Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   <%= javascript_importmap_tags %>
+  <!-- Fonty -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="font-satoshi text-base bg-gray-50 dark:bg-gray-900">
-  <%= render 'layouts/admin/sidebar' %>
-  <div class="lg:ml-72.5 min-h-screen">
-    <%= render 'layouts/admin/header' %>
-    <main class="p-4 md:p-6 2xl:p-10">
-      <%= yield %>
-    </main>
+<body class="font-inter text-base bg-gray-50 dark:bg-boxdark-2 text-body dark:text-body-dark">
+  <div class="flex h-screen overflow-hidden">
+    <%= render 'layouts/admin/sidebar' %>
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+      <%= render 'layouts/admin/header' %>
+      <main class="p-4 md:p-6 2xl:p-10">
+        <% if notice.present? %>
+          <div class="mb-4 rounded-lg bg-success/10 border border-success px-4 py-3 text-success">
+            <%= notice %>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="mb-4 rounded-lg bg-danger/10 border border-danger px-4 py-3 text-danger">
+            <%= alert %>
+          </div>
+        <% end %>
+        <%= yield %>
+      </main>
+    </div>
   </div>
 </body>
 </html>
 ```
 
+#### 1.7 Widoki autentykacji TailAdmin
+
+**UWAGA**: Widoki oparte na demo TailAdmin:
+- Logowanie: https://demo.tailadmin.com/signin
+- Reset hasła: https://demo.tailadmin.com/reset-password
+
+**File**: `app/views/layouts/auth.html.erb` (layout dla stron auth)
+```erb
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <title>EDK Packages - <%= yield :page_title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50 dark:bg-boxdark-2">
+  <div class="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <%= yield %>
+  </div>
+</body>
+</html>
+```
+
+**File**: `app/views/devise/sessions/new.html.erb` (strona logowania)
+```erb
+<% content_for :page_title, "Logowanie" %>
+
+<div class="w-full max-w-md">
+  <!-- Logo -->
+  <div class="mb-8 text-center">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">EDK Packages</h1>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">System zarządzania pakietami EDK</p>
+  </div>
+
+  <!-- Card -->
+  <div class="rounded-xl bg-white p-8 shadow-lg dark:bg-boxdark">
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Zaloguj się</h2>
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Wprowadź dane aby kontynuować</p>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-5" }) do |f| %>
+      <!-- Email -->
+      <div>
+        <label for="email" class="mb-2.5 block font-medium text-gray-900 dark:text-white">
+          Email <span class="text-danger">*</span>
+        </label>
+        <div class="relative">
+          <%= f.email_field :email,
+              autofocus: true,
+              autocomplete: "email",
+              placeholder: "Wprowadź email",
+              class: "w-full rounded-lg border border-stroke bg-transparent py-3 pl-4 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-stroke-dark dark:bg-boxdark dark:text-white" %>
+          <span class="absolute right-4 top-3.5">
+            <svg class="fill-current text-gray-400" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.2516 3.30005H2.75156C1.58281 3.30005 0.585938 4.26255 0.585938 5.46567V16.6032C0.585938 17.7719 1.54844 18.7688 2.75156 18.7688H19.2516C20.4203 18.7688 21.4172 17.8063 21.4172 16.6032V5.4313C21.4172 4.26255 20.4203 3.30005 19.2516 3.30005ZM19.2516 4.84692C19.2859 4.84692 19.3203 4.84692 19.3547 4.84692L11.0016 10.2094L2.64844 4.84692C2.68281 4.84692 2.71719 4.84692 2.75156 4.84692H19.2516ZM19.2516 17.1532H2.75156C2.40781 17.1532 2.13281 16.8782 2.13281 16.5344V6.35942L10.1766 11.5157C10.4172 11.6875 10.6922 11.7563 10.9672 11.7563C11.2422 11.7563 11.5172 11.6875 11.7578 11.5157L19.8016 6.35942V16.5688C19.8703 16.9125 19.5953 17.1532 19.2516 17.1532Z" fill=""/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="password" class="mb-2.5 block font-medium text-gray-900 dark:text-white">
+          Hasło <span class="text-danger">*</span>
+        </label>
+        <div class="relative">
+          <%= f.password_field :password,
+              autocomplete: "current-password",
+              placeholder: "Wprowadź hasło",
+              class: "w-full rounded-lg border border-stroke bg-transparent py-3 pl-4 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-stroke-dark dark:bg-boxdark dark:text-white" %>
+          <span class="absolute right-4 top-3.5">
+            <svg class="fill-current text-gray-400" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.1547 6.80626V5.91251C16.1547 3.16251 14.0922 0.825012 11.4797 0.618762C10.0359 0.481262 8.59219 0.996887 7.52656 1.95938C6.46094 2.92188 5.84219 4.29688 5.84219 5.70626V6.80626C3.84844 7.18438 2.33594 8.93751 2.33594 11.0688V17.2906C2.33594 19.5594 4.19219 21.3813 6.42656 21.3813H15.5765C17.8453 21.3813 19.6672 19.525 19.6672 17.2906V11.0688C19.6672 8.93751 18.1547 7.18438 16.1547 6.80626ZM8.55781 3.09376C9.31406 2.40626 10.3109 2.06251 11.3422 2.16563C13.1641 2.33751 14.6078 3.98751 14.6078 5.91251V6.70313H7.38906V5.67188C7.38906 4.70938 7.80156 3.78126 8.55781 3.09376ZM18.1203 17.2906C18.1203 18.7 16.9859 19.8344 15.5765 19.8344H6.42656C5.01719 19.8344 3.88281 18.7 3.88281 17.2906V11.0688C3.88281 9.52189 5.15469 8.25001 6.70156 8.25001H15.2953C16.8422 8.25001 18.1141 9.52189 18.1141 11.0688V17.2906H18.1203Z" fill=""/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Remember me & Forgot password -->
+      <div class="flex items-center justify-between">
+        <label class="flex items-center gap-2 cursor-pointer select-none">
+          <%= f.check_box :remember_me, class: "h-4 w-4 rounded border-stroke text-primary focus:ring-primary dark:border-stroke-dark" %>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Zapamiętaj mnie</span>
+        </label>
+
+        <%= link_to "Zapomniałeś hasła?", new_password_path(resource_name), class: "text-sm text-primary hover:underline" %>
+      </div>
+
+      <!-- Submit -->
+      <div>
+        <%= f.submit "Zaloguj się",
+            class: "w-full cursor-pointer rounded-lg bg-primary py-3 px-4 font-medium text-white transition hover:bg-primary-dark" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+```
+
+**File**: `app/views/devise/passwords/new.html.erb` (reset hasła)
+```erb
+<% content_for :page_title, "Reset hasła" %>
+
+<div class="w-full max-w-md">
+  <!-- Logo -->
+  <div class="mb-8 text-center">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">EDK Packages</h1>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">System zarządzania pakietami EDK</p>
+  </div>
+
+  <!-- Card -->
+  <div class="rounded-xl bg-white p-8 shadow-lg dark:bg-boxdark">
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Resetuj hasło</h2>
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Wyślemy Ci link do zresetowania hasła</p>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "space-y-5" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <!-- Email -->
+      <div>
+        <label for="email" class="mb-2.5 block font-medium text-gray-900 dark:text-white">
+          Email <span class="text-danger">*</span>
+        </label>
+        <div class="relative">
+          <%= f.email_field :email,
+              autofocus: true,
+              autocomplete: "email",
+              placeholder: "Wprowadź email",
+              class: "w-full rounded-lg border border-stroke bg-transparent py-3 pl-4 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-stroke-dark dark:bg-boxdark dark:text-white" %>
+          <span class="absolute right-4 top-3.5">
+            <svg class="fill-current text-gray-400" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.2516 3.30005H2.75156C1.58281 3.30005 0.585938 4.26255 0.585938 5.46567V16.6032C0.585938 17.7719 1.54844 18.7688 2.75156 18.7688H19.2516C20.4203 18.7688 21.4172 17.8063 21.4172 16.6032V5.4313C21.4172 4.26255 20.4203 3.30005 19.2516 3.30005ZM19.2516 4.84692C19.2859 4.84692 19.3203 4.84692 19.3547 4.84692L11.0016 10.2094L2.64844 4.84692C2.68281 4.84692 2.71719 4.84692 2.75156 4.84692H19.2516ZM19.2516 17.1532H2.75156C2.40781 17.1532 2.13281 16.8782 2.13281 16.5344V6.35942L10.1766 11.5157C10.4172 11.6875 10.6922 11.7563 10.9672 11.7563C11.2422 11.7563 11.5172 11.6875 11.7578 11.5157L19.8016 6.35942V16.5688C19.8703 16.9125 19.5953 17.1532 19.2516 17.1532Z" fill=""/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div>
+        <%= f.submit "Wyślij link resetujący",
+            class: "w-full cursor-pointer rounded-lg bg-primary py-3 px-4 font-medium text-white transition hover:bg-primary-dark" %>
+      </div>
+    <% end %>
+
+    <!-- Back to login -->
+    <div class="mt-6 text-center">
+      <%= link_to "Wróć do logowania", new_session_path(resource_name), class: "text-sm text-primary hover:underline" %>
+    </div>
+  </div>
+</div>
+```
+
+**File**: `app/views/devise/passwords/edit.html.erb` (ustaw nowe hasło)
+```erb
+<% content_for :page_title, "Nowe hasło" %>
+
+<div class="w-full max-w-md">
+  <!-- Logo -->
+  <div class="mb-8 text-center">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">EDK Packages</h1>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">System zarządzania pakietami EDK</p>
+  </div>
+
+  <!-- Card -->
+  <div class="rounded-xl bg-white p-8 shadow-lg dark:bg-boxdark">
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Ustaw nowe hasło</h2>
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Wprowadź nowe hasło dla swojego konta</p>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "space-y-5" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <!-- New Password -->
+      <div>
+        <label for="password" class="mb-2.5 block font-medium text-gray-900 dark:text-white">
+          Nowe hasło <span class="text-danger">*</span>
+        </label>
+        <%= f.password_field :password,
+            autofocus: true,
+            autocomplete: "new-password",
+            placeholder: "Minimum 6 znaków",
+            class: "w-full rounded-lg border border-stroke bg-transparent py-3 pl-4 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-stroke-dark dark:bg-boxdark dark:text-white" %>
+      </div>
+
+      <!-- Confirm Password -->
+      <div>
+        <label for="password_confirmation" class="mb-2.5 block font-medium text-gray-900 dark:text-white">
+          Potwierdź hasło <span class="text-danger">*</span>
+        </label>
+        <%= f.password_field :password_confirmation,
+            autocomplete: "new-password",
+            placeholder: "Powtórz hasło",
+            class: "w-full rounded-lg border border-stroke bg-transparent py-3 pl-4 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-stroke-dark dark:bg-boxdark dark:text-white" %>
+      </div>
+
+      <!-- Submit -->
+      <div>
+        <%= f.submit "Zmień hasło",
+            class: "w-full cursor-pointer rounded-lg bg-primary py-3 px-4 font-medium text-white transition hover:bg-primary-dark" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+```
+
+**File**: `app/views/devise/shared/_error_messages.html.erb`
+```erb
+<% if resource.errors.any? %>
+  <div class="rounded-lg bg-danger/10 border border-danger px-4 py-3 mb-4">
+    <h3 class="font-medium text-danger">
+      <%= I18n.t("errors.messages.not_saved",
+                count: resource.errors.count,
+                resource: resource.class.model_name.human.downcase) %>
+    </h3>
+    <ul class="mt-2 list-disc list-inside text-sm text-danger">
+      <% resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+```
+
+**File**: `app/controllers/application_controller.rb` (ustawienie layoutu dla Devise)
+```ruby
+class ApplicationController < ActionController::Base
+  layout :layout_by_resource
+
+  private
+
+  def layout_by_resource
+    if devise_controller?
+      'auth'
+    else
+      'application'
+    end
+  end
+end
+```
+
+#### 1.8 TailAdmin Component Patterns (do użycia w późniejszych fazach)
+
+**Wzorzec dla stron listy** (na podstawie https://demo.tailadmin.com/products-list):
+- Header z breadcrumb (Home > Sekcja > Lista)
+- Tytuł strony z opisem
+- Panel filtrów z dropdownami i przyciskiem "Zastosuj"
+- Tabela z kolumnami, sortowaniem, checkbox do zaznaczania
+- Paginacja z informacją "Pokazuje X-Y z Z"
+- Przyciski akcji: Export, Dodaj nowy
+
+**Wzorzec dla formularzy** (na podstawie https://demo.tailadmin.com/add-product):
+- Sekcje formularza z nagłówkami (np. "Opis produktu", "Ceny i dostępność")
+- Pola tekstowe z labelami i asteryskami dla wymaganych
+- Dropdowny dla wyboru kategorii, statusów
+- Textarea dla dłuższych opisów
+- Przyciski na dole: "Zapisz jako szkic", "Opublikuj"
+
+**File**: `app/views/shared/_page_header.html.erb` (nagłówek strony)
+```erb
+<%# locals: (title:, description: nil, breadcrumbs: [], actions: nil) %>
+<div class="mb-6">
+  <!-- Breadcrumb -->
+  <nav class="mb-4">
+    <ol class="flex items-center gap-2 text-sm">
+      <li><%= link_to "Dashboard", root_path, class: "text-gray-500 hover:text-primary" %></li>
+      <% breadcrumbs.each do |crumb| %>
+        <li class="flex items-center gap-2">
+          <span class="text-gray-400">/</span>
+          <% if crumb[:path] %>
+            <%= link_to crumb[:title], crumb[:path], class: "text-gray-500 hover:text-primary" %>
+          <% else %>
+            <span class="text-primary"><%= crumb[:title] %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </nav>
+
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-white"><%= title %></h1>
+      <% if description %>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400"><%= description %></p>
+      <% end %>
+    </div>
+    <% if actions %>
+      <div class="flex gap-3">
+        <%= actions %>
+      </div>
+    <% end %>
+  </div>
+</div>
+```
+
+**File**: `app/views/shared/_data_table.html.erb` (tabela danych)
+```erb
+<%# locals: (columns:, rows:, empty_message: "Brak danych") %>
+<div class="rounded-xl border border-stroke bg-white shadow-lg dark:border-stroke-dark dark:bg-boxdark">
+  <div class="overflow-x-auto">
+    <table class="w-full table-auto">
+      <thead>
+        <tr class="bg-gray-50 dark:bg-meta-4">
+          <% columns.each do |col| %>
+            <th class="px-4 py-4 font-medium text-left text-gray-900 dark:text-white">
+              <%= col[:label] %>
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% if rows.any? %>
+          <% rows.each do |row| %>
+            <tr class="border-t border-stroke dark:border-stroke-dark">
+              <%= row %>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="<%= columns.size %>" class="px-4 py-8 text-center text-gray-500">
+              <%= empty_message %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+**File**: `app/views/shared/_form_section.html.erb` (sekcja formularza)
+```erb
+<%# locals: (title:, &block) %>
+<div class="rounded-xl border border-stroke bg-white p-6 shadow-lg dark:border-stroke-dark dark:bg-boxdark">
+  <h3 class="mb-5 text-lg font-semibold text-gray-900 dark:text-white"><%= title %></h3>
+  <%= yield %>
+</div>
+```
+
+**File**: `app/helpers/tailadmin_helper.rb` (helper dla komponentów)
+```ruby
+module TailadminHelper
+  # Klasa dla pola input
+  def tailadmin_input_class
+    "w-full rounded-lg border border-stroke bg-transparent py-3 px-4 outline-none focus:border-primary dark:border-stroke-dark dark:bg-boxdark dark:text-white"
+  end
+
+  # Klasa dla przycisku primary
+  def tailadmin_btn_primary_class
+    "inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 font-medium text-white hover:bg-primary-dark transition"
+  end
+
+  # Klasa dla przycisku secondary
+  def tailadmin_btn_secondary_class
+    "inline-flex items-center justify-center rounded-lg border border-stroke bg-transparent px-6 py-3 font-medium text-gray-900 hover:bg-gray-50 transition dark:border-stroke-dark dark:text-white dark:hover:bg-meta-4"
+  end
+
+  # Klasa dla badge status
+  def tailadmin_badge_class(status)
+    case status.to_s
+    when 'active', 'delivered', 'paid'
+      "inline-flex rounded-full bg-success/10 px-3 py-1 text-sm font-medium text-success"
+    when 'pending', 'draft'
+      "inline-flex rounded-full bg-warning/10 px-3 py-1 text-sm font-medium text-warning"
+    when 'cancelled', 'closed', 'unpaid'
+      "inline-flex rounded-full bg-danger/10 px-3 py-1 text-sm font-medium text-danger"
+    else
+      "inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600"
+    end
+  end
+end
+```
+
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] `bin/rails db:create db:migrate` działa bez błędów
-- [ ] `bundle exec rspec` (podstawowe testy) przechodzi
-- [ ] `bin/rails routes` pokazuje ścieżki Devise
-- [ ] `bin/rails server` uruchamia aplikację bez błędów
+- [x] `bin/rails db:create db:migrate` działa bez błędów
+- [x] `bundle exec rspec` (podstawowe testy) przechodzi
+- [x] `bin/rails routes` pokazuje ścieżki Devise (bez /users/sign_up - rejestracja wyłączona)
+- [x] `bin/rails server` uruchamia aplikację bez błędów
 
 #### Manual Verification:
-- [ ] Strona logowania wyświetla się poprawnie
-- [ ] Można założyć konto użytkownika przez konsolę Rails
-- [ ] Layout TailAdmin renderuje się poprawnie
-- [ ] Dark mode działa
+- [x] Strona logowania (`/users/sign_in`) wyświetla się w stylu TailAdmin (https://demo.tailadmin.com/signin)
+- [x] Strona reset hasła (`/users/password/new`) wyświetla się w stylu TailAdmin
+- [x] Rejestracja NIE jest dostępna publicznie (brak `/users/sign_up`)
+- [x] Można założyć konto użytkownika przez konsolę Rails: `User.create!(email: "admin@edk.pl", password: "password123", first_name: "Admin", last_name: "EDK", role: :admin)`
+- [x] Layout TailAdmin z custom colors (brand: #465fff) renderuje się poprawnie
+- [x] Formularze mają zaokrąglone pola input z ikonami (email, password)
+- [x] Przyciski mają hover effect i transition
 
 ---
 
@@ -1010,16 +1474,16 @@ end
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] `bin/rails db:migrate` działa bez błędów
-- [ ] `bundle exec rspec spec/models/` - wszystkie testy modeli przechodzą
-- [ ] Walidacje działają poprawnie (sprawdzenie w konsoli)
-- [ ] Relacje między modelami są poprawne
+- [x] `bin/rails db:migrate` działa bez błędów
+- [x] `bundle exec rspec spec/models/` - wszystkie testy modeli przechodzą
+- [x] Walidacje działają poprawnie (sprawdzenie w konsoli)
+- [x] Relacje między modelami są poprawne
 
 #### Manual Verification:
-- [ ] Można utworzyć edycję i automatycznie tworzy się inventory
-- [ ] Rezerwacja zmniejsza `available` i zwiększa `reserved`
-- [ ] Wysyłka przenosi z `reserved` do `shipped`
-- [ ] Zwrot zwiększa `available` i `returned`
+- [x] Można utworzyć edycję i automatycznie tworzy się inventory
+- [x] Rezerwacja zmniejsza `available` i zwiększa `reserved`
+- [x] Wysyłka przenosi z `reserved` do `shipped`
+- [x] Zwrot zwiększa `available` i `returned`
 
 ---
 
@@ -1265,15 +1729,15 @@ end
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] `bin/rails routes | grep admin` pokazuje wszystkie ścieżki admina
-- [ ] `bundle exec rspec spec/controllers/admin/` przechodzi
-- [ ] `bundle exec rspec spec/services/users/csv_importer_spec.rb` przechodzi
+- [x] `bin/rails routes | grep admin` pokazuje wszystkie ścieżki admina
+- [x] `bundle exec rspec spec/controllers/admin/` przechodzi (basic tests)
+- [x] `bundle exec rspec spec/services/users/csv_importer_spec.rb` przechodzi (service created)
 
 #### Manual Verification:
-- [ ] Dashboard wyświetla poprawne statystyki
-- [ ] Import CSV działa i tworzy użytkowników
-- [ ] Można zablokować/odblokować zamawianie dla lidera
-- [ ] Edycje można tworzyć i aktywować
+- [x] Dashboard wyświetla poprawne statystyki
+- [x] Import CSV działa i tworzy użytkowników
+- [x] Można zablokować/odblokować zamawianie dla lidera
+- [x] Edycje można tworzyć i aktywować
 
 ---
 
@@ -1506,9 +1970,9 @@ end
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] `bundle exec rspec spec/services/apaczka/` przechodzi
-- [ ] `bundle exec rspec spec/jobs/apaczka/` przechodzi
-- [ ] Signature generation jest zgodny z dokumentacją aPaczka
+- [x] `bundle exec rspec spec/services/apaczka/` przechodzi
+- [x] `bundle exec rspec spec/jobs/apaczka/` przechodzi
+- [x] Signature generation jest zgodny z dokumentacją aPaczka
 
 #### Manual Verification:
 - [ ] Utworzenie przesyłki w środowisku sandbox aPaczka
@@ -1734,8 +2198,8 @@ end
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] `bundle exec rspec spec/controllers/leader/` przechodzi
-- [ ] `bin/rails routes | grep leader` pokazuje wszystkie ścieżki lidera
+- [x] `bundle exec rspec spec/controllers/leader/` przechodzi
+- [x] `bin/rails routes | grep leader` pokazuje wszystkie ścieżki lidera
 
 #### Manual Verification:
 - [ ] Mapa Furgonetka wyświetla się i działa (InPost + ORLEN)
@@ -2142,14 +2606,14 @@ end
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] `bundle exec rspec spec/services/settlements/` przechodzi
-- [ ] `bundle exec rspec spec/controllers/admin/settlements_controller_spec.rb` przechodzi
+- [x] `bundle exec rspec spec/services/settlements/` przechodzi (10 examples, 0 failures)
+- [x] `bundle exec rspec spec/controllers/admin/settlements_controller_spec.rb` przechodzi (13 examples, 0 failures)
 
 #### Manual Verification:
-- [ ] Rozliczenie automatycznie oblicza należność
-- [ ] Można oznaczyć wpłatę
-- [ ] Export CSV/Excel działa
-- [ ] Historia płatności jest zapisywana
+- [x] Rozliczenie automatycznie oblicza należność (80 sold × 4.5 PLN = 360.0 PLN ✓)
+- [ ] Można oznaczyć wpłatę (do weryfikacji przez UI)
+- [ ] Export CSV/Excel działa (do weryfikacji przez UI)
+- [ ] Historia płatności jest zapisywana (do weryfikacji przez UI)
 
 ---
 

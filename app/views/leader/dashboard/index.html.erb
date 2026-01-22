@@ -1,0 +1,193 @@
+<% content_for :title, "Dashboard Lidera" %>
+<% content_for :breadcrumb, "Dashboard" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Witaj, <%= current_user.first_name %>!</h1>
+      <p class="text-gray-600 dark:text-gray-400">Panel lidera okręgu - EDK <%= @edition.year %></p>
+    </div>
+    <% if @can_order %>
+      <%= link_to new_leader_order_path, class: "inline-flex items-center px-4 py-2 bg-brand-500 text-white text-sm font-medium rounded-lg hover:bg-brand-600 transition-colors" do %>
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nowe zamówienie
+      <% end %>
+    <% else %>
+      <div class="inline-flex items-center px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 text-sm font-medium rounded-lg">
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+        Zamawianie zablokowane
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Total Ordered -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Zamówione pakiety</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white"><%= @stats[:total_ordered] %></p>
+        </div>
+        <div class="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+          <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Shipped -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Dostarczone pakiety</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white"><%= @stats[:total_shipped] %></p>
+        </div>
+        <div class="p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
+          <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Reported Sold -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Sprzedane pakiety</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white"><%= @stats[:total_reported_sold] %></p>
+        </div>
+        <div class="p-3 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+          <svg class="h-6 w-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amount Due -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Do zapłaty</p>
+          <p class="mt-2 text-2xl font-bold text-brand-600 dark:text-brand-400">
+            <%= number_to_currency(@stats[:amount_due], unit: "zł", format: "%n %u") %>
+          </p>
+        </div>
+        <div class="p-3 rounded-lg bg-yellow-100 dark:bg-yellow-900/30">
+          <svg class="h-6 w-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Orders -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Ostatnie zamówienia</h2>
+      <%= link_to "Zobacz wszystkie", leader_orders_path, class: "text-brand-500 hover:text-brand-600 text-sm font-medium" %>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">#</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Ilość</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Akcje</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          <% @recent_orders.each do |order| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+              <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">#<%= order.id %></td>
+              <td class="px-6 py-4 text-center text-sm text-gray-900 dark:text-white"><%= order.quantity %></td>
+              <td class="px-6 py-4"><%= status_badge(order.status) %></td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= order.created_at.strftime("%d.%m.%Y") %></td>
+              <td class="px-6 py-4 text-right">
+                <%= link_to "Zobacz", leader_order_path(order), class: "text-brand-500 hover:text-brand-600 text-sm" %>
+              </td>
+            </tr>
+          <% end %>
+          <% if @recent_orders.empty? %>
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                Brak zamówień. <%= link_to "Złóż pierwsze zamówienie", new_leader_order_path, class: "text-brand-500 hover:text-brand-600" if @can_order %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+          <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Zamówienia</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Zarządzaj zamówieniami</p>
+        </div>
+        <%= link_to leader_orders_path, class: "text-brand-500 hover:text-brand-600" do %>
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-lg bg-green-100 dark:bg-green-900/30">
+          <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Raporty sprzedaży</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Raportuj sprzedane pakiety</p>
+        </div>
+        <%= link_to leader_sales_reports_path, class: "text-brand-500 hover:text-brand-600" do %>
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-lg bg-red-100 dark:bg-red-900/30">
+          <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+          </svg>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Zwroty</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Zgłoś zwrot pakietów</p>
+        </div>
+        <%= link_to leader_returns_path, class: "text-brand-500 hover:text-brand-600" do %>
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
