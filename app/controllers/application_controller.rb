@@ -4,4 +4,17 @@ class ApplicationController < ActionController::Base
 
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
+
+  # Use auth layout for Devise controllers, application layout for others
+  layout :layout_by_resource
+
+  private
+
+  def layout_by_resource
+    if devise_controller?
+      'auth'
+    else
+      'application'
+    end
+  end
 end
