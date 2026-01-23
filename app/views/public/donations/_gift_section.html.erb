@@ -1,0 +1,66 @@
+<%# locals: (f:, donation:) %>
+
+<!-- Gift Checkbox -->
+<div class="mt-6">
+  <label class="flex items-start gap-3 cursor-pointer">
+    <%= f.check_box :want_gift,
+        checked: true,
+        class: "mt-1 h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer",
+        data: { donation_form_target: "wantGift", action: "change->donation-form#toggleGiftSection" } %>
+    <div>
+      <h2 class="text-base font-semibold text-gray-900">Chcę otrzymać upominek za darowiznę</h2>
+      <p class="text-sm text-gray-600 mt-1">
+        W ramach wdzięczności za Twoją cegiełkę możesz odebrać pamiątkowy pakiet EDK. Dziękujemy, zapraszamy!!!
+      </p>
+    </div>
+  </label>
+</div>
+
+<!-- Parcel Locker Section (visible when want_gift is checked) -->
+<div data-donation-form-target="giftSection" class="mt-6">
+  <label class="block text-sm font-medium text-gray-900 mb-2">
+    Wybierz paczkomat InPost <span class="text-indigo-500">*</span>
+  </label>
+
+  <!-- Map Button -->
+  <button type="button"
+          data-action="donation-form#openFurgonetkaMap"
+          class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-indigo-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition <%= donation.errors[:locker_code].present? ? 'border-red-500' : '' %>">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+    </svg>
+    Wybierz paczkomat InPost
+  </button>
+
+  <!-- Hidden fields for locker data -->
+  <%= f.hidden_field :locker_code, data: { donation_form_target: "lockerCode" } %>
+  <%= f.hidden_field :locker_name, data: { donation_form_target: "lockerName" } %>
+  <%= f.hidden_field :locker_address, data: { donation_form_target: "lockerAddress" } %>
+  <%= f.hidden_field :locker_city, data: { donation_form_target: "lockerCity" } %>
+  <%= f.hidden_field :locker_post_code, data: { donation_form_target: "lockerPostCode" } %>
+
+  <!-- Selected Locker Display -->
+  <div class="mt-4">
+    <label class="block text-sm font-medium text-gray-900 mb-2">Wybrany paczkomat</label>
+    <div data-donation-form-target="selectedLocker">
+      <% if donation.locker_code.present? %>
+        <div class="p-4 border border-green-400 rounded-lg bg-green-50">
+          <p class="text-sm font-semibold text-gray-900">
+            <%= donation.locker_code %> - <%= donation.locker_name %>
+          </p>
+          <p class="text-sm text-gray-600">
+            <%= donation.locker_city %>, <%= donation.locker_post_code %>
+          </p>
+        </div>
+      <% else %>
+        <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-400">
+          Nie wybrano jeszcze paczkomatu
+        </div>
+      <% end %>
+    </div>
+    <% if donation.errors[:locker_code].present? %>
+      <p class="text-xs text-red-600 mt-1"><%= donation.errors[:locker_code].first %></p>
+    <% end %>
+  </div>
+</div>

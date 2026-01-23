@@ -1,0 +1,36 @@
+<% content_for :page_title, "Cegiełka na EDK" %>
+
+<main data-controller="donation-form" data-donation-form-price-per-unit-value="<%= @price_per_unit %>">
+  <!-- Main content area with two-tone background -->
+  <div class="relative min-h-screen">
+    <!-- Two-tone background for desktop -->
+    <div class="hidden lg:block absolute inset-0">
+      <div class="absolute left-0 top-0 h-full w-1/2 bg-white"></div>
+      <div class="absolute right-0 top-0 h-full w-1/2 bg-gray-100"></div>
+    </div>
+    
+    <!-- Content -->
+    <div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <%= form_with model: @donation, url: cegielka_path, method: :post,
+          class: "flex flex-col lg:flex-row gap-8 lg:gap-16",
+          data: { action: "submit->donation-form#handleSubmit" } do |f| %>
+        
+        <!-- Left Column - Header & Brick Selection -->
+        <div class="flex-1 lg:pr-8">
+          <%= render "public/donations/header" %>
+          <%= render "public/donations/amount_section", f: f, donation: @donation, price: @price_per_unit %>
+        </div>
+        
+        <!-- Right Column - Form -->
+        <div class="flex-1 lg:pl-8 bg-gray-100 lg:bg-transparent p-6 lg:p-0 rounded-xl lg:rounded-none -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0">
+          <%= render "public/donations/personal_info", f: f, donation: @donation %>
+          <%= render "public/donations/gift_section", f: f, donation: @donation %>
+          <%= render "public/donations/terms_section", f: f, donation: @donation %>
+          <%= render "public/donations/submit_button" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%= render "public/donations/footer" %>
+</main>

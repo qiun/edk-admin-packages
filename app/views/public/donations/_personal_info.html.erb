@@ -1,0 +1,59 @@
+<%# locals: (f:, donation:) %>
+<div class="space-y-4">
+  <!-- Email -->
+  <div>
+    <label for="donation_email" class="block text-sm font-medium text-gray-900 mb-1">
+      Adres e-mail <span class="text-indigo-500">*</span>
+    </label>
+    <%= f.email_field :email,
+        autocomplete: "email",
+        placeholder: "np. jan@kowalski.com",
+        class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none #{donation.errors[:email].present? ? 'border-red-500' : ''}" %>
+    <% if donation.errors[:email].present? %>
+      <p class="text-xs text-red-600 mt-1"><%= donation.errors[:email].first %></p>
+    <% end %>
+  </div>
+
+  <!-- First Name & Last Name Row -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label for="donation_first_name" class="block text-sm font-medium text-gray-900 mb-1">
+        Imię <span class="text-indigo-500">*</span>
+      </label>
+      <%= f.text_field :first_name,
+          autocomplete: "given-name",
+          placeholder: "np. Jan",
+          class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none #{donation.errors[:first_name].present? ? 'border-red-500' : ''}" %>
+      <% if donation.errors[:first_name].present? %>
+        <p class="text-xs text-red-600 mt-1"><%= donation.errors[:first_name].first %></p>
+      <% end %>
+    </div>
+
+    <div>
+      <label for="donation_last_name" class="block text-sm font-medium text-gray-900 mb-1">
+        Nazwisko <span class="text-indigo-500">*</span>
+      </label>
+      <%= f.text_field :last_name,
+          autocomplete: "family-name",
+          placeholder: "np. Kowalski-Nowak",
+          class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none #{donation.errors[:last_name].present? ? 'border-red-500' : ''}" %>
+      <% if donation.errors[:last_name].present? %>
+        <p class="text-xs text-red-600 mt-1"><%= donation.errors[:last_name].first %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Phone -->
+  <div>
+    <label for="donation_phone" class="block text-sm font-medium text-gray-900 mb-1">
+      Telefon <span class="text-indigo-500">*</span>
+    </label>
+    <%= f.telephone_field :phone,
+        autocomplete: "tel",
+        placeholder: "np. 123456789 lub +48123456789",
+        class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none #{donation.errors[:phone].present? ? 'border-red-500' : ''}" %>
+    <% if donation.errors[:phone].present? %>
+      <p class="text-xs text-red-600 mt-1"><%= donation.errors[:phone].first %></p>
+    <% end %>
+  </div>
+</div>
