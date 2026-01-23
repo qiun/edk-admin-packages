@@ -36,3 +36,16 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+# macOS
+.DS_Store
+
+# MCP servers cache
+.playwright-mcp/
+.serena/
+
+# Demo templates
+tailadmin-free-tailwind-dashboard-template-main/
+
+# Test files
+test_import_*.csv
