@@ -13,7 +13,7 @@
     <div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
       <%= form_with model: @donation, url: cegielka_path, method: :post,
           class: "flex flex-col lg:flex-row gap-8 lg:gap-16",
-          data: { action: "submit->donation-form#handleSubmit" } do |f| %>
+          data: { turbo: false, action: "submit->donation-form#handleSubmit" } do |f| %>
         
         <!-- Left Column - Header & Brick Selection -->
         <div class="flex-1 lg:pr-8">

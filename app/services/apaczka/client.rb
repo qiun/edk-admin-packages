@@ -50,7 +50,23 @@ module Apaczka
 
     private
 
-    def build_order_data(order)
+    def build_order_data(source)
+      # Support both Order and Shipment objects
+      receiver_data = if source.is_a?(Shipment)
+        {
+          name: source.recipient_name,
+          phone: source.recipient_phone,
+          email: source.recipient_email
+        }
+      else
+        # Order object
+        {
+          name: source.user.full_name,
+          phone: source.user.phone,
+          email: source.user.email
+        }
+      end
+
       {
         order: {
           service_id: "INPOST_COURIER_POINT",
@@ -63,21 +79,18 @@ module Apaczka
             sender_phone: sender_config[:phone],
             sender_email: sender_config[:email]
           },
-          receiver: {
-            name: order.user.full_name,
-            address: order.locker_address,
-            city: order.locker_city,
-            postal_code: order.locker_post_code,
-            phone: order.user.phone,
-            email: order.user.email,
-            foreign_address_id: order.locker_code,
+          receiver: receiver_data.merge(
+            address: source.locker_address,
+            city: source.locker_city,
+            postal_code: source.locker_post_code,
+            foreign_address_id: source.locker_code,
             is_pickup_point: true
-          },
+          ),
           parcels: [{
-            weight: calculate_weight(order.quantity),
+            weight: calculate_weight(source.quantity),
             dimensions: package_dimensions
           }],
-          comment: "Pakiety EDK - #{order.quantity} szt."
+          comment: "Pakiety EDK - #{source.quantity} szt."
         }
       }
     end

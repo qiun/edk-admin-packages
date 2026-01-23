@@ -49,3 +49,6 @@ tailadmin-free-tailwind-dashboard-template-main/
 
 # Test files
 test_import_*.csv
+
+# Kubernetes secrets (never commit actual secrets!)
+_deploy/admin-packages-secrets.yaml

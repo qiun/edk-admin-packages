@@ -15,6 +15,12 @@ Rails.application.configure do
   # Enable server timing.
   config.server_timing = true
 
+  # Allow requests from development hostnames
+  config.hosts << "lvh.me"
+  config.hosts << /[a-z0-9-]+\.lvh\.me/  # All subdomains of lvh.me
+  config.hosts << /[a-z0-9-]+\.ngrok-free\.app/  # ngrok for webhook testing
+  config.hosts << "edk-pakiety.websiteinit.com"
+
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
   if Rails.root.join("tmp/caching-dev.txt").exist?

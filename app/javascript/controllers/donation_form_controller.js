@@ -93,11 +93,9 @@ export default class extends Controller {
       this.selectedLockerTarget.innerHTML = `
         <div class="p-4 border border-green-400 rounded-lg bg-green-50">
           <p class="text-sm font-semibold text-gray-900">
-            ${code} - ${name}
+            ${name}
           </p>
-          <p class="text-sm text-gray-600">
-            ${address?.city || ''}, ${address?.postCode || address?.post_code || ''}
-          </p>
+          ${address?.street ? `<p class="text-sm text-gray-600">${address.street}</p>` : ''}
         </div>
       `
     }

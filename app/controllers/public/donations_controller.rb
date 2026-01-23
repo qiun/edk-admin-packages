@@ -13,6 +13,8 @@ module Public
       @donation = Donation.new(donation_params)
       @donation.edition = @edition
       @donation.amount = @donation.quantity.to_i * @price_per_unit
+      @donation.payment_id = generate_payment_id
+      @donation.payment_status = "pending"
 
       ActiveRecord::Base.transaction do
         if @donation.save
@@ -24,14 +26,21 @@ module Public
               # Don't block the order - just mark that gift cannot be fulfilled
               @donation.update_column(:gift_pending, true)
             end
-            
+
             # Check stock levels and notify admins if low
-            ::Inventory::StockAlertService.new(@edition).check_and_notify!
+            InventoryServices::StockAlertService.new(@edition).check_and_notify!
           end
 
-          # For now, redirect to success page (Przelewy24 integration later)
-          # TODO: Create Przelewy24 payment and redirect
-          redirect_to cegielka_sukces_path(session_id: @donation.id)
+          # Create Przelewy24 payment and redirect
+          begin
+            payment_result = create_przelewy24_payment(@donation)
+            redirect_to payment_result[:redirect_url], allow_other_host: true
+          rescue Przelewy24::Client::Error => e
+            Rails.logger.error "Przelewy24 payment creation failed: #{e.message}"
+            @donation.update_column(:payment_status, "failed")
+            flash[:error] = "Nie udało się utworzyć płatności. Spróbuj ponownie."
+            render :new, status: :unprocessable_entity
+          end
         else
           render :new, status: :unprocessable_entity
         end
@@ -39,7 +48,14 @@ module Public
     end
 
     def success
-      @donation = Donation.find_by(id: params[:session_id])
+      # User returns from Przelewy24 after payment
+      # We'll receive payment confirmation via webhook, so just show thank you page
+      # Optional: try to find donation by session_id if available in params
+      @donation = Donation.find_by(payment_id: params[:session_id]) if params[:session_id].present?
+    end
+
+    def error
+      # User cancelled payment or payment failed
     end
 
     private
@@ -49,6 +65,38 @@ module Public
         :email, :first_name, :last_name, :phone, :quantity, :want_gift,
         :locker_code, :locker_name, :locker_address, :locker_city, :locker_post_code,
         :terms_accepted
+      )
+    end
+
+    def generate_payment_id
+      "DON-#{Time.current.to_i}-#{SecureRandom.hex(4)}"
+    end
+
+    def create_przelewy24_payment(donation)
+      client = Przelewy24::Client.new(
+        merchant_id: ENV.fetch("PRZELEWY24_MERCHANT_ID"),
+        pos_id: ENV.fetch("PRZELEWY24_POS_ID"),
+        api_key: ENV.fetch("PRZELEWY24_API_KEY"),
+        crc_key: ENV.fetch("PRZELEWY24_CRC_KEY"),
+        sandbox: ENV.fetch("PRZELEWY24_SANDBOX", Rails.env.development?.to_s) == "true"
+      )
+
+      # URLs from environment or fallback to generated URLs
+      return_url = ENV.fetch("PRZELEWY24_RETURN_URL", cegielka_sukces_url)
+      status_url = ENV.fetch("PRZELEWY24_STATUS_URL", webhooks_przelewy24_url)
+
+      client.create_transaction(
+        session_id: donation.payment_id,
+        amount: donation.amount,
+        currency: "PLN",
+        description: "Cegiełka EDK #{@edition&.year} - #{donation.quantity} pakiet(y)",
+        email: donation.email,
+        country: "PL",
+        language: "pl",
+        url_return: return_url,
+        url_status: status_url,
+        client: "#{donation.first_name} #{donation.last_name}",
+        phone: donation.phone
       )
     end
   end

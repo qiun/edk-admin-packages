@@ -1,4 +1,4 @@
-module Inventory
+module InventoryServices
   class StockAlertService
     LOW_STOCK_THRESHOLD = 50
     

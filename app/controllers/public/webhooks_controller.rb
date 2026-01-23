@@ -4,24 +4,100 @@ module Public
     skip_before_action :authenticate_user!, raise: false
 
     def przelewy24
-      Rails.logger.info "Przelewy24 webhook received: #{params.to_json}"
+      Rails.logger.info "Przelewy24 webhook received: #{webhook_params.to_json}"
 
-      # TODO: Implement Przelewy24 verification
-      donation = Donation.find_by(payment_id: params[:sessionId])
+      # Verify webhook signature
+      client = przelewy24_client
+      unless client.verify_notification_signature(webhook_params)
+        Rails.logger.error "Przelewy24 webhook signature verification failed"
+        render json: { status: "ERROR", message: "Invalid signature" }, status: :unauthorized
+        return
+      end
 
-      if donation
+      # Find donation by sessionId (payment_id)
+      donation = Donation.find_by(payment_id: webhook_params[:sessionId])
+      unless donation
+        Rails.logger.error "Donation not found for sessionId: #{webhook_params[:sessionId]}"
+        render json: { status: "ERROR", message: "Donation not found" }, status: :not_found
+        return
+      end
+
+      # Verify transaction with Przelewy24 API
+      verification = client.verify_transaction(
+        session_id: webhook_params[:sessionId],
+        order_id: webhook_params[:orderId],
+        amount: webhook_params[:amount],
+        currency: webhook_params[:currency]
+      )
+
+      unless verification[:success]
+        Rails.logger.error "Przelewy24 transaction verification failed: #{verification[:response]}"
+        render json: { status: "ERROR", message: "Verification failed" }, status: :unprocessable_entity
+        return
+      end
+
+      # Update donation status
+      ActiveRecord::Base.transaction do
         donation.update!(
           payment_status: "paid",
-          payment_transaction_id: params[:orderId]
+          payment_transaction_id: webhook_params[:orderId]
         )
 
-        # TODO: Create shipment if want_gift
-        # TODO: Send confirmation email
+        # Create shipment if gift was requested
+        if donation.want_gift? && donation.locker_code.present?
+          create_shipment_for_donation(donation)
+        end
 
-        render json: { status: "OK" }
-      else
-        render json: { status: "ERROR", message: "Donation not found" }, status: :not_found
+        # Send confirmation email
+        DonationMailer.confirmation(donation).deliver_later
       end
+
+      Rails.logger.info "Przelewy24 payment confirmed for donation ##{donation.id}"
+      render json: { status: "OK" }
+    rescue StandardError => e
+      Rails.logger.error "Przelewy24 webhook processing error: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      render json: { status: "ERROR", message: "Processing failed" }, status: :internal_server_error
+    end
+
+    private
+
+    def webhook_params
+      params.permit(:merchantId, :posId, :sessionId, :amount, :originAmount, :currency, :orderId,
+                    :methodId, :statement, :sign, :reasonCode, :testMode)
+    end
+
+    def przelewy24_client
+      Przelewy24::Client.new(
+        merchant_id: ENV.fetch("PRZELEWY24_MERCHANT_ID"),
+        pos_id: ENV.fetch("PRZELEWY24_POS_ID"),
+        api_key: ENV.fetch("PRZELEWY24_API_KEY"),
+        crc_key: ENV.fetch("PRZELEWY24_CRC_KEY"),
+        sandbox: ENV.fetch("PRZELEWY24_SANDBOX", Rails.env.development?.to_s) == "true"
+      )
+    end
+
+    def create_shipment_for_donation(donation)
+      # Create shipment order
+      shipment = Shipment.create!(
+        order_type: "Donation",
+        order_id: donation.id,
+        recipient_name: "#{donation.first_name} #{donation.last_name}",
+        recipient_email: donation.email,
+        recipient_phone: donation.phone,
+        locker_code: donation.locker_code,
+        locker_name: donation.locker_name,
+        locker_address: donation.locker_address,
+        locker_city: donation.locker_city,
+        locker_post_code: donation.locker_post_code,
+        quantity: donation.quantity,
+        status: "pending"
+      )
+
+      # Queue shipment creation job
+      Apaczka::CreateShipmentJob.perform_later(shipment)
+
+      Rails.logger.info "Queued shipment creation for donation ##{donation.id}"
     end
   end
 end
