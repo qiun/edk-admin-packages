@@ -1,0 +1,112 @@
+<% content_for :page_title, "Reset hasła" %>
+
+<div class="relative flex flex-col justify-center w-full h-screen dark:bg-gray-900 sm:p-0 lg:flex-row">
+  <!-- Form -->
+  <div class="flex flex-col flex-1 w-full lg:w-1/2">
+    <div class="w-full max-w-md pt-10 mx-auto">
+      <%= link_to new_session_path(resource_name), class: "inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" do %>
+        <svg class="stroke-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12.7083 5L7.5 10.2083L12.7083 15.4167" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Wróć do logowania
+      <% end %>
+    </div>
+    <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+      <div>
+        <div class="mb-5 sm:mb-8">
+          <h1 class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
+            Resetuj hasło
+          </h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Wyślemy Ci link do zresetowania hasła na email
+          </p>
+        </div>
+        <div>
+          <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+            <%= render "devise/shared/error_messages", resource: resource %>
+            <div class="space-y-5">
+              <!-- Email -->
+              <div>
+                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Email<span class="text-error-500">*</span>
+                </label>
+                <%= f.email_field :email,
+                    autofocus: true,
+                    autocomplete: "email",
+                    placeholder: "info@edk.pl",
+                    class: "dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" %>
+              </div>
+              <!-- Button -->
+              <div>
+                <%= f.submit "Wyślij link resetujący", class: "flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="relative items-center hidden w-full h-full bg-brand-950 dark:bg-white/5 lg:grid lg:w-1/2">
+    <div class="flex items-center justify-center z-1">
+      <!-- Grid Shape Top Right -->
+      <div class="absolute right-0 top-0 -z-1 w-full max-w-[250px] xl:max-w-[450px]">
+        <svg class="w-full h-auto opacity-10" viewBox="0 0 450 450" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g opacity="0.5">
+            <rect width="90" height="90" fill="white"/>
+            <rect x="90" width="90" height="90" fill="white" opacity="0.8"/>
+            <rect x="180" width="90" height="90" fill="white" opacity="0.6"/>
+            <rect x="270" width="90" height="90" fill="white" opacity="0.4"/>
+            <rect x="360" width="90" height="90" fill="white" opacity="0.2"/>
+            <rect y="90" width="90" height="90" fill="white" opacity="0.8"/>
+            <rect x="90" y="90" width="90" height="90" fill="white" opacity="0.6"/>
+            <rect x="180" y="90" width="90" height="90" fill="white" opacity="0.4"/>
+            <rect x="270" y="90" width="90" height="90" fill="white" opacity="0.2"/>
+            <rect y="180" width="90" height="90" fill="white" opacity="0.6"/>
+            <rect x="90" y="180" width="90" height="90" fill="white" opacity="0.4"/>
+            <rect x="180" y="180" width="90" height="90" fill="white" opacity="0.2"/>
+            <rect y="270" width="90" height="90" fill="white" opacity="0.4"/>
+            <rect x="90" y="270" width="90" height="90" fill="white" opacity="0.2"/>
+            <rect y="360" width="90" height="90" fill="white" opacity="0.2"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Grid Shape Bottom Left -->
+      <div class="absolute bottom-0 left-0 -z-1 w-full max-w-[250px] rotate-180 xl:max-w-[450px]">
+        <svg class="w-full h-auto opacity-10" viewBox="0 0 450 450" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g opacity="0.5">
+            <rect width="90" height="90" fill="white"/>
+            <rect x="90" width="90" height="90" fill="white" opacity="0.8"/>
+            <rect x="180" width="90" height="90" fill="white" opacity="0.6"/>
+            <rect x="270" width="90" height="90" fill="white" opacity="0.4"/>
+            <rect x="360" width="90" height="90" fill="white" opacity="0.2"/>
+            <rect y="90" width="90" height="90" fill="white" opacity="0.8"/>
+            <rect x="90" y="90" width="90" height="90" fill="white" opacity="0.6"/>
+            <rect x="180" y="90" width="90" height="90" fill="white" opacity="0.4"/>
+            <rect x="270" y="90" width="90" height="90" fill="white" opacity="0.2"/>
+            <rect y="180" width="90" height="90" fill="white" opacity="0.6"/>
+            <rect x="90" y="180" width="90" height="90" fill="white" opacity="0.4"/>
+            <rect x="180" y="180" width="90" height="90" fill="white" opacity="0.2"/>
+            <rect y="270" width="90" height="90" fill="white" opacity="0.4"/>
+            <rect x="90" y="270" width="90" height="90" fill="white" opacity="0.2"/>
+            <rect y="360" width="90" height="90" fill="white" opacity="0.2"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="flex flex-col items-center max-w-xs">
+        <div class="block mb-4">
+          <div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500">
+            <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-center text-gray-400 dark:text-white/60">
+          System zarządzania pakietami EDK
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

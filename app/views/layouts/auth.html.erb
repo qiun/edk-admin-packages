@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <title>EDK Packages - <%= yield :page_title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body
+  class="font-outfit antialiased"
+  x-data="{ 'darkMode': false, 'loaded': true }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode'));
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)));
+    window.addEventListener('DOMContentLoaded', () => {setTimeout(() => loaded = false, 500)})"
+  :class="{'dark bg-gray-900': darkMode === true}"
+>
+  <!-- Preloader -->
+  <div
+    x-show="loaded"
+    class="fixed left-0 top-0 z-999999 flex h-screen w-screen items-center justify-center bg-white dark:bg-black"
+  >
+    <div
+      class="h-16 w-16 animate-spin rounded-full border-4 border-solid border-brand-500 border-t-transparent"
+    ></div>
+  </div>
+
+  <div class="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
+    <%= yield %>
+  </div>
+</body>
+</html>
