@@ -1,16 +1,43 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
+  # NOTE: Removed :registerable - only admins can create user accounts
+  devise :database_authenticatable,
          :recoverable, :rememberable, :validatable
 
   # Enums
-  enum :role, { admin: 0, warehouse: 1, leader: 2 }
+  enum :role, { leader: "leader", warehouse: "warehouse", admin: "admin" }
+
+  # Associations
+  belongs_to :created_by, class_name: "User", optional: true
+  has_many :created_users, class_name: "User", foreign_key: "created_by_id", dependent: :nullify
+  has_many :area_groups, foreign_key: "leader_id", dependent: :nullify
+  has_many :orders, dependent: :destroy
+  has_many :sales_reports, dependent: :destroy
+  has_many :settlements, dependent: :destroy
+  has_many :returns, dependent: :destroy
+  has_many :leader_settings, dependent: :destroy
 
   # Validations
-  validates :name, presence: true
-  validates :role, presence: true
+  validates :first_name, :last_name, presence: true
+  validates :role, inclusion: { in: roles.keys }
 
-  # Associations (to be added in later phases)
-  # belongs_to :okręg, optional: true
+  # Scopes
+  scope :leaders, -> { where(role: :leader) }
+  scope :admins, -> { where(role: :admin) }
+  scope :warehouse_staff, -> { where(role: :warehouse) }
+
+  # Methods
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
+  def effective_price_for(edition)
+    leader_settings.find_by(edition: edition)&.custom_price || edition.default_price
+  end
+
+  def ordering_locked_for?(edition)
+    return true if edition.ordering_locked
+    leader_settings.find_by(edition: edition)&.ordering_locked || false
+  end
 end
