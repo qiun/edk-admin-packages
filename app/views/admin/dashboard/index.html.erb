@@ -1,0 +1,196 @@
+<% content_for :page_title, "Dashboard" %>
+
+<!-- Page Header -->
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h2>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      Witaj, <%= current_user.first_name %>! Oto przegląd systemu pakietów EDK.
+    </p>
+  </div>
+  <% if @edition&.inventory %>
+    <%= link_to admin_inventory_path, class: "inline-flex items-center gap-2 rounded-lg bg-[#465fff] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#3641f5]" do %>
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+      </svg>
+      Zarządzaj Magazynem
+    <% end %>
+  <% end %>
+</div>
+
+<!-- Metrics Grid - 4 karty w rzędzie -->
+<div class="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
+  <!-- Liderów -->
+  <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Liderów</p>
+        <p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white"><%= @stats[:total_leaders] %></p>
+      </div>
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30">
+        <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Oczekujące zamówienia -->
+  <div class="rounded-xl border border-amber-200 bg-amber-50/50 p-5 dark:border-amber-800 dark:bg-amber-900/20">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Oczekujące zamówienia</p>
+        <p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white"><%= @stats[:pending_orders] %></p>
+      </div>
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+        <svg class="h-6 w-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wysłane dziś -->
+  <div class="rounded-xl border border-green-200 bg-green-50/50 p-5 dark:border-green-800 dark:bg-green-900/20">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Wysłane dziś</p>
+        <p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white"><%= @stats[:shipped_today] %></p>
+      </div>
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+        <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nierozliczone -->
+  <div class="rounded-xl border border-red-200 bg-red-50/50 p-5 dark:border-red-800 dark:bg-red-900/20">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Nierozliczone</p>
+        <p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white"><%= @stats[:pending_settlements] %></p>
+      </div>
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+        <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stan Magazynu - 5 boxów w rzędzie -->
+<% if @inventory %>
+  <div class="mb-6 rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+    <div class="mb-4 flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Stan Magazynu</h3>
+      <%= link_to "Zobacz szczegóły", admin_inventory_path, class: "text-sm text-[#465fff] hover:underline" %>
+    </div>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-5">
+      <!-- Całkowity zapas -->
+      <div class="rounded-xl bg-gray-50 p-4 text-center dark:bg-gray-800">
+        <p class="text-2xl font-bold text-gray-800 dark:text-white"><%= number_with_delimiter(@inventory.total_stock) %></p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Całkowity zapas</p>
+      </div>
+      <!-- Dostępne -->
+      <div class="rounded-xl bg-green-50 p-4 text-center dark:bg-green-900/20">
+        <p class="text-2xl font-bold text-green-600 dark:text-green-400"><%= number_with_delimiter(@inventory.available) %></p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Dostępne</p>
+      </div>
+      <!-- Zarezerwowane -->
+      <div class="rounded-xl bg-amber-50 p-4 text-center dark:bg-amber-900/20">
+        <p class="text-2xl font-bold text-amber-600 dark:text-amber-400"><%= number_with_delimiter(@inventory.reserved) %></p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Zarezerwowane</p>
+      </div>
+      <!-- Wysłane -->
+      <div class="rounded-xl bg-blue-50 p-4 text-center dark:bg-blue-900/20">
+        <p class="text-2xl font-bold text-blue-600 dark:text-blue-400"><%= number_with_delimiter(@inventory.shipped) %></p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Wysłane</p>
+      </div>
+      <!-- Zwrócone -->
+      <div class="rounded-xl bg-purple-50 p-4 text-center dark:bg-purple-900/20">
+        <p class="text-2xl font-bold text-purple-600 dark:text-purple-400"><%= number_with_delimiter(@inventory.returned) %></p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Zwrócone</p>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Ostatnie Zamówienia -->
+<div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+  <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Ostatnie Zamówienia</h3>
+    <%= link_to "Zobacz wszystkie", admin_orders_path, class: "text-sm text-[#465fff] hover:underline" %>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-gray-100 dark:border-gray-800">
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Lider</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Ilość</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Status</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Data</th>
+          <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Akcje</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        <% if @recent_orders.any? %>
+          <% @recent_orders.each do |order| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#ecf3ff] text-sm font-medium text-[#465fff]">
+                    <%= order.user.first_name.first.upcase %><%= order.user.last_name.first.upcase %>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-800 dark:text-white"><%= order.user.first_name %> <%= order.user.last_name %></p>
+                    <p class="text-xs text-gray-500"><%= order.area_group&.name %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-600 dark:text-gray-400"><%= order.quantity %> szt.</td>
+              <td class="px-5 py-4">
+                <% status_classes = {
+                  'pending' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+                  'confirmed' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+                  'shipped' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+                  'delivered' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+                  'cancelled' => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400'
+                } %>
+                <% status_labels = {
+                  'pending' => 'Oczekujące',
+                  'confirmed' => 'Potwierdzone',
+                  'shipped' => 'Wysłane',
+                  'delivered' => 'Dostarczone',
+                  'cancelled' => 'Anulowane'
+                } %>
+                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium <%= status_classes[order.status] %>">
+                  <%= status_labels[order.status] %>
+                </span>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= order.created_at.strftime('%d.%m.%Y') %>
+              </td>
+              <td class="px-5 py-4 text-right">
+                <%= link_to admin_order_path(order), class: "text-gray-400 hover:text-[#465fff]" do %>
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="px-5 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              Brak zamówień dla tej edycji
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

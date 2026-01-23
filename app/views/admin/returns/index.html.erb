@@ -1,0 +1,92 @@
+<% content_for :title, "Zwroty" %>
+<% content_for :breadcrumb, "Zwroty" %>
+
+<div class="space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Zwroty pakietów</h1>
+      <p class="text-gray-600 dark:text-gray-400">Zarządzaj zwrotami od liderów okręgów</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+    <div class="flex flex-wrap gap-2">
+      <%= link_to "Wszystkie", admin_returns_path,
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status].blank? ? 'bg-brand-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Zgłoszone", admin_returns_path(status: :requested),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'requested' ? 'bg-yellow-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Zatwierdzone", admin_returns_path(status: :approved),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'approved' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Wysłane", admin_returns_path(status: :shipped),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'shipped' ? 'bg-purple-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Odebrane", admin_returns_path(status: :received),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'received' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Odrzucone", admin_returns_path(status: :rejected),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'rejected' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+    </div>
+  </div>
+
+  <!-- Returns Table -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">#</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Lider</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Ilość</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data zgłoszenia</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data odbioru</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Akcje</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          <% @returns.each do |return_item| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+              <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">#<%= return_item.id %></td>
+              <td class="px-6 py-4">
+                <div class="flex items-center">
+                  <div class="h-8 w-8 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-medium text-sm">
+                    <%= return_item.user.first_name[0] %><%= return_item.user.last_name[0] %>
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white"><%= return_item.user.full_name %></p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400"><%= return_item.user.email %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-center text-sm font-medium text-gray-900 dark:text-white">
+                <%= return_item.quantity %> szt.
+              </td>
+              <td class="px-6 py-4"><%= status_badge(return_item.status) %></td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= return_item.created_at.strftime("%d.%m.%Y %H:%M") %>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= return_item.received_at ? return_item.received_at.strftime("%d.%m.%Y") : "—" %>
+              </td>
+              <td class="px-6 py-4 text-right text-sm font-medium space-x-2">
+                <%= link_to "Zobacz", admin_return_path(return_item), class: "text-brand-500 hover:text-brand-600" %>
+                <% if return_item.requested? %>
+                  <%= button_to "Zatwierdź", approve_admin_return_path(return_item), method: :post, class: "text-green-600 hover:text-green-700" %>
+                <% end %>
+                <% if return_item.shipped? %>
+                  <%= button_to "Odbierz", mark_received_admin_return_path(return_item), method: :post, class: "text-blue-600 hover:text-blue-700" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          <% if @returns.empty? %>
+            <tr>
+              <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                Brak zwrotów
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

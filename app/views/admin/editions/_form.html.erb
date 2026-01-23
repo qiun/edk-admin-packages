@@ -1,0 +1,132 @@
+<%= form_with model: [:admin, @edition], class: "space-y-6" do |f| %>
+  <% if @edition.errors.any? %>
+    <div class="rounded-2xl border border-red-200 bg-red-50 p-5 dark:border-red-800 dark:bg-red-900/30">
+      <div class="flex">
+        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800 dark:text-red-400">Wystąpiły błędy:</h3>
+          <ul class="mt-2 text-sm text-red-700 dark:text-red-300 list-disc list-inside">
+            <% @edition.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Basic Information -->
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+        Podstawowe informacje
+      </h3>
+    </div>
+    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <%= f.label :name, "Nazwa edycji", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :name,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "np. EDK 2027",
+            required: true %>
+        </div>
+
+        <div>
+          <%= f.label :year, "Rok", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.number_field :year,
+            min: 2024,
+            max: 2100,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            required: true %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :status, "Status", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+        <div x-data="{ isOptionSelected: <%= @edition.status.present? ? 'true' : 'false' %> }" class="relative">
+          <%= f.select :status,
+            [["Wersja robocza", "draft"], ["Aktywna", "active"], ["Zamknięta", "closed"]],
+            {},
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            "@change": "isOptionSelected = true" %>
+          <span class="pointer-events-none absolute top-1/2 right-4 z-30 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+            <svg class="stroke-current" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <label class="flex items-center">
+          <%= f.check_box :ordering_locked,
+            class: "h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:ring-offset-gray-800" %>
+          <span class="ml-2 text-sm text-gray-700 dark:text-gray-400">Zablokuj zamawianie pakietów</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+        Cennik
+      </h3>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Ustaw ceny pakietów dla różnych grup użytkowników
+      </p>
+    </div>
+    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <%= f.label :default_price, "Cena dla liderów", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :default_price,
+              min: 0,
+              step: 0.01,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "30.00",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              zł
+            </span>
+          </div>
+          <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+            Domyślna cena za pakiet dla liderów obszarowych
+          </p>
+        </div>
+
+        <div>
+          <%= f.label :donor_price, "Cena dla darczyńców", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :donor_price,
+              min: 0,
+              step: 0.01,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "50.00",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              zł
+            </span>
+          </div>
+          <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+            Cena za pakiet na stronie cegiełki (darowizny publiczne)
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="flex justify-end gap-3">
+    <%= link_to "Anuluj",
+      admin_editions_path,
+      class: "inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-6 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700" %>
+    <%= f.submit @edition.persisted? ? "Zapisz zmiany" : "Utwórz edycję",
+      class: "inline-flex h-11 cursor-pointer items-center justify-center rounded-lg bg-brand-500 px-6 text-sm font-medium text-white transition-colors hover:bg-brand-600 dark:hover:bg-brand-700" %>
+  </div>
+<% end %>

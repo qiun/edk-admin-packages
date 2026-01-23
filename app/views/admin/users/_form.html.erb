@@ -1,0 +1,209 @@
+<%= form_with model: [:admin, user], class: "space-y-6" do |form| %>
+  <% if user.errors.any? %>
+    <div class="rounded-2xl border border-red-200 bg-red-50 p-5 dark:border-red-800 dark:bg-red-900/30">
+      <div class="flex">
+        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800 dark:text-red-400">Wystąpiły błędy:</h3>
+          <ul class="mt-2 text-sm text-red-700 dark:text-red-300 list-disc list-inside">
+            <% user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Basic Information -->
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+        Dane osobowe
+      </h3>
+    </div>
+    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <%= form.label :first_name, "Imię", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= form.text_field :first_name,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "Jan",
+            required: true %>
+        </div>
+
+        <div>
+          <%= form.label :last_name, "Nazwisko", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= form.text_field :last_name,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "Kowalski",
+            required: true %>
+        </div>
+      </div>
+
+      <div>
+        <%= form.label :email, "Email", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+        <%= form.email_field :email,
+          class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+          placeholder: "jan.kowalski@example.com",
+          required: true %>
+      </div>
+
+      <div>
+        <%= form.label :phone, "Telefon", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+        <%= form.telephone_field :phone,
+          class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+          placeholder: "+48 123 456 789" %>
+      </div>
+
+      <div>
+        <%= form.label :role, "Rola", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+        <div x-data="{ isOptionSelected: <%= user.role.present? ? 'true' : 'false' %> }" class="relative">
+          <%= form.select :role,
+            [['Lider okręgu', 'leader'], ['Magazyn', 'warehouse'], ['Admin', 'admin']],
+            {},
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            "@change": "isOptionSelected = true" %>
+          <span class="pointer-events-none absolute top-1/2 right-4 z-30 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+            <svg class="stroke-current" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+        <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+          Lider okręgu - może zamawiać pakiety dla swojego okręgu; Magazyn - obsługuje wysyłki; Admin - pełny dostęp
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authentication -->
+  <% if user.new_record? %>
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="px-5 py-4 sm:px-6 sm:py-5">
+        <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+          Hasło
+        </h3>
+      </div>
+      <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <%= form.label :password, "Hasło", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+            <%= form.password_field :password,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "••••••••",
+              required: true %>
+          </div>
+
+          <div>
+            <%= form.label :password_confirmation, "Powtórz hasło", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+            <%= form.password_field :password_confirmation,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "••••••••",
+              required: true %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="px-5 py-4 sm:px-6 sm:py-5">
+        <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+          Zmiana hasła
+        </h3>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Pozostaw puste, aby nie zmieniać hasła
+        </p>
+      </div>
+      <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <%= form.label :password, "Nowe hasło", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+            <%= form.password_field :password,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "Pozostaw puste, aby nie zmieniać" %>
+          </div>
+
+          <div>
+            <%= form.label :password_confirmation, "Powtórz nowe hasło", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+            <%= form.password_field :password_confirmation,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "Powtórz nowe hasło" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Leader Settings - only for leaders on edit -->
+  <% if user.persisted? && user.leader? && defined?(@leader_setting) && @leader_setting %>
+    <div class="rounded-2xl border border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
+      <div class="px-5 py-4 sm:px-6 sm:py-5">
+        <div class="flex items-center gap-2">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h3 class="text-base font-medium text-blue-800 dark:text-blue-300">
+            Ustawienia lidera okręgu
+          </h3>
+        </div>
+        <p class="mt-1 text-sm text-blue-600 dark:text-blue-400">
+          Edycja: <%= current_edition&.name %>
+        </p>
+      </div>
+
+      <%= fields_for :leader_setting, @leader_setting do |ls| %>
+        <div class="space-y-6 border-t border-blue-100 p-5 sm:p-6 dark:border-blue-900">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <%= ls.label :custom_price, "Cena pakietu", class: "mb-1.5 block text-sm font-medium text-blue-700 dark:text-blue-300" %>
+              <div class="relative">
+                <%= ls.number_field :custom_price,
+                  step: 0.01,
+                  min: 0,
+                  class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-blue-300 bg-white px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-blue-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+                  placeholder: current_edition&.default_price ? "#{current_edition.default_price}" : "Podaj cenę" %>
+                <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+                  zł
+                </span>
+              </div>
+              <p class="mt-1.5 text-xs text-blue-600 dark:text-blue-400">
+                Pozostaw puste, aby użyć domyślnej ceny
+                <% if current_edition&.default_price %>
+                  (<%= number_to_currency(current_edition.default_price, unit: 'zł', format: '%n %u') %>)
+                <% end %>
+              </p>
+            </div>
+
+            <div>
+              <label class="mb-1.5 block text-sm font-medium text-blue-700 dark:text-blue-300">
+                Zamawianie
+              </label>
+              <div class="flex h-11 items-center">
+                <label class="flex items-center">
+                  <%= ls.check_box :ordering_locked,
+                    class: "h-4 w-4 rounded border-blue-300 text-brand-500 focus:ring-brand-500 dark:border-blue-700 dark:bg-gray-900 dark:ring-offset-gray-800" %>
+                  <span class="ml-2 text-sm text-blue-700 dark:text-blue-300">Zablokuj zamawianie</span>
+                </label>
+              </div>
+              <p class="mt-1.5 text-xs text-blue-600 dark:text-blue-400">
+                Lider nie będzie mógł składać zamówień
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Form Actions -->
+  <div class="flex justify-end gap-3">
+    <%= link_to "Anuluj",
+      admin_users_path,
+      class: "inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-6 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700" %>
+    <%= form.submit user.new_record? ? "Utwórz użytkownika" : "Zapisz zmiany",
+      class: "inline-flex h-11 cursor-pointer items-center justify-center rounded-lg bg-brand-500 px-6 text-sm font-medium text-white transition-colors hover:bg-brand-600 dark:hover:bg-brand-700" %>
+  </div>
+<% end %>

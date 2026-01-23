@@ -1,0 +1,33 @@
+<%# locals: (title:, description: nil, breadcrumbs: [], actions: nil) %>
+<div class="mb-6">
+  <!-- Breadcrumb -->
+  <nav class="mb-4">
+    <ol class="flex items-center gap-2 text-sm">
+      <li><%= link_to "Dashboard", root_path, class: "text-gray-500 hover:text-primary" %></li>
+      <% breadcrumbs.each do |crumb| %>
+        <li class="flex items-center gap-2">
+          <span class="text-gray-400">/</span>
+          <% if crumb[:path] %>
+            <%= link_to crumb[:title], crumb[:path], class: "text-gray-500 hover:text-primary" %>
+          <% else %>
+            <span class="text-primary"><%= crumb[:title] %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </nav>
+
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-white"><%= title %></h1>
+      <% if description %>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400"><%= description %></p>
+      <% end %>
+    </div>
+    <% if actions %>
+      <div class="flex gap-3">
+        <%= actions %>
+      </div>
+    <% end %>
+  </div>
+</div>

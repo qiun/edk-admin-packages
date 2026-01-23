@@ -1,0 +1,257 @@
+<header class="sticky top-0 z-40 flex w-full border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+  <div class="flex grow flex-col items-center justify-between lg:flex-row lg:px-6">
+    <div class="flex w-full items-center justify-between gap-2 border-b border-gray-200 px-3 py-3 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4 dark:border-gray-800">
+      <!-- Hamburger Toggle BTN -->
+      <button
+        class="z-50 flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 lg:hidden dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-800"
+        @click.stop="sidebarToggle = !sidebarToggle"
+      >
+        <!-- Menu Icon -->
+        <svg
+          x-show="!sidebarToggle"
+          class="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M3.25 6C3.25 5.58579 3.58579 5.25 4 5.25L20 5.25C20.4142 5.25 20.75 5.58579 20.75 6C20.75 6.41421 20.4142 6.75 20 6.75L4 6.75C3.58579 6.75 3.25 6.41422 3.25 6ZM3.25 18C3.25 17.5858 3.58579 17.25 4 17.25L20 17.25C20.4142 17.25 20.75 17.5858 20.75 18C20.75 18.4142 20.4142 18.75 20 18.75L4 18.75C3.58579 18.75 3.25 18.4142 3.25 18ZM4 11.25C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75L12 12.75C12.4142 12.75 12.75 12.4142 12.75 12C12.75 11.5858 12.4142 11.25 12 11.25L4 11.25Z"
+            fill=""
+          />
+        </svg>
+
+        <!-- Close Icon -->
+        <svg
+          x-show="sidebarToggle"
+          class="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="display: none;"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M6.21967 7.28131C5.92678 6.98841 5.92678 6.51354 6.21967 6.22065C6.51256 5.92775 6.98744 5.92775 7.28033 6.22065L11.999 10.9393L16.7176 6.22078C17.0105 5.92789 17.4854 5.92788 17.7782 6.22078C18.0711 6.51367 18.0711 6.98855 17.7782 7.28144L13.0597 12L17.7782 16.7186C18.0711 17.0115 18.0711 17.4863 17.7782 17.7792C17.4854 18.0721 17.0105 18.0721 16.7176 17.7792L11.999 13.0607L7.28033 17.7794C6.98744 18.0722 6.51256 18.0722 6.21967 17.7794C5.92678 17.4865 5.92678 17.0116 6.21967 16.7187L10.9384 12L6.21967 7.28131Z"
+            fill=""
+          />
+        </svg>
+      </button>
+
+      <!-- Mobile Logo -->
+      <%= link_to admin_root_path, class: "lg:hidden flex items-center gap-2" do %>
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#465fff]">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+        </div>
+        <span class="text-lg font-semibold text-gray-900 dark:text-white">PAKIETY EDK</span>
+      <% end %>
+
+      <!-- Placeholder for mobile right side -->
+      <div class="lg:hidden w-10"></div>
+
+      <!-- Breadcrumb -->
+      <div class="hidden lg:block">
+        <nav class="flex" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center space-x-1">
+            <li>
+              <%= link_to admin_root_path, class: "text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400" do %>
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+              <% end %>
+            </li>
+            <li>
+              <div class="flex items-center">
+                <svg class="h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span class="ml-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <%= content_for?(:page_title) ? yield(:page_title) : "Dashboard" %>
+                </span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="hidden w-full items-center justify-end gap-4 px-5 py-4 lg:flex lg:px-0">
+      <!-- Notification Button -->
+      <% unread_notifications = Notification.for_admins.unread.recent.limit(5) %>
+      <% unread_count = Notification.for_admins.unread.count %>
+      <div
+        class="relative"
+        x-data="{ dropdownOpen: false }"
+        @click.outside="dropdownOpen = false"
+      >
+        <button
+          class="relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+          @click.prevent="dropdownOpen = !dropdownOpen"
+        >
+          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+          </svg>
+          <% if unread_count > 0 %>
+            <span class="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
+              <%= unread_count > 9 ? '9+' : unread_count %>
+            </span>
+          <% end %>
+        </button>
+        
+        <!-- Notifications Dropdown -->
+        <div
+          x-show="dropdownOpen"
+          x-transition:enter="transition ease-out duration-100"
+          x-transition:enter-start="transform opacity-0 scale-95"
+          x-transition:enter-end="transform opacity-100 scale-100"
+          x-transition:leave="transition ease-in duration-75"
+          x-transition:leave-start="transform opacity-100 scale-100"
+          x-transition:leave-end="transform opacity-0 scale-95"
+          class="absolute right-0 mt-4 w-80 rounded-2xl border border-gray-200 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900"
+          style="display: none;"
+        >
+          <div class="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-800">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Powiadomienia</h3>
+            <% if unread_count > 0 %>
+              <%= link_to "Oznacz wszystkie", mark_all_read_admin_notifications_path, 
+                  method: :post, 
+                  class: "text-xs text-[#465fff] hover:underline",
+                  data: { turbo_method: :post } %>
+            <% end %>
+          </div>
+          
+          <div class="max-h-80 overflow-y-auto">
+            <% if unread_notifications.any? %>
+              <% unread_notifications.each do |notification| %>
+                <div class="flex items-start gap-3 border-b border-gray-100 px-4 py-3 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50 <%= 'bg-blue-50 dark:bg-blue-900/20' unless notification.read? %>">
+                  <div class="flex-shrink-0 mt-1">
+                    <% if notification.notification_type == Notification::OUT_OF_STOCK %>
+                      <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/50">
+                        <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                      </span>
+                    <% elsif notification.notification_type == Notification::LOW_STOCK %>
+                      <span class="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/50">
+                        <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                      </span>
+                    <% else %>
+                      <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/50">
+                        <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6z"/>
+                        </svg>
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      <%= notification.title %>
+                    </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
+                      <%= notification.message %>
+                    </p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                      <%= time_ago_in_words(notification.created_at) %> temu
+                    </p>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                <svg class="mx-auto h-8 w-8 mb-2 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6z"/>
+                </svg>
+                <p class="text-sm">Brak nowych powiadomień</p>
+              </div>
+            <% end %>
+          </div>
+          
+          <div class="border-t border-gray-200 px-4 py-3 dark:border-gray-800">
+            <%= link_to "Zobacz wszystkie powiadomienia", admin_notifications_path, class: "block text-center text-sm text-[#465fff] hover:underline" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Dropdown -->
+      <div
+        class="relative"
+        x-data="{ dropdownOpen: false }"
+        @click.outside="dropdownOpen = false"
+      >
+        <button
+          class="flex items-center text-gray-700 dark:text-gray-400"
+          @click.prevent="dropdownOpen = !dropdownOpen"
+        >
+          <span class="mr-3 flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#465fff] text-white font-medium">
+            <%= current_user.first_name.first.upcase %><%= current_user.last_name.first.upcase %>
+          </span>
+
+          <span class="mr-1 hidden text-sm font-medium lg:block">
+            <%= current_user.first_name %> <%= current_user.last_name %>
+          </span>
+
+          <svg
+            :class="dropdownOpen && 'rotate-180'"
+            class="h-5 w-5 stroke-gray-500 transition-transform duration-200 dark:stroke-gray-400"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <path
+              d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
+              stroke=""
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div
+          x-show="dropdownOpen"
+          x-transition:enter="transition ease-out duration-100"
+          x-transition:enter-start="transform opacity-0 scale-95"
+          x-transition:enter-end="transform opacity-100 scale-100"
+          x-transition:leave="transition ease-in duration-75"
+          x-transition:leave-start="transform opacity-100 scale-100"
+          x-transition:leave-end="transform opacity-0 scale-95"
+          class="absolute right-0 mt-4 flex w-64 flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-800 dark:bg-gray-900"
+          style="display: none;"
+        >
+          <div class="mb-3 border-b border-gray-100 pb-3 dark:border-gray-800">
+            <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <%= current_user.first_name %> <%= current_user.last_name %>
+            </span>
+            <span class="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">
+              <%= current_user.email %>
+            </span>
+          </div>
+
+          <div class="mb-3 border-b border-gray-100 pb-3 dark:border-gray-800">
+            <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium bg-[#ecf3ff] text-[#465fff]">
+              <%= current_user.role.humanize %>
+            </span>
+          </div>
+
+          <%= button_to destroy_user_session_path, method: :delete, class: "group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5" do %>
+            <svg class="h-5 w-5 fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M15.1007 19.247C14.6865 19.247 14.3507 18.9112 14.3507 18.497L14.3507 14.245H12.8507V18.497C12.8507 19.7396 13.8581 20.747 15.1007 20.747H18.5007C19.7434 20.747 20.7507 19.7396 20.7507 18.497L20.7507 5.49609C20.7507 4.25345 19.7433 3.24609 18.5007 3.24609H15.1007C13.8581 3.24609 12.8507 4.25345 12.8507 5.49609V9.74501L14.3507 9.74501V5.49609C14.3507 5.08188 14.6865 4.74609 15.1007 4.74609L18.5007 4.74609C18.9149 4.74609 19.2507 5.08188 19.2507 5.49609L19.2507 18.497C19.2507 18.9112 18.9149 19.247 18.5007 19.247H15.1007ZM3.25073 11.9984C3.25073 12.2144 3.34204 12.4091 3.48817 12.546L8.09483 17.1556C8.38763 17.4485 8.86251 17.4487 9.15549 17.1559C9.44848 16.8631 9.44863 16.3882 9.15583 16.0952L5.81116 12.7484L16.0007 12.7484C16.4149 12.7484 16.7507 12.4127 16.7507 11.9984C16.7507 11.5842 16.4149 11.2484 16.0007 11.2484L5.81528 11.2484L9.15585 7.90554C9.44864 7.61255 9.44847 7.13767 9.15547 6.84488C8.86248 6.55209 8.3876 6.55226 8.09481 6.84525L3.52309 11.4202C3.35673 11.5577 3.25073 11.7657 3.25073 11.9984Z"/>
+            </svg>
+            Wyloguj się
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

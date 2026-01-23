@@ -1,0 +1,55 @@
+<% content_for :title, "Historia magazynu" %>
+<% content_for :breadcrumb, "Historia ruchów" %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Historia ruchów magazynowych</h1>
+      <p class="text-gray-600 dark:text-gray-400">Pełna historia operacji magazynowych</p>
+    </div>
+    <%= link_to "Wróć do magazynu", admin_inventory_path, class: "text-brand-500 hover:text-brand-600" %>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Typ</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Ilość</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Użytkownik</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Referencja</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Notatka</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          <% @moves.each do |move| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+              <td class="px-6 py-4 text-sm text-gray-900 dark:text-white"><%= move.created_at.strftime("%d.%m.%Y %H:%M") %></td>
+              <td class="px-6 py-4">
+                <% move_colors = { stock_in: "green", stock_out: "red", reserve: "yellow", release: "blue", ship: "purple", return_received: "teal", adjustment: "gray" } %>
+                <% move_names = { stock_in: "Przyjęcie", stock_out: "Wydanie", reserve: "Rezerwacja", release: "Zwolnienie", ship: "Wysyłka", return_received: "Zwrot", adjustment: "Korekta" } %>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-<%= move_colors[move.move_type.to_sym] || 'gray' %>-100 text-<%= move_colors[move.move_type.to_sym] || 'gray' %>-800">
+                  <%= move_names[move.move_type.to_sym] || move.move_type %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm font-medium <%= move.quantity > 0 ? 'text-green-600' : 'text-red-600' %>">
+                <%= move.quantity > 0 ? "+#{move.quantity}" : move.quantity %>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= move.created_by&.full_name || "System" %></td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <% if move.reference_type.present? %>
+                  <%= move.reference_type %> #<%= move.reference_id %>
+                <% else %>
+                  —
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= move.notes.presence || "—" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,120 @@
+<% content_for :title, "Zamówienie ##{@order.id}" %>
+<% content_for :breadcrumb, "Zamówienie ##{@order.id}" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Zamówienie #<%= @order.id %></h1>
+      <p class="text-gray-600 dark:text-gray-400">Utworzone: <%= @order.created_at.strftime("%d.%m.%Y %H:%M") %></p>
+    </div>
+    <div class="flex items-center gap-2">
+      <% if @order.pending? %>
+        <%= button_to "Potwierdź zamówienie", confirm_admin_order_path(@order), method: :post, class: "inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors" %>
+        <%= button_to "Anuluj", cancel_admin_order_path(@order), method: :post, class: "inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors", data: { turbo_confirm: "Czy na pewno anulować?" } %>
+      <% end %>
+      <% if @order.shipment&.label_pdf.present? %>
+        <%= link_to print_label_admin_order_path(@order), target: "_blank", class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg hover:bg-gray-50" do %>
+          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+          </svg>
+          Drukuj etykietę
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Order Details -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Szczegóły zamówienia</h2>
+      <dl class="space-y-4">
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Status</dt>
+          <dd><%= status_badge(@order.status) %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Ilość</dt>
+          <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= @order.quantity %> pakietów</dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Cena za sztukę</dt>
+          <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= number_to_currency(@order.price_per_unit, unit: "zł", format: "%n %u") %></dd>
+        </div>
+        <div class="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+          <dt class="text-sm font-medium text-gray-900 dark:text-white">Suma</dt>
+          <dd class="text-lg font-bold text-brand-500"><%= number_to_currency(@order.total_amount, unit: "zł", format: "%n %u") %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Leader Info -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Lider</h2>
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold">
+          <%= @order.user.first_name[0] %><%= @order.user.last_name[0] %>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-900 dark:text-white"><%= @order.user.full_name %></p>
+          <p class="text-sm text-gray-500 dark:text-gray-400"><%= @order.user.email %></p>
+        </div>
+      </div>
+      <% if @order.user.phone.present? %>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          <span class="font-medium">Telefon:</span> <%= @order.user.phone %>
+        </p>
+      <% end %>
+    </div>
+
+    <!-- Delivery Address -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Adres dostawy (Paczkomat)</h2>
+      <dl class="space-y-2">
+        <div>
+          <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase">Kod paczkomatu</dt>
+          <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= @order.locker_code %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase">Nazwa</dt>
+          <dd class="text-sm text-gray-900 dark:text-white"><%= @order.locker_name %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase">Adres</dt>
+          <dd class="text-sm text-gray-900 dark:text-white"><%= @order.locker_address %></dd>
+        </div>
+        <div>
+          <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase">Miasto</dt>
+          <dd class="text-sm text-gray-900 dark:text-white"><%= @order.locker_post_code %> <%= @order.locker_city %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Shipment Info -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Wysyłka</h2>
+      <% if @order.shipment.present? %>
+        <dl class="space-y-2">
+          <div class="flex justify-between">
+            <dt class="text-sm text-gray-500 dark:text-gray-400">Status</dt>
+            <dd><%= status_badge(@order.shipment.status) %></dd>
+          </div>
+          <% if @order.shipment.waybill_number.present? %>
+            <div class="flex justify-between">
+              <dt class="text-sm text-gray-500 dark:text-gray-400">Nr listu przewozowego</dt>
+              <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= @order.shipment.waybill_number %></dd>
+            </div>
+          <% end %>
+          <% if @order.shipment.tracking_url.present? %>
+            <div class="flex justify-between">
+              <dt class="text-sm text-gray-500 dark:text-gray-400">Śledzenie</dt>
+              <dd><%= link_to "Śledź przesyłkę", @order.shipment.tracking_url, target: "_blank", class: "text-brand-500 hover:text-brand-600 text-sm" %></dd>
+            </div>
+          <% end %>
+        </dl>
+      <% else %>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Brak informacji o wysyłce</p>
+      <% end %>
+    </div>
+  </div>
+</div>

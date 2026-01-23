@@ -1,0 +1,94 @@
+<% content_for :title, @user.full_name %>
+<% content_for :breadcrumb, @user.full_name %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="h-16 w-16 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold text-xl">
+        <%= @user.first_name[0] %><%= @user.last_name[0] %>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= @user.full_name %></h1>
+        <p class="text-gray-600 dark:text-gray-400"><%= @user.email %></p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <%= link_to edit_admin_user_path(@user), class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors" do %>
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+        Edytuj
+      <% end %>
+    </div>
+  </div>
+
+  <!-- User Info Card -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+    <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Rola</dt>
+        <dd class="mt-1">
+          <% role_colors = { leader: "bg-blue-100 text-blue-800", warehouse: "bg-purple-100 text-purple-800", admin: "bg-red-100 text-red-800" } %>
+          <% role_names = { leader: "Lider", warehouse: "Magazyn", admin: "Administrator" } %>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= role_colors[@user.role.to_sym] %>">
+            <%= role_names[@user.role.to_sym] %>
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Telefon</dt>
+        <dd class="mt-1 text-gray-900 dark:text-white"><%= @user.phone.presence || "—" %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Utworzony</dt>
+        <dd class="mt-1 text-gray-900 dark:text-white"><%= @user.created_at.strftime("%d.%m.%Y %H:%M") %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <% if @user.leader? && current_edition %>
+    <!-- Leader Actions -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Akcje dla lidera</h2>
+      <div class="flex gap-3">
+        <% if @user.ordering_locked_for?(current_edition) %>
+          <%= button_to "Odblokuj zamawianie", unlock_ordering_admin_user_path(@user), method: :post, class: "inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors" %>
+        <% else %>
+          <%= button_to "Zablokuj zamawianie", lock_ordering_admin_user_path(@user), method: :post, class: "inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Recent Orders -->
+  <% if @orders.any? %>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Ostatnie zamówienia</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Edycja</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Ilość</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            <% @orders.each do |order| %>
+              <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white"><%= order.edition.name %></td>
+                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white"><%= order.quantity %></td>
+                <td class="px-6 py-4"><%= status_badge(order.status) %></td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= order.created_at.strftime("%d.%m.%Y") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>
