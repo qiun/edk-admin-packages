@@ -36,7 +36,7 @@ export default class extends Controller {
 
     try {
       new window.Furgonetka.Map({
-        courierServices: ['inpost', 'orlen'],  // InPost i ORLEN Paczka
+        courierServices: ['inpost'],            // Tylko InPost
         type: 'parcel_machine',                 // Tylko paczkomaty
         pointTypesFilter: ['parcel_machine'],   // Filtr tylko na automaty
         callback: (params) => this.onPointSelected(params),
@@ -56,10 +56,10 @@ export default class extends Controller {
 
     const { code, name, type, address } = params.point
 
-    // Weryfikacja czy to paczkomat
+    // Weryfikacja czy to paczkomat InPost
     const lockerType = (type || '').toLowerCase()
-    if (lockerType !== 'inpost' && lockerType !== 'orlen') {
-      alert('Proszę wybrać paczkomat InPost lub ORLEN')
+    if (lockerType !== 'inpost') {
+      alert('Proszę wybrać paczkomat InPost')
       return
     }
 
