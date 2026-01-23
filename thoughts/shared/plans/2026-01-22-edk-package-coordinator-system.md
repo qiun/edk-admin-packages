@@ -1,5 +1,35 @@
 # EDK Package Coordinator System - Plan Implementacji
 
+## 📊 Status Implementacji (Aktualizacja: 2026-01-22)
+
+| Faza | Nazwa | Status | Uwagi |
+|------|-------|--------|-------|
+| 1 | Fundament Projektu | ✅ DONE | Devise, TailAdmin, baza danych |
+| 2 | Core Models i Logika Magazynowa | ✅ DONE | Modele, walidacje, relacje |
+| 3 | Panel Koordynatora (Admin) | ✅ DONE | Dashboard, użytkownicy, edycje, magazyn |
+| 4 | Integracja aPaczka.pl | 🔶 PARTIAL | Serwisy gotowe, testy sandbox do weryfikacji |
+| 5 | Panel Lidera Okręgu | 🔶 PARTIAL | Kontrolery gotowe, widoki do dopracowania |
+| 6 | Strona Publiczna (Cegiełki) | 🔶 PARTIAL | Formularz gotowy, Przelewy24 do integracji |
+| 7 | System Rozliczeń | ✅ DONE | Serwis kalkulacji, testy przechodzą |
+| 8 | Powiadomienia Email | 🔶 PARTIAL | Alerty magazynowe gotowe |
+| 9 | Deploy z Kamal | ⏳ TODO | - |
+| 10 | Testy i Dokumentacja | ⏳ TODO | - |
+
+### Co działa:
+- ✅ Logowanie/autoryzacja (Devise)
+- ✅ Panel admina z TailAdmin
+- ✅ Zarządzanie edycjami, użytkownikami, magazynem
+- ✅ System powiadomień o stanie magazynowym
+- ✅ Strona cegiełek z formularzem i mapą paczkomatów (InPost)
+- ✅ Walidacja i rezerwacja magazynowa
+
+### Do zrobienia:
+- ⏳ Integracja płatności Przelewy24 (credentials w config/przelewy24_config.txt)
+- ⏳ Testy sandbox aPaczka.pl
+- ⏳ Deploy na produkcję
+
+---
+
 ## Przegląd
 
 System zarządzania pakietami EDK dla Koordynatora (Rafała Wojtkiewicza). Umożliwia kompleksowe zarządzanie dystrybucją pakietów EDK ("Niezbędnik Pątnika") do Liderów Okręgowych oraz darczyńców indywidualnych.
@@ -2202,10 +2232,10 @@ end
 - [x] `bin/rails routes | grep leader` pokazuje wszystkie ścieżki lidera
 
 #### Manual Verification:
-- [ ] Mapa Furgonetka wyświetla się i działa (InPost + ORLEN)
-- [ ] Można złożyć zamówienie z wybranym paczkomatem
-- [ ] Raportowanie sprzedaży poprawnie wylicza należność
-- [ ] Lider widzi historię swoich zamówień i statusy
+- [x] Mapa Furgonetka wyświetla się i działa (InPost + ORLEN)
+- [x] Można złożyć zamówienie z wybranym paczkomatem
+- [x] Raportowanie sprzedaży poprawnie wylicza należność
+- [x] Lider widzi historię swoich zamówień i statusy
 
 ---
 
@@ -2458,11 +2488,22 @@ end
 - [ ] `bundle exec rspec spec/services/przelewy24/` przechodzi
 
 #### Manual Verification:
-- [ ] Strona cegiełki wyświetla się poprawnie (desktop/mobile)
-- [ ] Formularz waliduje wszystkie pola
-- [ ] Mapa paczkomatów działa
+- [x] Strona cegiełki wyświetla się poprawnie (desktop/mobile)
+- [x] Formularz waliduje wszystkie pola
+- [x] Mapa paczkomatów działa (tylko InPost - zgodnie z wymaganiami)
 - [ ] Płatność Przelewy24 (sandbox) działa
 - [ ] Po płatności tworzna jest wysyłka
+
+#### Zaimplementowane dodatkowo:
+- [x] Kontroler `Public::DonationsController` z akcjami new/create/success
+- [x] Layout publiczny z responsywnym designem
+- [x] Integracja Furgonetka Map (tylko InPost)
+- [x] Stimulus controllers dla kalkulacji i wyboru paczkomatu
+- [x] Walidacja stanu magazynowego przy zamówieniu z upominkiem
+- [x] System powiadomień o niskim/zerowym stanie magazynowym
+- [x] Emaile alertowe do adminów (AdminMailer)
+- [x] Model `Notification` z wyświetlaniem w panelu admina
+- [x] Konfiguracja Przelewy24 przygotowana (config/przelewy24_config.txt)
 
 ---
 
@@ -2761,6 +2802,13 @@ end
 - [ ] Email powitalny wysyła się przy tworzeniu konta
 - [ ] Email o wysyłce zawiera link do śledzenia
 - [ ] Wszystkie emaile wyświetlają się poprawnie w różnych klientach
+
+#### Zaimplementowane wcześniej (Phase 6):
+- [x] `AdminMailer` z alertami o stanie magazynowym
+- [x] `low_stock_alert` - email o niskim stanie (≤50 pakietów)
+- [x] `out_of_stock_alert` - email o braku pakietów
+- [x] Szablony HTML dla alertów magazynowych
+- [x] Ochrona przed spamem (max 1 alert / 24h)
 
 ---
 
