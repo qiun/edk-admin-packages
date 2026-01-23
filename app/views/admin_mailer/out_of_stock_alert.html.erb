@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #dc2626; color: white; padding: 20px; text-align: center; }
+    .content { padding: 20px; background: #fff; border: 1px solid #ddd; }
+    .alert-box { background: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 15px 0; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚨 BRAK PAKIETÓW NA MAGAZYNIE!</h1>
+    </div>
+    <div class="content">
+      <p>Dzień dobry,</p>
+      
+      <div class="alert-box">
+        <strong>Edycja:</strong> <%= @edition.name %><br>
+        <strong>Dostępne pakiety:</strong> 0
+      </div>
+      
+      <p><strong>UWAGA!</strong> Magazyn jest pusty. Zamówienia z upominkami nie mogą być realizowane do czasu uzupełnienia zapasów.</p>
+      
+      <p>Proszę pilnie uzupełnić stan magazynowy.</p>
+      
+      <p>
+        <a href="<%= admin_inventory_url %>" style="background: #dc2626; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+          Uzupełnij magazyn
+        </a>
+      </p>
+    </div>
+    <div class="footer">
+      <p>PAKIETY EDK - System zarządzania pakietami</p>
+    </div>
+  </div>
+</body>
+</html>

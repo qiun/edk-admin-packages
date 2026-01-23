@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #f59e0b; color: white; padding: 20px; text-align: center; }
+    .content { padding: 20px; background: #fff; border: 1px solid #ddd; }
+    .alert-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 15px 0; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚠️ Niski stan magazynowy</h1>
+    </div>
+    <div class="content">
+      <p>Dzień dobry,</p>
+      
+      <div class="alert-box">
+        <strong>Edycja:</strong> <%= @edition.name %><br>
+        <strong>Dostępne pakiety:</strong> <%= @available %>
+      </div>
+      
+      <p>Stan magazynowy pakietów EDK jest niski. Rozważ uzupełnienie zapasów, aby uniknąć problemów z realizacją zamówień.</p>
+      
+      <p>
+        <a href="<%= admin_inventory_url %>" style="background: #465fff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+          Sprawdź magazyn
+        </a>
+      </p>
+    </div>
+    <div class="footer">
+      <p>PAKIETY EDK - System zarządzania pakietami</p>
+    </div>
+  </div>
+</body>
+</html>
