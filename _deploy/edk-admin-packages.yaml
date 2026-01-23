@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edk-admin-packages
+  labels:
+    app: edk-admin-packages
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 30
+  selector:
+    matchLabels:
+      app: edk-admin-packages
+  template:
+    metadata:
+      labels:
+        app: edk-admin-packages
+    spec:
+      containers:
+        - name: edk-admin-packages
+          image: docker.investimetric.io/edk/edk-admin-packages:TAG_PLACEHOLDER
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
+          envFrom:
+            - configMapRef:
+                name: admin-packages-config
+            - secretRef:
+                name: admin-packages-secrets
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /up
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /up
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      imagePullSecrets:
+        - name: docker-inv-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: edk-admin-packages
+  labels:
+    app: edk-admin-packages
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: edk-admin-packages

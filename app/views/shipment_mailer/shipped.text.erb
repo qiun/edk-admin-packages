@@ -1,0 +1,25 @@
+PACZKA WYSŁANA
+================
+
+Cześć <%= @recipient_name %>!
+
+Świetna wiadomość! Twoja paczka z pakietami EDK została właśnie wysłana i jest w drodze do Ciebie.
+
+ŚLEDŹ SWOJĄ PRZESYŁKĘ:
+Numer śledzenia: <%= @shipment.waybill_number %>
+<% if @tracking_url.present? %>
+Link do śledzenia: <%= @tracking_url %>
+<% end %>
+
+Kurier: <%= @shipment.carrier %>
+Szacowany czas dostawy: 1-2 dni robocze
+
+Otrzymasz dodatkowe powiadomienie gdy paczka zostanie dostarczona do paczkomatu.
+
+<% if @source.is_a?(Donation) %>
+Dziękujemy za wsparcie EDK! ❤️
+<% end %>
+
+---
+Fundacja Indywidualności Otwartych
+kontakt@edk.org.pl

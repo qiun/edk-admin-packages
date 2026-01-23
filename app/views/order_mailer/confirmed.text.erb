@@ -1,0 +1,25 @@
+ZAMÓWIENIE POTWIERDZONE
+EDK <%= @edition.year %>
+========================
+
+Cześć <%= @user.first_name %>!
+
+Twoje zamówienie pakietów EDK zostało POTWIERDZONE i wkrótce zostanie przygotowane do wysyłki.
+
+SZCZEGÓŁY ZAMÓWIENIA:
+- Numer zamówienia: #<%= @order.id %>
+- Data zamówienia: <%= @order.created_at.strftime("%d.%m.%Y") %>
+- Ilość pakietów: <%= @order.quantity %> szt.
+- Adres dostawy:
+  <%= @order.locker_name %>
+  <%= @order.locker_address %>
+  <%= @order.locker_post_code %> <%= @order.locker_city %>
+
+Otrzymasz powiadomienie email gdy Twoja paczka zostanie wysłana wraz z numerem do śledzenia przesyłki.
+
+"Nie ma, że się nie da!"
+
+---
+Fundacja Indywidualności Otwartych
+KRS: 0000123456 | NIP: 1234567890
+kontakt@edk.org.pl

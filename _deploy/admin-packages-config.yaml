@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: admin-packages-config
+data:
+  # Rails Configuration
+  RAILS_ENV: "production"
+  RAILS_LOG_TO_STDOUT: "true"
+  RAILS_SERVE_STATIC_FILES: "true"
+
+  # Application URLs
+  APP_URL: "https://pakiety.edk.org.pl"
+  PUBLIC_DONATION_URL: "https://wspieram.edk.org.pl"
+
+  # Przelewy24 Configuration
+  PRZELEWY24_MERCHANT_ID: "276306"
+  PRZELEWY24_POS_ID: "276306"
+  PRZELEWY24_SANDBOX: "false"
+  PRZELEWY24_RETURN_URL: "https://wspieram.edk.org.pl/cegielka/sukces"
+  PRZELEWY24_STATUS_URL: "https://wspieram.edk.org.pl/webhooks/przelewy24"
+
+  # aPaczka Configuration
+  APACZKA_APP_ID: "your_production_apaczka_app_id"
+  APACZKA_SANDBOX: "false"
+
+  # Email Configuration
+  SMTP_ADDRESS: "smtp.gmail.com"
+  SMTP_PORT: "587"
+  SMTP_DOMAIN: "edk.org.pl"
+  SMTP_AUTHENTICATION: "plain"
+  SMTP_ENABLE_STARTTLS_AUTO: "true"
+
+  # Email Sender Address
+  LEADER_EMAIL_FROM: "pakiety@edk.org.pl"  # For all emails (donations, orders, shipments, settlements)
+  ADMIN_EMAIL: "admin@edk.org.pl"

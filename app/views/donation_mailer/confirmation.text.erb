@@ -1,0 +1,52 @@
+===============================================
+  DZIĘKUJEMY ZA TWOJE WSPARCIE EDK <%= @edition&.year || Time.current.year %>!
+===============================================
+
+Cześć <%= @donation.first_name %>!
+
+Serdecznie dziękujemy za wsparcie Ekumenicznej Drogi Krzyżowej <%= @edition&.year || Time.current.year %>.
+Twoja cegiełka ma ogromne znaczenie dla społeczności EDK!
+
+-----------------------------------------------
+SZCZEGÓŁY DAROWIZNY
+-----------------------------------------------
+
+Data płatności:    <%= l(@donation.updated_at, format: :long) %>
+Ilość pakietów:    <%= @donation.quantity %>
+Kwota:             <%= number_to_currency(@donation.amount, unit: "zł", separator: ",", delimiter: " ") %>
+Numer transakcji:  <%= @donation.payment_id %>
+
+<% if @donation.want_gift? && @donation.locker_code.present? %>
+-----------------------------------------------
+SZCZEGÓŁY WYSYŁKI UPOMINKU
+-----------------------------------------------
+
+Twój pamiątkowy pakiet EDK zostanie wysłany na wybrany paczkomat:
+
+Paczkomat: <%= @donation.locker_name %>
+<% if @donation.locker_address.present? %>
+Adres:     <%= @donation.locker_address %>
+<% end %>
+
+Otrzymasz powiadomienie SMS, gdy paczka będzie gotowa do odbioru.
+
+<% end %>
+===============================================
+           NIE MA, ŻE SIĘ NIE DA!
+===============================================
+
+Dzięki Twojemu wsparciu możemy kontynuować organizację EDK i budować dom dla idealistów,
+którzy zmieniają siebie i świat.
+
+Z wdzięcznością,
+Zespół EDK
+
+-----------------------------------------------
+
+Fundacja Indywidualności Otwartych
+KRS: 0000123456 | NIP: 1234567890 | REGON: 123456789
+https://edk.org.pl
+kontakt@edk.org.pl
+
+Ten email został wysłany, ponieważ dokonałeś darowizny na rzecz EDK.
+Jeśli masz pytania, skontaktuj się z nami: kontakt@edk.org.pl

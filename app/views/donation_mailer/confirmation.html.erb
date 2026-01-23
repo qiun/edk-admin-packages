@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f3f4f6;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      .header {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        padding: 40px 20px;
+        text-align: center;
+      }
+      .header h1 {
+        color: #ffffff;
+        margin: 0;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .content {
+        padding: 40px 20px;
+      }
+      .greeting {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #1f2937;
+      }
+      .details-box {
+        background-color: #f9fafb;
+        border-left: 4px solid #4f46e5;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .details-box h2 {
+        margin-top: 0;
+        color: #1f2937;
+        font-size: 18px;
+      }
+      .detail-row {
+        display: flex;
+        padding: 8px 0;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+      .detail-label {
+        font-weight: 600;
+        color: #6b7280;
+        min-width: 140px;
+      }
+      .detail-value {
+        color: #1f2937;
+      }
+      .motto {
+        background-color: #eef2ff;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 30px 0;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        color: #4f46e5;
+      }
+      .footer {
+        background-color: #1f2937;
+        color: #9ca3af;
+        padding: 30px 20px;
+        text-align: center;
+        font-size: 14px;
+      }
+      .footer a {
+        color: #60a5fa;
+        text-decoration: none;
+      }
+      .footer .organization {
+        margin-top: 15px;
+        font-size: 12px;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>🎉 Dziękujemy za Twoje wsparcie!</h1>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <p class="greeting">
+          Cześć <%= @donation.first_name %>!
+        </p>
+
+        <p>
+          Serdecznie dziękujemy za wsparcie Ekumenicznej Drogi Krzyżowej <%= @edition&.year || Time.current.year %>.
+          Twoja cegiełka ma ogromne znaczenie dla społeczności EDK!
+        </p>
+
+        <!-- Donation Details -->
+        <div class="details-box">
+          <h2>📋 Szczegóły darowizny</h2>
+          <div class="detail-row">
+            <span class="detail-label">Data płatności:</span>
+            <span class="detail-value"><%= l(@donation.updated_at, format: :long) %></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Ilość pakietów:</span>
+            <span class="detail-value"><%= @donation.quantity %></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Kwota:</span>
+            <span class="detail-value"><%= number_to_currency(@donation.amount, unit: "zł", separator: ",", delimiter: " ") %></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Numer transakcji:</span>
+            <span class="detail-value"><%= @donation.payment_id %></span>
+          </div>
+        </div>
+
+        <% if @donation.want_gift? && @donation.locker_code.present? %>
+          <!-- Shipment Details -->
+          <div class="details-box">
+            <h2>📦 Szczegóły wysyłki upominku</h2>
+            <p>
+              Twój pamiątkowy pakiet EDK zostanie wysłany na wybrany paczkomat:
+            </p>
+            <div class="detail-row">
+              <span class="detail-label">Paczkomat:</span>
+              <span class="detail-value"><strong><%= @donation.locker_name %></strong></span>
+            </div>
+            <% if @donation.locker_address.present? %>
+              <div class="detail-row">
+                <span class="detail-label">Adres:</span>
+                <span class="detail-value"><%= @donation.locker_address %></span>
+              </div>
+            <% end %>
+            <p style="margin-top: 15px; color: #6b7280; font-size: 14px;">
+              Otrzymasz powiadomienie SMS, gdy paczka będzie gotowa do odbioru.
+            </p>
+          </div>
+        <% end %>
+
+        <!-- Motto -->
+        <div class="motto">
+          Nie ma, że się nie da!
+        </div>
+
+        <p>
+          Dzięki Twojemu wsparciu możemy kontynuować organizację EDK i budować dom dla idealistów,
+          którzy zmieniają siebie i świat.
+        </p>
+
+        <p style="margin-top: 30px;">
+          Z wdzięcznością,<br>
+          <strong>Zespół EDK</strong>
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          <strong>Fundacja Indywidualności Otwartych</strong>
+        </p>
+        <div class="organization">
+          KRS: 0000123456 | NIP: 1234567890 | REGON: 123456789<br>
+          <a href="https://edk.org.pl">edk.org.pl</a> |
+          <a href="mailto:kontakt@edk.org.pl">kontakt@edk.org.pl</a>
+        </div>
+        <p style="margin-top: 20px; font-size: 12px;">
+          Ten email został wysłany, ponieważ dokonałeś darowizny na rzecz EDK.<br>
+          Jeśli masz pytania, skontaktuj się z nami: <a href="mailto:kontakt@edk.org.pl">kontakt@edk.org.pl</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

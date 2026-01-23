@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .content { background: #f9fafb; padding: 30px; }
+    .success-box { background: white; padding: 30px; border-radius: 8px; margin: 20px 0; text-align: center; }
+    .checkmark { font-size: 64px; color: #10b981; }
+    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 14px; }
+    .motto { font-style: italic; color: #8b5cf6; font-size: 18px; margin: 20px 0; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>✅ Paczka dostarczona!</h1>
+    </div>
+
+    <div class="content">
+      <p>Cześć <%= @recipient_name %>!</p>
+
+      <div class="success-box">
+        <div class="checkmark">✓</div>
+        <h2 style="margin: 20px 0; color: #10b981;">Twoja paczka dotarła!</h2>
+        <p>Twoja paczka z pakietami EDK została dostarczona do paczkomatu i czeka na odbiór.</p>
+      </div>
+
+      <p><strong>Paczkomat:</strong> <%= @shipment.receiver_foreign_address_id %></p>
+      <% if @shipment.delivered_at.present? %>
+        <p><strong>Data dostawy:</strong> <%= @shipment.delivered_at.strftime("%d.%m.%Y %H:%M") %></p>
+      <% end %>
+
+      <p><strong>Przypomnienie:</strong> Paczka będzie oczekiwała na odbiór przez 48 godzin. Po tym czasie zostanie automatycznie zwrócona.</p>
+
+      <div class="motto">
+        "Nie ma, że się nie da!"
+      </div>
+
+      <% if @source.is_a?(Donation) %>
+        <p style="text-align: center; margin-top: 30px;">
+          Dziękujemy za wsparcie EDK! ❤️<br>
+          Cieszymy się, że możemy podzielić się z Tobą pakietem.
+        </p>
+      <% end %>
+    </div>
+
+    <div class="footer">
+      <p><strong>Fundacja Indywidualności Otwartych</strong></p>
+      <p>kontakt@edk.org.pl</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <h2>🔔 Nowe zamówienie pakietów</h2>
+
+  <p><strong>Lider:</strong> <%= @user.full_name %></p>
+  <p><strong>Email:</strong> <%= @user.email %></p>
+  <p><strong>Ilość pakietów:</strong> <%= @order.quantity %> szt.</p>
+  <p><strong>Data zamówienia:</strong> <%= @order.created_at.strftime("%d.%m.%Y %H:%M") %></p>
+
+  <h3>Adres dostawy:</h3>
+  <p>
+    <%= @order.locker_name %><br>
+    <%= @order.locker_address %><br>
+    <%= @order.locker_post_code %> <%= @order.locker_city %>
+  </p>
+
+  <p><a href="<%= admin_orders_url %>">Przejdź do panelu zamówień</a></p>
+</body>
+</html>
