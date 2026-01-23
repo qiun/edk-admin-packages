@@ -70,6 +70,7 @@ group :development, :test do
   gem "rspec-rails", "~> 8.0"
   gem "factory_bot_rails", "~> 6.5"
   gem "faker", "~> 3.5"
+  gem "webmock", "~> 3.24"
 
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false

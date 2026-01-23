@@ -1,0 +1,20 @@
+# ===========================================
+# Przelewy24 Configuration
+# ===========================================
+# Dane z projektu edk-donations-refactor (produkcja)
+# 
+# Ustaw te wartości w Rails credentials:
+# bin/rails credentials:edit
+#
+# przelewy24:
+#   merchant_id: "276306"
+#   pos_id: "276306"
+#   crc_key: "your_crc_key_here"
+#   api_key: "your_api_key_here"
+#   sandbox: true
+#   return_url: "http://localhost:3000/cegielka/sukces"
+#   status_url: "http://localhost:3000/webhooks/przelewy24"
+#
+# Produkcyjne URLe:
+#   return_url: "https://pakiety.edk.org.pl/cegielka/sukces"
+#   status_url: "https://pakiety.edk.org.pl/webhooks/przelewy24"
