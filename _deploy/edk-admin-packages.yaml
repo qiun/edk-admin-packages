@@ -5,8 +5,8 @@ metadata:
   labels:
     app: edk-admin-packages
 spec:
-  replicas: 2
-  progressDeadlineSeconds: 30
+  replicas: 1
+  progressDeadlineSeconds: 60
   selector:
     matchLabels:
       app: edk-admin-packages
@@ -20,8 +20,8 @@ spec:
           image: docker.investimetric.io/edk/edk-admin-packages:TAG_PLACEHOLDER
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
-              name: http
+            - containerPort: 3000
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: admin-packages-config
@@ -37,19 +37,17 @@ spec:
           livenessProbe:
             httpGet:
               path: /up
-              port: 80
+              port: 3000
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /up
-              port: 80
+              port: 3000
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 3
-            failureThreshold: 3
       imagePullSecrets:
         - name: docker-inv-auth
 ---
@@ -57,14 +55,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: edk-admin-packages
-  labels:
-    app: edk-admin-packages
 spec:
   type: ClusterIP
-  ports:
-    - port: 3000
-      targetPort: 80
-      protocol: TCP
-      name: http
   selector:
     app: edk-admin-packages
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      name: http

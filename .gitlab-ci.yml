@@ -1,0 +1,34 @@
+image: ruby:3.4.5-slim
+
+stages:
+  - docker
+  - deploy-prod
+
+docker-web:
+  image: docker:stable
+  stage: docker
+  script:
+    - ls
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.investimetric.io
+    - docker build -t docker.investimetric.io/$CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID .
+    - docker push docker.investimetric.io/$CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+
+.deploy:
+  script:
+    - apk update && apk add --no-cache curl
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+    - mkdir ~/.kube/
+    - echo $K_CONFIG | base64 -d > ~/.kube/config
+    - sed s%TAG_PLACEHOLDER%$CI_PIPELINE_ID%g _deploy/edk-admin-packages.yaml | kubectl apply -f - -n $ENV_NAME
+    - kubectl apply -f _deploy/admin-packages-config.yaml -n $ENV_NAME
+
+deploy-prod:
+  extends: .deploy
+  stage: deploy-prod
+  variables:
+    ENV_NAME: default
+    K_CONFIG: $K8S_PROD
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "master"

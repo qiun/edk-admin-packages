@@ -1,51 +1,74 @@
-# See https://docs.docker.com/engine/reference/builder/#dockerignore-file for more about ignoring files.
+# Git
+.git
+.gitignore
+.gitattributes
 
-# Ignore git directory.
-/.git/
-/.gitignore
+# CI/CD
+.gitlab-ci.yml
+.github
 
-# Ignore bundler config.
-/.bundle
+# Documentation
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+*.md
 
-# Ignore all environment files.
-/.env*
+# Development files
+.env
+.env.*
+!.env.example
+.env.local
+.env.*.local
 
-# Ignore all default key files.
-/config/master.key
-/config/credentials/*.key
+# Editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
 
-# Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+# Test files
+spec/
+test/
+.rspec
+.rubocop.yml
 
-# Ignore pidfiles, but keep the directory.
-/tmp/pids/*
-!/tmp/pids/.keep
+# Logs
+log/*
+*.log
+tmp/*
+!tmp/.keep
+!log/.keep
 
-# Ignore storage (uploaded files in development and any SQLite databases).
-/storage/*
-!/storage/.keep
-/tmp/storage/*
-!/tmp/storage/.keep
+# Storage
+storage/*
+!storage/.keep
 
-# Ignore assets.
-/node_modules/
-/app/assets/builds/*
-!/app/assets/builds/.keep
-/public/assets
+# Node modules (if any)
+node_modules/
+npm-debug.log
+yarn-error.log
 
-# Ignore CI service files.
-/.github
+# Coverage
+coverage/
+.simplecov
 
-# Ignore Kamal files.
-/config/deploy*.yml
-/.kamal
+# Temporary files
+*.tmp
+*.bak
+*.cache
 
-# Ignore development files
-/.devcontainer
+# Dependencies
+vendor/bundle/
+.bundle/
 
-# Ignore Docker-related files
-/.dockerignore
-/Dockerfile*
+# Claude context (do not include in image)
+.claude/
+claudedocs/
+
+# Deployment
+_deploy/
+Dockerfile
+.dockerignore
+docker-compose*.yml

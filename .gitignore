@@ -52,3 +52,4 @@ test_import_*.csv
 
 # Kubernetes secrets (never commit actual secrets!)
 _deploy/admin-packages-secrets.yaml
+_deploy/DEPLOYMENT_CREDENTIALS.md
