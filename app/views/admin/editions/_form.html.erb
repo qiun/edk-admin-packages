@@ -60,12 +60,25 @@
         </div>
       </div>
 
-      <div>
+      <div class="space-y-3">
         <label class="flex items-center">
           <%= f.check_box :ordering_locked,
             class: "h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:ring-offset-gray-800" %>
           <span class="ml-2 text-sm text-gray-700 dark:text-gray-400">Zablokuj zamawianie pakietów</span>
         </label>
+
+        <div>
+          <label class="flex items-center">
+            <%= f.check_box :check_donation_inventory,
+              class: "h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:ring-offset-gray-800" %>
+            <span class="ml-2 text-sm text-gray-700 dark:text-gray-400">
+              Sprawdzaj stan magazynowy dla cegiełek
+            </span>
+          </label>
+          <p class="ml-6 mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+            Gdy zaznaczone, system blokuje darowizny jeśli brak pakietów w magazynie. Użyj pod koniec edycji, aby zapobiec przyjmowaniu zamówień na pakiety, które nie zostaną dodrukowane.
+          </p>
+        </div>
       </div>
     </div>
   </div>

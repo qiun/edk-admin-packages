@@ -22,9 +22,17 @@ module Public
           if @donation.want_gift? && @edition&.inventory
             begin
               @edition.inventory.reserve(@donation.quantity)
-            rescue Inventory::InsufficientStock
-              # Don't block the order - just mark that gift cannot be fulfilled
-              @donation.update_column(:gift_pending, true)
+            rescue Inventory::InsufficientStock => e
+              if @edition.check_donation_inventory
+                # Inventory checking is enabled - block the donation
+                @donation.destroy
+                flash.now[:error] = "Przepraszamy, ale nie mamy wystarczającej liczby pakietów w magazynie. Dostępne: #{@edition.inventory.available} szt."
+                render :new, status: :unprocessable_entity
+                return
+              else
+                # Inventory checking is disabled - just mark that gift cannot be fulfilled
+                @donation.update_column(:gift_pending, true)
+              end
             end
 
             # Check stock levels and notify admins if low

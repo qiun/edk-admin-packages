@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_220404) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_24_084223) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_220404) do
   end
 
   create_table "editions", force: :cascade do |t|
+    t.boolean "check_donation_inventory", default: false, null: false
     t.datetime "created_at", null: false
     t.decimal "default_price", precision: 8, scale: 2, default: "30.0"
     t.decimal "donor_price", precision: 8, scale: 2, default: "50.0"

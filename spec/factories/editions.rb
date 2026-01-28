@@ -10,6 +10,8 @@ FactoryBot.define do
 
     after(:create) do |edition|
       # Inventory is created automatically via callback
+      # Add default stock for tests
+      edition.inventory.add_stock(100, notes: "Initial test stock")
     end
 
     trait :draft do
