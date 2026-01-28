@@ -14,6 +14,7 @@ docker-web:
     - docker push docker.investimetric.io/$CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
 
 .deploy:
+  image: alpine:latest
   script:
     - apk update && apk add --no-cache curl
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
