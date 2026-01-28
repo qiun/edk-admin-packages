@@ -61,10 +61,10 @@
         </ul>
       </div>
 
-      <!-- Zamówienia Group -->
+      <!-- Liderzy Okręgowi Group -->
       <div>
         <h3 class="mb-4 text-xs font-medium uppercase leading-5 text-gray-400">
-          Zamówienia
+          Liderzy Okręgowi
         </h3>
 
         <ul class="mb-6 flex flex-col gap-1">
@@ -88,16 +88,7 @@
               <span>Wysyłki</span>
             <% end %>
           </li>
-        </ul>
-      </div>
 
-      <!-- Finansowe Group -->
-      <div>
-        <h3 class="mb-4 text-xs font-medium uppercase leading-5 text-gray-400">
-          Finansowe
-        </h3>
-
-        <ul class="mb-6 flex flex-col gap-1">
           <!-- Rozliczenia -->
           <li>
             <%= link_to admin_settlements_path, class: "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium #{request.path.start_with?('/admin/settlements') ? 'bg-[#ecf3ff] text-[#465fff] dark:bg-[#465fff]/10 dark:text-[#7592ff]' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'}" do %>
@@ -108,16 +99,6 @@
             <% end %>
           </li>
 
-          <!-- Darowizny -->
-          <li>
-            <%= link_to admin_donations_path, class: "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium #{request.path.start_with?('/admin/donations') ? 'bg-[#ecf3ff] text-[#465fff] dark:bg-[#465fff]/10 dark:text-[#7592ff]' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'}" do %>
-              <svg class="h-5 w-5 <%= request.path.start_with?('/admin/donations') ? 'fill-[#465fff]' : 'fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400' %>" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 4.318c1.637-1.11 3.805-1.396 5.807-.525 2.4 1.044 3.943 3.64 3.943 6.427 0 3.47-2.35 6.606-4.874 8.96a27.1 27.1 0 01-4.582 3.508 1 1 0 01-.588 0 27.099 27.099 0 01-4.582-3.508C4.6 16.831 2.25 13.695 2.25 10.22c0-2.787 1.544-5.383 3.943-6.427 2.002-.871 4.17-.585 5.807.525zm0 14.7a25.1 25.1 0 003.626-2.767C18.033 14.077 20 11.367 20 10.22c0-2.054-1.122-3.924-2.807-4.656-1.441-.627-3.16-.398-4.368.728a1 1 0 01-1.65 0c-1.208-1.126-2.927-1.355-4.368-.728C5.122 6.296 4 8.166 4 10.22c0 1.147 1.967 3.857 4.374 6.031A25.1 25.1 0 0012 19.018z"/>
-              </svg>
-              <span>Darowizny</span>
-            <% end %>
-          </li>
-
           <!-- Zwroty -->
           <li>
             <%= link_to admin_returns_path, class: "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium #{request.path.start_with?('/admin/returns') ? 'bg-[#ecf3ff] text-[#465fff] dark:bg-[#465fff]/10 dark:text-[#7592ff]' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'}" do %>
@@ -125,6 +106,25 @@
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M7.53 4.47a.75.75 0 010 1.06L4.81 8.25H15a6.75 6.75 0 010 13.5h-3a.75.75 0 010-1.5h3a5.25 5.25 0 100-10.5H4.81l2.72 2.72a.75.75 0 11-1.06 1.06l-4-4a.75.75 0 010-1.06l4-4a.75.75 0 011.06 0z"/>
               </svg>
               <span>Zwroty</span>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Cegiełki Group -->
+      <div>
+        <h3 class="mb-4 text-xs font-medium uppercase leading-5 text-gray-400">
+          Cegiełki
+        </h3>
+
+        <ul class="mb-6 flex flex-col gap-1">
+          <!-- Darowizny publiczne -->
+          <li>
+            <%= link_to admin_donations_path, class: "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium #{request.path.start_with?('/admin/donations') ? 'bg-[#ecf3ff] text-[#465fff] dark:bg-[#465fff]/10 dark:text-[#7592ff]' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'}" do %>
+              <svg class="h-5 w-5 <%= request.path.start_with?('/admin/donations') ? 'fill-[#465fff]' : 'fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400' %>" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 4.318c1.637-1.11 3.805-1.396 5.807-.525 2.4 1.044 3.943 3.64 3.943 6.427 0 3.47-2.35 6.606-4.874 8.96a27.1 27.1 0 01-4.582 3.508 1 1 0 01-.588 0 27.099 27.099 0 01-4.582-3.508C4.6 16.831 2.25 13.695 2.25 10.22c0-2.787 1.544-5.383 3.943-6.427 2.002-.871 4.17-.585 5.807.525zm0 14.7a25.1 25.1 0 003.626-2.767C18.033 14.077 20 11.367 20 10.22c0-2.054-1.122-3.924-2.807-4.656-1.441-.627-3.16-.398-4.368.728a1 1 0 01-1.65 0c-1.208-1.126-2.927-1.355-4.368-.728C5.122 6.296 4 8.166 4 10.22c0 1.147 1.967 3.857 4.374 6.031A25.1 25.1 0 0012 19.018z"/>
+              </svg>
+              <span>Wpłaty darczyńców</span>
             <% end %>
           </li>
         </ul>
