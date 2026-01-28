@@ -37,14 +37,28 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  # Enable delivery errors for testing
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
 
-  # Set localhost to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  # Set development domain for links generated in mailer templates
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch("APP_URL", "https://edk-pakiety.websiteinit.com").gsub("https://", "").gsub("http://", "")
+  }
+
+  # Microsoft 365 / Outlook SMTP Configuration
+  config.action_mailer.smtp_settings = {
+    address: ENV.fetch("SMTP_ADDRESS", "smtp-mail.outlook.com"),
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
+    domain: ENV.fetch("SMTP_DOMAIN", "edk.org.pl"),
+    user_name: ENV.fetch("SMTP_USER_NAME", "pakiety@edk.org.pl"),
+    password: ENV.fetch("SMTP_PASSWORD"),
+    authentication: ENV.fetch("SMTP_AUTHENTICATION", "login").to_sym,
+    enable_starttls_auto: ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true") == "true"
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
