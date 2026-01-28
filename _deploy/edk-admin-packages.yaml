@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: edk-admin-packages
-          image: docker.investimetric.io/edk/edk-admin-packages:TAG_PLACEHOLDER
+          image: docker.investimetric.io/edk/edk-donations:TAG_PLACEHOLDER
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
