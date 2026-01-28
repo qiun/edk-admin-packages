@@ -8,8 +8,9 @@ module Apaczka
     BASE_URL = "https://www.apaczka.pl/api/v2"
 
     def initialize
-      @app_id = Rails.application.credentials.dig(:apaczka, :app_id)
-      @app_secret = Rails.application.credentials.dig(:apaczka, :app_secret)
+      @app_id = ENV['APACZKA_APP_ID'] || Rails.application.credentials.dig(:apaczka, :app_id)
+      @app_secret = ENV['APACZKA_APP_SECRET'] || Rails.application.credentials.dig(:apaczka, :app_secret)
+      @sandbox = ENV['APACZKA_SANDBOX'] == 'true' || Rails.application.credentials.dig(:apaczka, :sandbox)
     end
 
     def create_shipment(order)
@@ -97,16 +98,17 @@ module Apaczka
 
     def post(endpoint, data)
       expires = 30.minutes.from_now.to_i
-      signature = generate_signature(endpoint, data.to_json, expires)
+      request_json = data.to_json
+      signature = generate_signature(endpoint, request_json, expires)
 
       response = Faraday.post("#{BASE_URL}#{endpoint}") do |req|
-        req.headers["Content-Type"] = "application/json"
-        req.body = {
+        req.headers["Content-Type"] = "application/x-www-form-urlencoded"
+        req.body = URI.encode_www_form({
           app_id: @app_id,
-          request: data.to_json,
+          request: request_json,
           expires: expires,
           signature: signature
-        }.to_json
+        })
       end
 
       JSON.parse(response.body)
@@ -128,7 +130,8 @@ module Apaczka
     end
 
     def generate_signature(endpoint, data, expires)
-      string_to_sign = "#{@app_id}#{endpoint}#{data}#{expires}"
+      # Per aPaczka API documentation: "app_id:route:data:expires"
+      string_to_sign = "#{@app_id}:#{endpoint}:#{data}:#{expires}"
       OpenSSL::HMAC.hexdigest("SHA256", @app_secret, string_to_sign)
     end
 

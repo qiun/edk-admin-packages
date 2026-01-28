@@ -2,7 +2,8 @@ module Apaczka
   class CreateShipmentJob < ApplicationJob
     queue_as :default
 
-    retry_on StandardError, wait: :polynomially_longer, attempts: 3
+    # Only retry on transient network errors, not on aPaczka API validation errors
+    retry_on Faraday::TimeoutError, Faraday::ConnectionFailed, wait: :polynomially_longer, attempts: 3
 
     def perform(shipment_or_id)
       # Handle both Shipment object and Shipment ID
@@ -13,7 +14,7 @@ module Apaczka
       return unless can_create_shipment?(source)
 
       client = ::Apaczka::Client.new
-      result = client.create_shipment(shipment)
+      result = client.create_shipment(source)
 
       if result[:success]
         # Update existing shipment with aPaczka data
@@ -30,26 +31,25 @@ module Apaczka
 
         # Aktualizuj magazyn - przenieś z reserved/allocated do shipped
         if source.is_a?(Order)
-          source.edition.inventory.ship(shipment.quantity, reference: "order_#{source.id}")
+          source.edition.inventory.ship(source.quantity, reference: source)
           source.update!(status: :shipped)
         elsif source.is_a?(Donation)
           # For donations, inventory was already reserved during donation creation
-          source.edition.inventory.ship(shipment.quantity, reference: "donation_#{source.id}") if source.edition&.inventory
+          source.edition.inventory.ship(source.quantity, reference: source) if source.edition&.inventory
           # Shipment status is tracked in the Shipment record, not in Donation
         end
 
-        # Wyślij powiadomienie (gdy będzie mailer)
-        # ShipmentMailer.shipped(shipment).deliver_later
-        # For donations, send via DonationMailer
-        DonationMailer.shipment_sent(source, result[:waybill_number]).deliver_later if source.is_a?(Donation)
+        # Wyślij powiadomienie o wysyłce
+        Rails.logger.info "[CreateShipmentJob] Sending shipment notification email"
+        ShipmentMailer.shipped(shipment).deliver_later
       else
-        # Loguj błąd
+        # Loguj błąd i powiadom admina
         source_type = source.class.name
         source_id = source.id
         Rails.logger.error("aPaczka shipment creation failed for #{source_type} #{source_id}: #{result[:error]}")
 
-        # Powiadom admina (gdy będzie mailer)
-        # AdminMailer.shipment_failed(source, result[:error]).deliver_later
+        # Update shipment status to failed
+        shipment.update(status: "failed", apaczka_response: { error: result[:error] })
 
         raise StandardError, "aPaczka API error: #{result[:error]}"
       end

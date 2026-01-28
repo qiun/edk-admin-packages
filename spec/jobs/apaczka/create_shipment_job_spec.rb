@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Apaczka::CreateShipmentJob, type: :job do
   let(:order) { create(:order, status: :confirmed, quantity: 10) }
+  let(:shipment) { create(:shipment, order: order) }
   let(:client) { instance_double(Apaczka::Client) }
 
   before do
@@ -20,16 +21,15 @@ RSpec.describe Apaczka::CreateShipmentJob, type: :job do
       end
 
       before do
-        allow(client).to receive(:create_shipment).with(order).and_return(api_result)
+        allow(client).to receive(:create_shipment).with(an_instance_of(Order)).and_return(api_result)
         allow(client).to receive(:get_waybill).with('AP123456').and_return('PDF_BINARY_DATA')
+        allow(ShipmentMailer).to receive(:shipped).and_return(double(deliver_later: true))
       end
 
-      it 'creates shipment record' do
-        expect {
-          described_class.perform_now(order.id)
-        }.to change(Shipment, :count).by(1)
+      it 'updates shipment record with aPaczka data' do
+        described_class.perform_now(shipment.id)
 
-        shipment = order.reload.shipment
+        shipment.reload
         expect(shipment.apaczka_order_id).to eq('AP123456')
         expect(shipment.waybill_number).to eq('WB789')
         expect(shipment.tracking_url).to eq('https://apaczka.pl/track/WB789')
@@ -37,23 +37,32 @@ RSpec.describe Apaczka::CreateShipmentJob, type: :job do
       end
 
       it 'stores PDF label' do
-        described_class.perform_now(order.id)
+        described_class.perform_now(shipment.id)
 
-        shipment = order.reload.shipment
+        shipment.reload
         expect(shipment.label_pdf).to eq('PDF_BINARY_DATA')
       end
 
       it 'updates inventory' do
         inventory = order.edition.inventory
-        expect(inventory).to receive(:ship).with(order.quantity, reference: order.id)
+        initial_shipped = inventory.shipped
 
-        described_class.perform_now(order.id)
+        described_class.perform_now(shipment.id)
+
+        inventory.reload
+        expect(inventory.shipped).to eq(initial_shipped + order.quantity)
       end
 
       it 'updates order status to shipped' do
-        described_class.perform_now(order.id)
+        described_class.perform_now(shipment.id)
 
         expect(order.reload.status).to eq('shipped')
+      end
+
+      it 'sends shipment notification email' do
+        expect(ShipmentMailer).to receive(:shipped).with(shipment)
+
+        described_class.perform_now(shipment.id)
       end
     end
 
@@ -66,30 +75,32 @@ RSpec.describe Apaczka::CreateShipmentJob, type: :job do
       end
 
       before do
-        allow(client).to receive(:create_shipment).with(order).and_return(api_result)
+        allow(client).to receive(:create_shipment).with(an_instance_of(Order)).and_return(api_result)
       end
 
       it 'raises StandardError' do
         expect {
-          described_class.perform_now(order.id)
+          described_class.perform_now(shipment.id)
         }.to raise_error(StandardError, /aPaczka API error/)
       end
 
-      it 'does not create shipment record' do
-        expect {
-          begin
-            described_class.perform_now(order.id)
-          rescue StandardError
-            # Expected error
-          end
-        }.not_to change(Shipment, :count)
+      it 'updates shipment status to failed' do
+        begin
+          described_class.perform_now(shipment.id)
+        rescue StandardError
+          # Expected error
+        end
+
+        shipment.reload
+        expect(shipment.status).to eq('failed')
+        expect(shipment.apaczka_response['error']).to eq('Invalid address')
       end
 
       it 'logs error' do
         allow(Rails.logger).to receive(:error)
 
         begin
-          described_class.perform_now(order.id)
+          described_class.perform_now(shipment.id)
         rescue StandardError
           # Expected
         end
@@ -100,13 +111,12 @@ RSpec.describe Apaczka::CreateShipmentJob, type: :job do
 
     context 'when order is not confirmed' do
       let(:pending_order) { create(:order, status: :pending) }
+      let(:pending_shipment) { create(:shipment, order: pending_order) }
 
-      it 'does not create shipment' do
+      it 'does not create shipment in aPaczka' do
         expect(client).not_to receive(:create_shipment)
 
-        expect {
-          described_class.perform_now(pending_order.id)
-        }.not_to change(Shipment, :count)
+        described_class.perform_now(pending_shipment.id)
       end
     end
   end

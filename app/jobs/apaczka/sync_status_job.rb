@@ -17,10 +17,14 @@ module Apaczka
 
             if new_status == "delivered"
               shipment.update!(delivered_at: Time.current)
-              shipment.order.update!(status: :delivered)
 
-              # Wyślij powiadomienie (gdy będzie mailer)
-              # ShipmentMailer.delivered(shipment).deliver_later
+              # Update source status if it's an Order
+              if shipment.source.is_a?(Order)
+                shipment.source.update!(status: :delivered)
+              end
+
+              # Wyślij powiadomienie o dostawie
+              ShipmentMailer.delivered(shipment).deliver_later
             end
           end
         rescue => e

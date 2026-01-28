@@ -2,44 +2,43 @@ require 'rails_helper'
 
 RSpec.describe Apaczka::SyncStatusJob, type: :job do
   let(:client) { instance_double(Apaczka::Client) }
+  let(:edition) { create(:edition) }
 
   before do
     allow(Apaczka::Client).to receive(:new).and_return(client)
+    allow(ShipmentMailer).to receive(:delivered).and_return(double(deliver_later: true))
+    # Default stub for get_order_status - can be overridden in specific tests
+    allow(client).to receive(:get_order_status).and_return('SHIPPED')
   end
 
   describe '#perform' do
+    let!(:shipped_order) { create(:order, edition: edition, status: :confirmed) }
+    let!(:in_transit_order) { create(:order, edition: edition, status: :confirmed) }
+    let!(:delivered_order) { create(:order, edition: edition, status: :confirmed) }
+
     let!(:shipped_shipment) do
-      create(:shipment,
-        status: :shipped,
-        apaczka_order_id: 'AP001'
-      )
+      create(:shipment, :shipped, order: shipped_order)
     end
 
     let!(:in_transit_shipment) do
-      create(:shipment,
-        status: :in_transit,
-        apaczka_order_id: 'AP002'
-      )
+      create(:shipment, :in_transit, order: in_transit_order)
     end
 
     let!(:delivered_shipment) do
-      create(:shipment,
-        status: :delivered,
-        apaczka_order_id: 'AP003'
-      )
+      create(:shipment, :delivered, order: delivered_order)
     end
 
     it 'only syncs non-delivered shipments' do
-      expect(client).to receive(:get_order_status).with('AP001').and_return('SHIPPED')
-      expect(client).to receive(:get_order_status).with('AP002').and_return('IN_TRANSIT')
-      expect(client).not_to receive(:get_order_status).with('AP003')
+      expect(client).to receive(:get_order_status).with(shipped_shipment.apaczka_order_id).and_return('SHIPPED')
+      expect(client).to receive(:get_order_status).with(in_transit_shipment.apaczka_order_id).and_return('IN_TRANSIT')
+      expect(client).not_to receive(:get_order_status).with(delivered_shipment.apaczka_order_id)
 
       described_class.perform_now
     end
 
     context 'when status changes to in_transit' do
       before do
-        allow(client).to receive(:get_order_status).with('AP001').and_return('IN_TRANSIT')
+        allow(client).to receive(:get_order_status).with(shipped_shipment.apaczka_order_id).and_return('IN_TRANSIT')
       end
 
       it 'updates shipment status' do
@@ -51,7 +50,7 @@ RSpec.describe Apaczka::SyncStatusJob, type: :job do
 
     context 'when status changes to delivered' do
       before do
-        allow(client).to receive(:get_order_status).with('AP002').and_return('DELIVERED')
+        allow(client).to receive(:get_order_status).with(in_transit_shipment.apaczka_order_id).and_return('DELIVERED')
       end
 
       it 'updates shipment status to delivered' do
@@ -69,14 +68,20 @@ RSpec.describe Apaczka::SyncStatusJob, type: :job do
       it 'updates order status to delivered' do
         described_class.perform_now
 
-        expect(in_transit_shipment.order.reload.status).to eq('delivered')
+        expect(in_transit_shipment.source.reload.status).to eq('delivered')
+      end
+
+      it 'sends delivery notification email' do
+        expect(ShipmentMailer).to receive(:delivered).with(in_transit_shipment)
+
+        described_class.perform_now
       end
     end
 
     context 'when API returns error for a shipment' do
       before do
-        allow(client).to receive(:get_order_status).with('AP001').and_raise(StandardError, 'API Error')
-        allow(client).to receive(:get_order_status).with('AP002').and_return('IN_TRANSIT')
+        allow(client).to receive(:get_order_status).with(shipped_shipment.apaczka_order_id).and_raise(StandardError, 'API Error')
+        allow(client).to receive(:get_order_status).with(in_transit_shipment.apaczka_order_id).and_return('IN_TRANSIT')
       end
 
       it 'continues processing other shipments' do
@@ -108,7 +113,7 @@ RSpec.describe Apaczka::SyncStatusJob, type: :job do
         'UNKNOWN_STATUS' => 'shipped'
       }.each do |apaczka_status, expected_status|
         it "maps #{apaczka_status} to #{expected_status}" do
-          allow(client).to receive(:get_order_status).with('AP001').and_return(apaczka_status)
+          allow(client).to receive(:get_order_status).with(shipped_shipment.apaczka_order_id).and_return(apaczka_status)
 
           described_class.perform_now
 
