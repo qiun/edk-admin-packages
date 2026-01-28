@@ -68,7 +68,7 @@ Rails.application.configure do
     port: ENV.fetch("SMTP_PORT", 587).to_i,
     domain: ENV.fetch("SMTP_DOMAIN", "edk.org.pl"),
     user_name: ENV.fetch("SMTP_USER_NAME", "pakiety@edk.org.pl"),
-    password: ENV.fetch("SMTP_PASSWORD"),
+    password: ENV.fetch("SMTP_PASSWORD", ""),
     authentication: ENV.fetch("SMTP_AUTHENTICATION", "login").to_sym,
     enable_starttls_auto: ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true") == "true"
   }
