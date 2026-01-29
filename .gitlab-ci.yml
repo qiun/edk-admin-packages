@@ -23,6 +23,7 @@ docker-web:
     - echo $K_CONFIG | base64 -d > ~/.kube/config
     - sed s%TAG_PLACEHOLDER%$CI_PIPELINE_ID%g _deploy/edk-admin-packages.yaml | kubectl apply -f - -n $ENV_NAME
     - kubectl apply -f _deploy/admin-packages-config.yaml -n $ENV_NAME
+    - kubectl apply -f _deploy/edk-ingress.yaml -n $ENV_NAME
 
 deploy-prod:
   extends: .deploy
