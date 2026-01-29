@@ -35,9 +35,9 @@ module Admin
       @user.password_confirmation = password
 
       if @user.save
-        # TODO: Send welcome email with password
-        # UserMailer.welcome(@user, password).deliver_later
-        redirect_to admin_user_path(@user), notice: "Użytkownik został utworzony. Hasło: #{password}"
+        # Send welcome email with password
+        UserMailer.welcome(@user, password).deliver_later
+        redirect_to admin_user_path(@user), notice: "Użytkownik został utworzony. Email z hasłem został wysłany na: #{@user.email}"
       else
         render :new, status: :unprocessable_entity
       end
