@@ -44,6 +44,24 @@ class User < ApplicationRecord
     leader_settings.find_by(edition: edition)&.ordering_locked || false
   end
 
+  # Generate a secure password that meets all complexity requirements
+  # Returns a 20-character password guaranteed to contain:
+  # - At least one uppercase letter (A-Z)
+  # - At least one lowercase letter (a-z)
+  # - At least one digit (0-9)
+  def self.generate_secure_password
+    # Guarantee each required character type
+    uppercase = ('A'..'Z').to_a.sample
+    lowercase = ('a'..'z').to_a.sample
+    digit = ('0'..'9').to_a.sample
+
+    # Generate remaining 17 random alphanumeric characters
+    remaining = SecureRandom.alphanumeric(17)
+
+    # Combine and shuffle to avoid predictable patterns
+    (uppercase + lowercase + digit + remaining).chars.shuffle.join
+  end
+
   private
 
   def password_complexity

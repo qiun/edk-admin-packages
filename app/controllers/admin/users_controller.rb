@@ -33,8 +33,8 @@ module Admin
 
       # Generate a random password (user won't know it)
       # They will set their own password via the email link
-      # Use alphanumeric to ensure uppercase, lowercase, and digits
-      random_password = SecureRandom.alphanumeric(20)
+      # Use User.generate_secure_password to guarantee all complexity requirements
+      random_password = User.generate_secure_password
       @user.password = random_password
       @user.password_confirmation = random_password
 
