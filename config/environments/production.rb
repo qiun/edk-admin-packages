@@ -63,20 +63,18 @@ Rails.application.configure do
   }
 
   # Microsoft 365 / Outlook SMTP Configuration
-  # Using port 465 (SMTPS - SSL from start) instead of 587 (STARTTLS upgrade)
-  # Port 465 is more reliable in Kubernetes/cloud environments - no TLS negotiation delay
+  # Official Microsoft settings: https://support.microsoft.com/pl-pl/office/ustawienia-pop-imap-i-smtp-dla-us%C5%82ugi-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040
+  # Port 587 with STARTTLS (connection starts unencrypted, then upgrades to TLS)
   config.action_mailer.smtp_settings = {
     address: ENV.fetch("SMTP_ADDRESS", "smtp-mail.outlook.com"),
-    port: ENV.fetch("SMTP_PORT", 465).to_i,
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
     domain: ENV.fetch("SMTP_DOMAIN", "edk.org.pl"),
     user_name: ENV.fetch("SMTP_USER_NAME", "pakiety@edk.org.pl"),
     password: ENV.fetch("SMTP_PASSWORD", ""),
     authentication: ENV.fetch("SMTP_AUTHENTICATION", "login").to_sym,
-    ssl: true,
-    tls: true,
-    enable_starttls_auto: false,  # Not needed with SSL from connection start
-    open_timeout: 10,
-    read_timeout: 10
+    enable_starttls_auto: true,  # STARTTLS for port 587 (Microsoft official)
+    open_timeout: 30,  # Increased timeout for slow STARTTLS negotiation
+    read_timeout: 30
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
