@@ -4,17 +4,16 @@
 class UserMailer < ApplicationMailer
   default from: ENV.fetch("LEADER_EMAIL_FROM", "pakiety@edk.org.pl")
 
-  # Send welcome email when leader account is created
+  # Send welcome email with password setup link
   # @param user [User] the user record
-  # @param password [String] temporary password (optional)
-  def welcome(user, password = nil)
+  # @param token [String] raw reset password token
+  def welcome_with_password_setup(user, token)
     @user = user
-    @password = password
-    @login_url = new_user_session_url
+    @password_setup_url = edit_user_password_url(reset_password_token: token)
 
     mail(
       to: @user.email,
-      subject: "Witaj w systemie EDK Packages - #{user.full_name}"
+      subject: "Witaj w systemie EDK Packages - Ustaw swoje hasło"
     )
   end
 

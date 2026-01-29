@@ -30,14 +30,24 @@ module Admin
     def create
       @user = User.new(user_params)
       @user.created_by = current_user
-      password = SecureRandom.hex(8)
-      @user.password = password
-      @user.password_confirmation = password
+
+      # Generate a random password (user won't know it)
+      # They will set their own password via the email link
+      random_password = SecureRandom.hex(16)
+      @user.password = random_password
+      @user.password_confirmation = random_password
 
       if @user.save
-        # Send welcome email with password
-        UserMailer.welcome(@user, password).deliver_later
-        redirect_to admin_user_path(@user), notice: "Użytkownik został utworzony. Email z hasłem został wysłany na: #{@user.email}"
+        # Generate password reset token and send email
+        raw_token, enc_token = Devise.token_generator.generate(User, :reset_password_token)
+        @user.reset_password_token = enc_token
+        @user.reset_password_sent_at = Time.current
+        @user.save(validate: false)
+
+        # Send welcome email with password setup link
+        UserMailer.welcome_with_password_setup(@user, raw_token).deliver_later
+
+        redirect_to admin_user_path(@user), notice: "Użytkownik został utworzony. Email z linkiem do ustawienia hasła został wysłany na: #{@user.email}"
       else
         render :new, status: :unprocessable_entity
       end
@@ -123,7 +133,11 @@ module Admin
     end
 
     def user_params
-      params.require(:user).permit(:email, :first_name, :last_name, :phone, :role, :password, :password_confirmation)
+      if action_name == 'create'
+        params.require(:user).permit(:email, :first_name, :last_name, :phone, :role)
+      else
+        params.require(:user).permit(:email, :first_name, :last_name, :phone, :role, :password, :password_confirmation)
+      end
     end
 
     def leader_setting_params

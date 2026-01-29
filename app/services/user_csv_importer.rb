@@ -27,6 +27,9 @@ class UserCsvImporter
       return
     end
 
+    # Generate random password (user won't know it)
+    random_password = SecureRandom.hex(16)
+
     user = User.new(
       email: email,
       first_name: row["first_name"]&.strip || row["imię"]&.strip,
@@ -34,12 +37,21 @@ class UserCsvImporter
       phone: row["phone"]&.strip || row["telefon"]&.strip,
       role: :leader,
       created_by: @created_by,
-      password: SecureRandom.hex(8)
+      password: random_password,
+      password_confirmation: random_password
     )
 
     if user.save
       result[:created] += 1
-      # TODO: UserMailer.welcome(user).deliver_later
+
+      # Generate password reset token
+      raw_token, enc_token = Devise.token_generator.generate(User, :reset_password_token)
+      user.reset_password_token = enc_token
+      user.reset_password_sent_at = Time.current
+      user.save(validate: false)
+
+      # Send welcome email with password setup link
+      UserMailer.welcome_with_password_setup(user, raw_token).deliver_later
     else
       result[:errors] << "#{email}: #{user.errors.full_messages.join(', ')}"
     end
