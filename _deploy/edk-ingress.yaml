@@ -1,0 +1,88 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: edk-prod-web
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 1g
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - host: panel.edk.org.pl
+    http:
+      paths:
+      - backend:
+          service:
+            name: edk-admin-web
+            port:
+              number: 80
+        path: /?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: edk-admin-service
+            port:
+              number: 8081
+        path: /api/?(.*)
+        pathType: Prefix
+  - host: mobile-api.edk.org.pl
+    http:
+      paths:
+      - backend:
+          service:
+            name: edk-mobile-api
+            port:
+              number: 9084
+        path: /?(.*)
+        pathType: Prefix
+  - host: web-api.edk.org.pl
+    http:
+      paths:
+      - backend:
+          service:
+            name: edk-web-api
+            port:
+              number: 9082
+        path: /?(.*)
+        pathType: Prefix
+  - host: tiles.edk.org.pl
+    http:
+      paths:
+      - backend:
+          service:
+            name: edk-tileserver
+            port:
+              number: 8080
+        path: /?(.*)
+        pathType: Prefix
+  - host: trasy.edk.org.pl
+    http:
+      paths:
+      - backend:
+          service:
+            name: edk-routes
+            port:
+              number: 3000
+        path: /?(.*)
+        pathType: Prefix
+  - host: pakiety.edk.org.pl
+    http:
+      paths:
+      - backend:
+          service:
+            name: edk-admin-packages  # ZMIENIONE z edk-donations
+            port:
+              number: 3000
+        path: /?(.*)
+        pathType: Prefix
+  - host: wspieram.edk.org.pl
+    http:
+      paths:
+      - backend:
+          service:
+            name: edk-admin-packages  # ZMIENIONE z edk-donations
+            port:
+              number: 3000
+        path: /?(.*)
+        pathType: Prefix
