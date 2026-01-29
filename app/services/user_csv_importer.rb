@@ -28,7 +28,8 @@ class UserCsvImporter
     end
 
     # Generate random password (user won't know it)
-    random_password = SecureRandom.hex(16)
+    # Use alphanumeric to ensure uppercase, lowercase, and digits
+    random_password = SecureRandom.alphanumeric(20)
 
     user = User.new(
       email: email,
