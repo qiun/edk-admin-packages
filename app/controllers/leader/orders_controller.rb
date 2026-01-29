@@ -27,9 +27,7 @@ module Leader
       @order.total_amount = @order.quantity * @order.price_per_unit
 
       if @order.save
-        # Reserve inventory
-        current_edition.inventory.reserve(@order.quantity, reference: @order)
-
+        # Inventory reservation happens in after_create callback
         redirect_to leader_order_path(@order), notice: "Zamówienie zostało złożone pomyślnie"
       else
         # Log validation errors for debugging

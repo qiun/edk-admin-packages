@@ -15,7 +15,7 @@ class Inventory < ApplicationRecord
     end
   end
 
-  def reserve(quantity)
+  def reserve(quantity, reference: nil)
     transaction do
       raise InsufficientStock, "Niewystarczająca ilość pakietów na magazynie" if available < quantity
 
@@ -23,7 +23,7 @@ class Inventory < ApplicationRecord
       self.reserved += quantity
       save!
 
-      record_move(:reserve, quantity)
+      record_move(:reserve, quantity, reference: reference)
     end
   end
 

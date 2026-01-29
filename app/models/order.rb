@@ -59,6 +59,6 @@ class Order < ApplicationRecord
   end
 
   def reserve_inventory
-    edition.inventory.reserve(quantity)
+    edition.inventory.reserve(quantity, reference: self)
   end
 end
