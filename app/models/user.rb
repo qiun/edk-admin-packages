@@ -40,7 +40,7 @@ class User < ApplicationRecord
   end
 
   def ordering_locked_for?(edition)
-    return true if edition.ordering_locked
+    return true if edition.nil? || edition.ordering_locked
     leader_settings.find_by(edition: edition)&.ordering_locked || false
   end
 
