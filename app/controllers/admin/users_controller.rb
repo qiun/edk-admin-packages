@@ -46,9 +46,13 @@ module Admin
         @user.save(validate: false)
 
         # Send welcome email with password setup link (synchronously for simplicity)
-        UserMailer.welcome_with_password_setup(@user, raw_token).deliver_now
-
-        redirect_to admin_user_path(@user), notice: "Użytkownik został utworzony. Email z linkiem do ustawienia hasła został wysłany na: #{@user.email}"
+        begin
+          UserMailer.welcome_with_password_setup(@user, raw_token).deliver_now
+          redirect_to admin_user_path(@user), notice: "Użytkownik został utworzony. Email z linkiem do ustawienia hasła został wysłany na: #{@user.email}"
+        rescue Net::SMTPAuthenticationError, Net::SMTPServerBusy, Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout, Net::OpenTimeout, Errno::ECONNREFUSED, SocketError => e
+          Rails.logger.error "Failed to send welcome email: #{e.message}"
+          redirect_to admin_user_path(@user), alert: "Użytkownik został utworzony, ale nie udało się wysłać emaila (problem z SMTP). Skontaktuj się z administratorem lub użyj funkcji resetowania hasła."
+        end
       else
         render :new, status: :unprocessable_entity
       end

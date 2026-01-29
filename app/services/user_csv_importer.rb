@@ -52,7 +52,12 @@ class UserCsvImporter
       user.save(validate: false)
 
       # Send welcome email with password setup link (synchronously for simplicity)
-      UserMailer.welcome_with_password_setup(user, raw_token).deliver_now
+      begin
+        UserMailer.welcome_with_password_setup(user, raw_token).deliver_now
+      rescue Net::SMTPAuthenticationError, Net::SMTPServerBusy, Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout, Net::OpenTimeout, Errno::ECONNREFUSED, SocketError => e
+        Rails.logger.error "Failed to send welcome email to #{user.email}: #{e.message}"
+        # Continue with import even if email fails
+      end
     else
       result[:errors] << "#{email}: #{user.errors.full_messages.join(', ')}"
     end
