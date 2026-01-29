@@ -32,6 +32,8 @@ module Leader
 
         redirect_to leader_order_path(@order), notice: "Zamówienie zostało złożone pomyślnie"
       else
+        # Log validation errors for debugging
+        Rails.logger.error "Order validation failed: #{@order.errors.full_messages.join(', ')}"
         @price_per_unit = @order.price_per_unit
         render :new, status: :unprocessable_entity
       end
