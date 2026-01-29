@@ -5,9 +5,6 @@
 if [[ "$@" == *"rails"* ]] && [[ "$@" == *"server"* ]]; then
   echo "Running database migrations..."
   ./bin/rails db:prepare
-
-  echo "Loading SolidQueue schema..."
-  ./bin/rails db:schema:load:queue
 fi
 
 exec "${@}"

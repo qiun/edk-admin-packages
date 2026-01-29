@@ -45,8 +45,8 @@ module Admin
         @user.reset_password_sent_at = Time.current
         @user.save(validate: false)
 
-        # Send welcome email with password setup link
-        UserMailer.welcome_with_password_setup(@user, raw_token).deliver_later
+        # Send welcome email with password setup link (synchronously for simplicity)
+        UserMailer.welcome_with_password_setup(@user, raw_token).deliver_now
 
         redirect_to admin_user_path(@user), notice: "Użytkownik został utworzony. Email z linkiem do ustawienia hasła został wysłany na: #{@user.email}"
       else

@@ -51,8 +51,8 @@ class UserCsvImporter
       user.reset_password_sent_at = Time.current
       user.save(validate: false)
 
-      # Send welcome email with password setup link
-      UserMailer.welcome_with_password_setup(user, raw_token).deliver_later
+      # Send welcome email with password setup link (synchronously for simplicity)
+      UserMailer.welcome_with_password_setup(user, raw_token).deliver_now
     else
       result[:errors] << "#{email}: #{user.errors.full_messages.join(', ')}"
     end
