@@ -58,7 +58,7 @@
                 <% elsif shipment.donation.present? %>
                   <div>
                     <p class="text-sm font-medium text-gray-900 dark:text-white">Cegiełka #<%= shipment.donation.id %></p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400"><%= shipment.donation.donor_name %></p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400"><%= shipment.donation.full_name %></p>
                   </div>
                 <% end %>
               </td>

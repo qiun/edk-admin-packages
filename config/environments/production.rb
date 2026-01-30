@@ -50,8 +50,9 @@ Rails.application.configure do
   config.cache_store = :solid_cache_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  # Using async adapter (runs jobs in-memory threads) instead of solid_queue
+  # TODO: Set up SolidQueue properly with separate database for persistent job queue
+  config.active_job.queue_adapter = :async
 
   # Enable delivery errors in production
   config.action_mailer.raise_delivery_errors = true

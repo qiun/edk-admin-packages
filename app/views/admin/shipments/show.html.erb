@@ -98,12 +98,12 @@
           <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-500 dark:text-gray-400">Darczyńca</span>
-              <span class="text-sm font-medium text-gray-900 dark:text-white"><%= @shipment.donation.donor_name %></span>
+              <span class="text-sm font-medium text-gray-900 dark:text-white"><%= @shipment.donation.full_name %></span>
             </div>
-            <% if @shipment.donation.donor_email.present? %>
+            <% if @shipment.donation.email.present? %>
               <div class="flex items-center justify-between mt-2">
                 <span class="text-sm text-gray-500 dark:text-gray-400">Email</span>
-                <span class="text-sm text-gray-900 dark:text-white"><%= @shipment.donation.donor_email %></span>
+                <span class="text-sm text-gray-900 dark:text-white"><%= @shipment.donation.email %></span>
               </div>
             <% end %>
           </div>
