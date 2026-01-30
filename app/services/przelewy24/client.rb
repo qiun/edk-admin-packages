@@ -120,44 +120,50 @@ module Przelewy24
       currency = params[:currency] || "PLN"
       session_id = params[:session_id]
 
-      json_string = {
-        sessionId: session_id,
-        merchantId: merchant_id,
-        amount: amount,
-        currency: currency,
-        crc: crc_key
-      }.to_json
+      sign_data = {
+        "sessionId" => session_id,
+        "merchantId" => merchant_id,
+        "amount" => amount,
+        "currency" => currency,
+        "crc" => crc_key
+      }
 
+      json_string = JSON.generate(sign_data)
       Digest::SHA384.hexdigest(json_string)
     end
 
     # Generate CRC signature for transaction verification
     # Format: {"sessionId":"{SessionId}","orderId":{OrderId},"amount":{Amount},"currency":"{Currency}","crc":{CRC}}
     def generate_verify_sign(params)
-      json_string = {
-        sessionId: params[:session_id],
-        orderId: params[:order_id].to_i,
-        amount: params[:amount].to_i,
-        currency: params[:currency] || "PLN",
-        crc: crc_key
-      }.to_json
+      sign_data = {
+        "sessionId" => params[:session_id],
+        "orderId" => params[:order_id].to_i,
+        "amount" => params[:amount].to_i,
+        "currency" => params[:currency] || "PLN",
+        "crc" => crc_key
+      }
 
+      json_string = JSON.generate(sign_data)
       Digest::SHA384.hexdigest(json_string)
     end
 
     # Generate CRC signature for webhook notification verification
     # Format: {"sessionId":"{SessionId}","orderId":{OrderId},"amount":{Amount}","currency":"{Currency}","crc":{CRC}}
+    # IMPORTANT: Must use JSON.generate without escaping slashes/unicode (like PHP JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
     def generate_notification_sign(params)
       # Convert to hash with symbol keys to ensure consistent access
       params_hash = params.respond_to?(:to_h) ? params.to_h.symbolize_keys : params
 
-      json_string = {
-        sessionId: params_hash[:sessionId],
-        orderId: params_hash[:orderId].to_i,
-        amount: params_hash[:amount].to_i,
-        currency: params_hash[:currency] || "PLN",
-        crc: crc_key
-      }.to_json
+      sign_data = {
+        "sessionId" => params_hash[:sessionId],
+        "orderId" => params_hash[:orderId].to_i,
+        "amount" => params_hash[:amount].to_i,
+        "currency" => params_hash[:currency] || "PLN",
+        "crc" => crc_key
+      }
+
+      # Use JSON.generate to avoid escaping slashes (equivalent to PHP JSON_UNESCAPED_SLASHES)
+      json_string = JSON.generate(sign_data)
 
       Rails.logger.debug "Przelewy24 signature JSON: #{json_string}"
       generated_sign = Digest::SHA384.hexdigest(json_string)
