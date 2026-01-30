@@ -1,28 +1,25 @@
-<%# locals: (f:, donation:, price:) %>
+<%# locals: (f:, donation:, brick_price:, shipping_cost:) %>
 <div class="border-t border-gray-300 pt-6">
   <label class="block text-sm font-medium text-gray-900 mb-3">
-    Wybierz cegiełkę <span class="text-[#5d1655]">*</span>
+    Wybierz ilość cegiełek (jedna cegiełka, dwie lub więcej) <span class="text-[#5d1655]">*</span>
   </label>
 
   <!-- Brick Selection Box -->
   <div class="border border-gray-300 rounded-lg p-4 flex items-center justify-between bg-white">
     <span class="font-medium text-gray-900">Cegiełka EDK</span>
-    <div class="flex items-center gap-4">
-      <span class="font-semibold text-[#5d1655]"><%= number_to_currency(price, unit: '', precision: 0) %> zł</span>
-      <%= f.number_field :quantity,
-          min: 1,
-          value: donation.quantity || 1,
-          class: "w-16 text-center border border-gray-300 rounded-md py-2 px-2 text-sm focus:ring-2 focus:ring-[#5d1655] focus:border-[#5d1655] outline-none",
-          data: { donation_form_target: "quantity", action: "input->donation-form#updateTotal" } %>
-    </div>
+    <%= f.number_field :quantity,
+        min: 1,
+        value: donation.quantity || 1,
+        class: "w-16 text-center border border-gray-300 rounded-md py-2 px-2 text-sm focus:ring-2 focus:ring-[#5d1655] focus:border-[#5d1655] outline-none",
+        data: { donation_form_target: "quantity", action: "input->donation-form#updateTotal" } %>
   </div>
-  
+
   <% if donation.errors[:quantity].present? %>
     <p class="text-xs text-red-600 mt-1"><%= donation.errors[:quantity].first %></p>
   <% end %>
-  
+
   <!-- Total -->
   <div class="text-right mt-3 text-sm font-semibold text-gray-700">
-    Razem: <span data-donation-form-target="total"><%= number_to_currency((donation.quantity || 1) * price, unit: '', precision: 0) %></span> zł
+    Razem: <span data-donation-form-target="total"><%= number_to_currency(shipping_cost + ((donation.quantity || 1) * brick_price), unit: '', precision: 0) %></span> zł
   </div>
 </div>
