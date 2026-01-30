@@ -40,8 +40,8 @@ export default class extends Controller {
     const shippingCost = Number(this.shippingCostValue)
     const total = shippingCost + (quantity * brickPrice)
 
-    // Round to avoid floating point precision errors and format as integer
-    this.totalTarget.textContent = Math.round(total)
+    // Format to 2 decimal places, supporting both grosze and full złoty
+    this.totalTarget.textContent = total.toFixed(2)
   }
 
   toggleGiftSection() {
