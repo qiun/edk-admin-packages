@@ -186,7 +186,12 @@ module Apaczka
 
     def generate_signature(endpoint, data, expires)
       # Per aPaczka API documentation: "app_id:route:data:expires"
-      string_to_sign = "#{@app_id}:#{endpoint}:#{data}:#{expires}"
+      # IMPORTANT: route must NOT have leading/trailing slashes
+      # Example: "order_send" not "/order_send/"
+      route = endpoint.to_s.gsub(/^\/|\/$/,  "")
+      
+      string_to_sign = "#{@app_id}:#{route}:#{data}:#{expires}"
+      Rails.logger.info "aPaczka route (normalized): #{route}"
       Rails.logger.info "aPaczka string_to_sign (first 200 chars): #{string_to_sign[0..200]}"
       Rails.logger.info "aPaczka app_secret present: #{@app_secret.present?}"
       signature = OpenSSL::HMAC.hexdigest("SHA256", @app_secret, string_to_sign)
