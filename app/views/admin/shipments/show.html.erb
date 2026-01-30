@@ -138,10 +138,27 @@
           </div>
         </dl>
       </div>
-    <% elsif @shipment.donation.present? && @shipment.donation.shipping_address.present? %>
+    <% elsif @shipment.donation.present? && @shipment.donation.locker_code.present? %>
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Adres dostawy</h2>
-        <div class="text-sm text-gray-900 dark:text-white whitespace-pre-line"><%= @shipment.donation.shipping_address %></div>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Paczkomat InPost</h2>
+        <dl class="grid grid-cols-1 gap-4">
+          <div>
+            <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Kod paczkomatu</dt>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= @shipment.donation.locker_code %></dd>
+          </div>
+          <div>
+            <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Nazwa</dt>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= @shipment.donation.locker_name %></dd>
+          </div>
+          <div>
+            <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Adres</dt>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= @shipment.donation.locker_address %></dd>
+          </div>
+          <div>
+            <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Miasto</dt>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= @shipment.donation.locker_post_code %> <%= @shipment.donation.locker_city %></dd>
+          </div>
+        </dl>
       </div>
     <% end %>
 
