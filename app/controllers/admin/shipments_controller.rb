@@ -13,9 +13,20 @@ module Admin
     end
 
     def refresh_status
-      # TODO: Implement in Phase 4 with aPaczka integration
-      # Apaczka::SyncStatusJob.perform_now(@shipment)
-      redirect_to admin_shipment_path(@shipment), notice: "Status został odświeżony"
+      unless @shipment.apaczka_order_id.present?
+        redirect_to admin_shipment_path(@shipment), alert: "Brak ID zamówienia w aPaczka"
+        return
+      end
+
+      client = Apaczka::Client.new
+      status = client.get_order_status(@shipment.apaczka_order_id)
+
+      if status.present?
+        @shipment.update(status: map_apaczka_status(status))
+        redirect_to admin_shipment_path(@shipment), notice: "Status został odświeżony: #{@shipment.status}"
+      else
+        redirect_to admin_shipment_path(@shipment), alert: "Nie udało się pobrać statusu z aPaczka"
+      end
     end
 
     def download_waybill
@@ -41,6 +52,26 @@ module Admin
 
     def set_shipment
       @shipment = Shipment.find(params[:id])
+    end
+
+    def map_apaczka_status(apaczka_status)
+      # Map aPaczka status to our internal status enum
+      case apaczka_status.to_s.downcase
+      when "new", "pending"
+        "pending"
+      when "confirmed", "label_created"
+        "label_printed"
+      when "sent", "dispatched"
+        "shipped"
+      when "in_transit", "out_for_delivery"
+        "in_transit"
+      when "delivered"
+        "delivered"
+      when "cancelled", "failed", "returned"
+        "failed"
+      else
+        "pending" # Default fallback
+      end
     end
   end
 end

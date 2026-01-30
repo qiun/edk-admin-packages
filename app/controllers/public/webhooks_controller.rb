@@ -74,16 +74,13 @@ module Public
     end
 
     def create_shipment_for_donation(donation)
-      # Create shipment order
+      # Create shipment - job will be automatically enqueued via after_commit callback
       shipment = Shipment.create!(
         donation: donation,
         status: "pending"
       )
 
-      # Queue shipment creation job
-      Apaczka::CreateShipmentJob.perform_later(shipment)
-
-      Rails.logger.info "Created shipment ##{shipment.id} and queued aPaczka job for donation ##{donation.id}"
+      Rails.logger.info "Created shipment ##{shipment.id} for donation ##{donation.id}"
     end
   end
 end
