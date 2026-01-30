@@ -80,24 +80,14 @@ module Public
     def create_shipment_for_donation(donation)
       # Create shipment order
       shipment = Shipment.create!(
-        order_type: "Donation",
-        order_id: donation.id,
-        recipient_name: "#{donation.first_name} #{donation.last_name}",
-        recipient_email: donation.email,
-        recipient_phone: donation.phone,
-        locker_code: donation.locker_code,
-        locker_name: donation.locker_name,
-        locker_address: donation.locker_address,
-        locker_city: donation.locker_city,
-        locker_post_code: donation.locker_post_code,
-        quantity: donation.quantity,
+        donation: donation,
         status: "pending"
       )
 
       # Queue shipment creation job
       Apaczka::CreateShipmentJob.perform_later(shipment)
 
-      Rails.logger.info "Queued shipment creation for donation ##{donation.id}"
+      Rails.logger.info "Created shipment ##{shipment.id} and queued aPaczka job for donation ##{donation.id}"
     end
   end
 end

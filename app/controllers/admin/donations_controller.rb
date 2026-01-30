@@ -41,23 +41,15 @@ module Admin
         if @donation.want_gift? && @donation.locker_code.present? && @donation.shipment.nil?
           begin
             shipment = Shipment.create!(
-              order_type: "Donation",
-              order_id: @donation.id,
-              recipient_name: "#{@donation.first_name} #{@donation.last_name}",
-              recipient_email: @donation.email,
-              recipient_phone: @donation.phone,
-              locker_code: @donation.locker_code,
-              locker_name: @donation.locker_name,
-              locker_address: @donation.locker_address,
-              locker_city: @donation.locker_city,
-              locker_post_code: @donation.locker_post_code,
-              quantity: @donation.quantity,
+              donation: @donation,
               status: "pending"
             )
 
             Apaczka::CreateShipmentJob.perform_later(shipment)
+            Rails.logger.info "Created shipment ##{shipment.id} for donation ##{@donation.id}"
           rescue => e
             Rails.logger.error "Failed to create shipment: #{e.message}"
+            Rails.logger.error e.backtrace.join("\n")
           end
         end
       end
