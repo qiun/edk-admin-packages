@@ -192,9 +192,9 @@ module Apaczka
 
     def generate_signature(endpoint, data, expires)
       # Per aPaczka API documentation: "app_id:route:data:expires"
-      # IMPORTANT: route must NOT have leading/trailing slashes
-      # Example: "order_send" not "/order_send/"
-      route = endpoint.to_s.gsub(/^\/|\/$/,  "")
+      # IMPORTANT: Remove only leading slash, keep trailing slash
+      # Example: "/order_send/" becomes "order_send/"
+      route = endpoint.to_s.gsub(/^\//, "")
 
       # Log each component separately for detailed analysis
       Rails.logger.info "=== Signature Component Analysis ==="
