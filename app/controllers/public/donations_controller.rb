@@ -3,14 +3,16 @@ module Public
     def new
       @donation = Donation.new(quantity: 1, want_gift: true)
       @edition = current_edition
-      @brick_price = @edition&.donor_brick_price || 30.0
-      @shipping_cost = @edition&.donor_shipping_cost || 20.0
+      # Convert BigDecimal to float to avoid scientific notation in HTML
+      @brick_price = (@edition&.donor_brick_price || 30).to_f
+      @shipping_cost = (@edition&.donor_shipping_cost || 20).to_f
     end
 
     def create
       @edition = current_edition
-      @brick_price = @edition&.donor_brick_price || 30.0
-      @shipping_cost = @edition&.donor_shipping_cost || 20.0
+      # Convert BigDecimal to float to avoid scientific notation in HTML
+      @brick_price = (@edition&.donor_brick_price || 30).to_f
+      @shipping_cost = (@edition&.donor_shipping_cost || 20).to_f
 
       @donation = Donation.new(donation_params)
       @donation.edition = @edition

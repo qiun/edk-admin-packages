@@ -35,8 +35,13 @@ export default class extends Controller {
 
     const quantity = parseInt(this.quantityTarget.value) || 1
     // Nowa formuła: wysyłka + (ilość × cena_cegiełki)
-    const total = this.shippingCostValue + (quantity * this.brickPriceValue)
-    this.totalTarget.textContent = total
+    // Convert to numbers explicitly to handle BigDecimal scientific notation from Rails
+    const brickPrice = Number(this.brickPriceValue)
+    const shippingCost = Number(this.shippingCostValue)
+    const total = shippingCost + (quantity * brickPrice)
+
+    // Round to avoid floating point precision errors and format as integer
+    this.totalTarget.textContent = Math.round(total)
   }
 
   toggleGiftSection() {
