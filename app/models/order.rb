@@ -26,7 +26,14 @@ class Order < ApplicationRecord
   def confirm!
     transaction do
       update!(status: :confirmed, confirmed_at: Time.current)
-      # Will be implemented in Phase 4: Apaczka::CreateShipmentJob.perform_later(self)
+
+      # Create shipment if it doesn't exist yet
+      if shipment.nil?
+        Shipment.create!(
+          order: self,
+          status: "pending"
+        )
+      end
     end
   end
 
