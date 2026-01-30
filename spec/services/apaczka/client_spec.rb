@@ -17,6 +17,7 @@ RSpec.describe Apaczka::Client do
     # Mock credentials
     allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :app_id).and_return('test_app_id')
     allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :app_secret).and_return('test_secret')
+    allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :sandbox).and_return(false)
     allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :sender).and_return(nil)
   end
 

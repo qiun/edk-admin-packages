@@ -2,16 +2,17 @@ require "faraday"
 require "openssl"
 require "base64"
 require "json"
+require "digest"
 
 module Apaczka
   class Client
     BASE_URL = "https://www.apaczka.pl/api/v2"
 
     def initialize
-      @app_id = (ENV['APACZKA_APP_ID'] || Rails.application.credentials.dig(:apaczka, :app_id)).to_s.strip
-      @app_secret = (ENV['APACZKA_APP_SECRET'] || Rails.application.credentials.dig(:apaczka, :app_secret)).to_s.strip
-      @sandbox = ENV['APACZKA_SANDBOX'] == 'true' || Rails.application.credentials.dig(:apaczka, :sandbox)
-      
+      @app_id = (ENV["APACZKA_APP_ID"] || Rails.application.credentials.dig(:apaczka, :app_id)).to_s.strip
+      @app_secret = (ENV["APACZKA_APP_SECRET"] || Rails.application.credentials.dig(:apaczka, :app_secret)).to_s.strip
+      @sandbox = ENV["APACZKA_SANDBOX"] == "true" || Rails.application.credentials.dig(:apaczka, :sandbox)
+
       Rails.logger.info "aPaczka Client initialized with app_id: #{@app_id}, sandbox: #{@sandbox}"
       Rails.logger.info "aPaczka app_secret length: #{@app_secret.length}, first 8 chars: #{@app_secret[0..7]}, last 4 chars: #{@app_secret[-4..-1]}"
       Rails.logger.warn "aPaczka app_secret is missing!" if @app_secret.blank?
@@ -64,13 +65,13 @@ module Apaczka
 
       # Remove code prefix if present
       name_without_code = locker_name.sub(/^#{Regexp.escape(locker_code)}\s*-\s*/, "")
-      
+
       # Split by comma to separate address from "postal_code city"
       parts = name_without_code.split(",").map(&:strip)
       return { address: "", city: "", postal_code: "" } if parts.empty?
 
       address = parts[0] || ""
-      
+
       # Parse "88-220 Osięciny" into postal_code and city
       postal_and_city = parts[1]&.strip || ""
       if postal_and_city =~ /^(\d{2}-\d{3})\s+(.+)$/
@@ -133,10 +134,10 @@ module Apaczka
             foreign_address_id: source.locker_code,
             is_pickup_point: true
           ),
-          parcels: [{
+          parcels: [ {
             weight: calculate_weight(source.quantity),
             dimensions: package_dimensions
-          }],
+          } ],
           comment: "Pakiety EDK - #{source.quantity} szt."
         }
       }
@@ -166,11 +167,11 @@ module Apaczka
 
       Rails.logger.info "Response status: #{response.status}"
       Rails.logger.info "Response body: #{response.body}"
-      
+
       response_data = JSON.parse(response.body)
       Rails.logger.info "Parsed status: #{response_data['status']}"
       Rails.logger.info "=== End API POST ==="
-      
+
       response_data
     end
 
@@ -194,22 +195,29 @@ module Apaczka
       # IMPORTANT: route must NOT have leading/trailing slashes
       # Example: "order_send" not "/order_send/"
       route = endpoint.to_s.gsub(/^\/|\/$/,  "")
-      
+
+      # Log each component separately for detailed analysis
+      Rails.logger.info "=== Signature Component Analysis ==="
+      Rails.logger.info "App ID: '#{@app_id}' (#{@app_id.bytesize} bytes, encoding: #{@app_id.encoding})"
+      Rails.logger.info "Route: '#{route}' (#{route.bytesize} bytes)"
+      Rails.logger.info "Data: '#{data[0..100]}...' (#{data.bytesize} bytes, encoding: #{data.encoding})"
+      Rails.logger.info "Expires: '#{expires}' (class: #{expires.class})"
+
+      # Build string to sign
       string_to_sign = "#{@app_id}:#{route}:#{data}:#{expires}"
-      
-      Rails.logger.info "=== aPaczka Signature Debug ==="
-      Rails.logger.info "Route (normalized): #{route}"
-      Rails.logger.info "Expires: #{expires}"
-      Rails.logger.info "Data length: #{data.length} bytes"
-      Rails.logger.info "Data (first 300 chars): #{data[0..299]}"
-      Rails.logger.info "String to sign length: #{string_to_sign.length} bytes"
-      Rails.logger.info "String to sign (first 400 chars): #{string_to_sign[0..399]}"
-      Rails.logger.info "App secret length: #{@app_secret.length}, first 8: #{@app_secret[0..7]}, last 4: #{@app_secret[-4..-1]}"
-      
+
+      Rails.logger.info "String to sign: #{string_to_sign.bytesize} bytes"
+      Rails.logger.info "String encoding: #{string_to_sign.encoding}"
+      Rails.logger.info "First 200 bytes (hex): #{string_to_sign[0..199].bytes.map { |b| b.to_s(16).rjust(2, '0') }.join(' ')}"
+
+      # Log secret hash for verification (never log the actual secret!)
+      Rails.logger.info "App secret MD5 (for verification): #{Digest::MD5.hexdigest(@app_secret)}"
+
       signature = OpenSSL::HMAC.hexdigest("SHA256", @app_secret, string_to_sign)
+
       Rails.logger.info "Generated signature: #{signature}"
-      Rails.logger.info "=== End Debug ==="
-      
+      Rails.logger.info "=== End Component Analysis ==="
+
       signature
     end
 
