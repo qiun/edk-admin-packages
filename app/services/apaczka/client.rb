@@ -26,11 +26,13 @@ module Apaczka
       response = post("/order_send/", data)
 
       if response["status"] == 200
+        # Response structure: response["response"]["order"]["id"]
+        order_data = response["response"]["order"]
         {
           success: true,
-          order_id: response["response"]["id"],
-          waybill_number: response["response"]["waybill_number"],
-          tracking_url: response["response"]["tracking_url"]
+          order_id: order_data["id"],
+          waybill_number: order_data["waybill_number"],
+          tracking_url: order_data["tracking_url"]
         }
       else
         { success: false, error: response["message"] }
