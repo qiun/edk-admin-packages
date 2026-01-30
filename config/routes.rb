@@ -54,7 +54,11 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :donations, only: [ :index, :show ]
+      resources :donations, only: [ :index, :show ] do
+        member do
+          post :mark_as_paid
+        end
+      end
       resources :returns, only: [ :index, :show, :update ] do
         member do
           post :approve
