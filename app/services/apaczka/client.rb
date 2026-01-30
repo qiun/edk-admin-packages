@@ -92,14 +92,14 @@ module Apaczka
       receiver_data = if source.is_a?(Donation)
         {
           name: source.full_name,
-          phone: source.phone,
+          phone: format_phone(source.phone),
           email: source.email
         }
       else
         # Order object
         {
           name: source.user.full_name,
-          phone: source.user.phone,
+          phone: format_phone(source.user.phone),
           email: source.user.email
         }
       end
@@ -130,7 +130,7 @@ module Apaczka
             postal_code: sender_config[:post_code],
             city: sender_config[:city],
             email: sender_config[:email],
-            phone: sender_config[:phone]
+            phone: format_phone(sender_config[:phone])
           },
           receiver: {
             country_code: "PL",
@@ -260,6 +260,13 @@ module Apaczka
     def package_dimensions
       # InPost Paczkomat Size B: 19x38x64 cm (standard size)
       { length: 19, width: 38, height: 64 }
+    end
+
+    def format_phone(phone)
+      # aPaczka expects phone in format: +48XXXXXXXXX
+      digits = phone.to_s.gsub(/\D/, "")
+      digits = digits.sub(/^48/, "") if digits.start_with?("48")
+      "+48#{digits[-9..-1]}"
     end
   end
 end
