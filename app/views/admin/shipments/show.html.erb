@@ -117,6 +117,7 @@
 
     <!-- Delivery Address -->
     <% if @shipment.order.present? %>
+      <% locker_info = parse_locker_info(@shipment.order) %>
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Adres dostawy (Paczkomat)</h2>
         <dl class="space-y-3">
@@ -130,15 +131,16 @@
           </div>
           <div>
             <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Adres</dt>
-            <dd class="text-sm text-gray-900 dark:text-white"><%= @shipment.order.locker_address %></dd>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= locker_info[:address] %></dd>
           </div>
           <div>
             <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Miasto</dt>
-            <dd class="text-sm text-gray-900 dark:text-white"><%= @shipment.order.locker_post_code %> <%= @shipment.order.locker_city %></dd>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= locker_info[:postal_code] %> <%= locker_info[:city] %></dd>
           </div>
         </dl>
       </div>
     <% elsif @shipment.donation.present? && @shipment.donation.locker_code.present? %>
+      <% locker_info = parse_locker_info(@shipment.donation) %>
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Paczkomat InPost</h2>
         <dl class="grid grid-cols-1 gap-4">
@@ -152,18 +154,18 @@
           </div>
           <div>
             <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Adres</dt>
-            <dd class="text-sm text-gray-900 dark:text-white"><%= @shipment.donation.locker_address %></dd>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= locker_info[:address] %></dd>
           </div>
           <div>
             <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Miasto</dt>
-            <dd class="text-sm text-gray-900 dark:text-white"><%= @shipment.donation.locker_post_code %> <%= @shipment.donation.locker_city %></dd>
+            <dd class="text-sm text-gray-900 dark:text-white"><%= locker_info[:postal_code] %> <%= locker_info[:city] %></dd>
           </div>
         </dl>
       </div>
     <% end %>
 
     <!-- Tracking Information -->
-    <% if @shipment.tracking_url.present? || @shipment.label_pdf.present? %>
+    <% if @shipment.tracking_url.present? || @shipment.label_pdf.present? || @shipment.apaczka_order_id.present? %>
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Śledzenie i dokumenty</h2>
         <div class="space-y-3">
@@ -172,6 +174,19 @@
               <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">Link do śledzenia</dt>
               <dd>
                 <%= link_to @shipment.tracking_url, @shipment.tracking_url, target: "_blank", class: "text-sm text-brand-500 hover:text-brand-600 break-all" %>
+              </dd>
+            </div>
+          <% end %>
+          <% if @shipment.apaczka_order_id.present? %>
+            <div>
+              <dt class="text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">List przewozowy</dt>
+              <dd>
+                <%= link_to download_waybill_admin_shipment_path(@shipment), class: "inline-flex items-center text-sm text-brand-500 hover:text-brand-600" do %>
+                  <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                  </svg>
+                  Pobierz list przewozowy (PDF)
+                <% end %>
               </dd>
             </div>
           <% end %>

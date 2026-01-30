@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       resources :shipments, only: [ :index, :show ] do
         member do
           post :refresh_status
+          get :download_waybill
         end
       end
 
