@@ -2,6 +2,7 @@ module Public
   class WebhooksController < ApplicationController
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate_user!, raise: false
+    skip_before_action :allow_browser, only: [:przelewy24]
 
     def przelewy24
       Rails.logger.info "Przelewy24 webhook received: #{webhook_params.to_json}"
