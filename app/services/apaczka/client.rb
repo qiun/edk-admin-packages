@@ -8,11 +8,12 @@ module Apaczka
     BASE_URL = "https://www.apaczka.pl/api/v2"
 
     def initialize
-      @app_id = ENV['APACZKA_APP_ID'] || Rails.application.credentials.dig(:apaczka, :app_id)
-      @app_secret = ENV['APACZKA_APP_SECRET'] || Rails.application.credentials.dig(:apaczka, :app_secret)
+      @app_id = (ENV['APACZKA_APP_ID'] || Rails.application.credentials.dig(:apaczka, :app_id)).to_s.strip
+      @app_secret = (ENV['APACZKA_APP_SECRET'] || Rails.application.credentials.dig(:apaczka, :app_secret)).to_s.strip
       @sandbox = ENV['APACZKA_SANDBOX'] == 'true' || Rails.application.credentials.dig(:apaczka, :sandbox)
       
       Rails.logger.info "aPaczka Client initialized with app_id: #{@app_id}, sandbox: #{@sandbox}"
+      Rails.logger.info "aPaczka app_secret length: #{@app_secret.length}, first 8 chars: #{@app_secret[0..7]}, last 4 chars: #{@app_secret[-4..-1]}"
       Rails.logger.warn "aPaczka app_secret is missing!" if @app_secret.blank?
       Rails.logger.warn "aPaczka app_id is missing!" if @app_id.blank?
     end
@@ -146,25 +147,29 @@ module Apaczka
       request_json = data.to_json
       signature = generate_signature(endpoint, request_json, expires)
 
-      Rails.logger.info "aPaczka API POST to #{endpoint}"
-      Rails.logger.info "aPaczka app_id: #{@app_id}"
-      Rails.logger.info "aPaczka expires: #{expires}"
-      Rails.logger.info "aPaczka request data: #{request_json[0..500]}"
-      Rails.logger.info "aPaczka signature: #{signature}"
+      form_params = {
+        app_id: @app_id,
+        request: request_json,
+        expires: expires,
+        signature: signature
+      }
+
+      Rails.logger.info "=== aPaczka API POST ==="
+      Rails.logger.info "Endpoint: #{BASE_URL}#{endpoint}"
+      Rails.logger.info "Form params: app_id=#{form_params[:app_id]}, expires=#{form_params[:expires]}, signature=#{form_params[:signature]}"
+      Rails.logger.info "Request JSON length: #{request_json.length} bytes"
 
       response = Faraday.post("#{BASE_URL}#{endpoint}") do |req|
         req.headers["Content-Type"] = "application/x-www-form-urlencoded"
-        req.body = URI.encode_www_form({
-          app_id: @app_id,
-          request: request_json,
-          expires: expires,
-          signature: signature
-        })
+        req.body = URI.encode_www_form(form_params)
       end
 
+      Rails.logger.info "Response status: #{response.status}"
+      Rails.logger.info "Response body: #{response.body}"
+      
       response_data = JSON.parse(response.body)
-      Rails.logger.info "aPaczka API response status: #{response_data['status']}"
-      Rails.logger.info "aPaczka API response: #{response.body[0..500]}"
+      Rails.logger.info "Parsed status: #{response_data['status']}"
+      Rails.logger.info "=== End API POST ==="
       
       response_data
     end
@@ -191,11 +196,20 @@ module Apaczka
       route = endpoint.to_s.gsub(/^\/|\/$/,  "")
       
       string_to_sign = "#{@app_id}:#{route}:#{data}:#{expires}"
-      Rails.logger.info "aPaczka route (normalized): #{route}"
-      Rails.logger.info "aPaczka string_to_sign (first 200 chars): #{string_to_sign[0..200]}"
-      Rails.logger.info "aPaczka app_secret present: #{@app_secret.present?}"
+      
+      Rails.logger.info "=== aPaczka Signature Debug ==="
+      Rails.logger.info "Route (normalized): #{route}"
+      Rails.logger.info "Expires: #{expires}"
+      Rails.logger.info "Data length: #{data.length} bytes"
+      Rails.logger.info "Data (first 300 chars): #{data[0..299]}"
+      Rails.logger.info "String to sign length: #{string_to_sign.length} bytes"
+      Rails.logger.info "String to sign (first 400 chars): #{string_to_sign[0..399]}"
+      Rails.logger.info "App secret length: #{@app_secret.length}, first 8: #{@app_secret[0..7]}, last 4: #{@app_secret[-4..-1]}"
+      
       signature = OpenSSL::HMAC.hexdigest("SHA256", @app_secret, string_to_sign)
-      Rails.logger.info "aPaczka generated signature: #{signature}"
+      Rails.logger.info "Generated signature: #{signature}"
+      Rails.logger.info "=== End Debug ==="
+      
       signature
     end
 
