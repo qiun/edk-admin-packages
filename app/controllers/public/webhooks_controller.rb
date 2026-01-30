@@ -4,11 +4,13 @@ module Public
 
     def przelewy24
       Rails.logger.info "Przelewy24 webhook received: #{webhook_params.to_json}"
+      Rails.logger.debug "Received signature: #{webhook_params[:sign]}"
 
       # Verify webhook signature
       client = przelewy24_client
       unless client.verify_notification_signature(webhook_params)
         Rails.logger.error "Przelewy24 webhook signature verification failed"
+        Rails.logger.error "Received sign: #{webhook_params[:sign]}"
         render json: { status: "ERROR", message: "Invalid signature" }, status: :unauthorized
         return
       end

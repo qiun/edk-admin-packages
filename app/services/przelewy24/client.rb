@@ -148,15 +148,22 @@ module Przelewy24
     # Generate CRC signature for webhook notification verification
     # Format: {"sessionId":"{SessionId}","orderId":{OrderId},"amount":{Amount}","currency":"{Currency}","crc":{CRC}}
     def generate_notification_sign(params)
+      # Convert to hash with symbol keys to ensure consistent access
+      params_hash = params.respond_to?(:to_h) ? params.to_h.symbolize_keys : params
+
       json_string = {
-        sessionId: params[:sessionId],
-        orderId: params[:orderId].to_i,
-        amount: params[:amount].to_i,
-        currency: params[:currency] || "PLN",
+        sessionId: params_hash[:sessionId],
+        orderId: params_hash[:orderId].to_i,
+        amount: params_hash[:amount].to_i,
+        currency: params_hash[:currency] || "PLN",
         crc: crc_key
       }.to_json
 
-      Digest::SHA384.hexdigest(json_string)
+      Rails.logger.debug "Przelewy24 signature JSON: #{json_string}"
+      generated_sign = Digest::SHA384.hexdigest(json_string)
+      Rails.logger.debug "Przelewy24 generated signature: #{generated_sign}"
+
+      generated_sign
     end
 
     class Error < StandardError; end
