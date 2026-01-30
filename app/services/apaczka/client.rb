@@ -11,6 +11,10 @@ module Apaczka
       @app_id = ENV['APACZKA_APP_ID'] || Rails.application.credentials.dig(:apaczka, :app_id)
       @app_secret = ENV['APACZKA_APP_SECRET'] || Rails.application.credentials.dig(:apaczka, :app_secret)
       @sandbox = ENV['APACZKA_SANDBOX'] == 'true' || Rails.application.credentials.dig(:apaczka, :sandbox)
+      
+      Rails.logger.info "aPaczka Client initialized with app_id: #{@app_id}, sandbox: #{@sandbox}"
+      Rails.logger.warn "aPaczka app_secret is missing!" if @app_secret.blank?
+      Rails.logger.warn "aPaczka app_id is missing!" if @app_id.blank?
     end
 
     def create_shipment(order)
@@ -101,6 +105,12 @@ module Apaczka
       request_json = data.to_json
       signature = generate_signature(endpoint, request_json, expires)
 
+      Rails.logger.info "aPaczka API POST to #{endpoint}"
+      Rails.logger.info "aPaczka app_id: #{@app_id}"
+      Rails.logger.info "aPaczka expires: #{expires}"
+      Rails.logger.info "aPaczka request data: #{request_json[0..500]}"
+      Rails.logger.info "aPaczka signature: #{signature}"
+
       response = Faraday.post("#{BASE_URL}#{endpoint}") do |req|
         req.headers["Content-Type"] = "application/x-www-form-urlencoded"
         req.body = URI.encode_www_form({
@@ -111,7 +121,11 @@ module Apaczka
         })
       end
 
-      JSON.parse(response.body)
+      response_data = JSON.parse(response.body)
+      Rails.logger.info "aPaczka API response status: #{response_data['status']}"
+      Rails.logger.info "aPaczka API response: #{response.body[0..500]}"
+      
+      response_data
     end
 
     def get(endpoint)
@@ -132,7 +146,11 @@ module Apaczka
     def generate_signature(endpoint, data, expires)
       # Per aPaczka API documentation: "app_id:route:data:expires"
       string_to_sign = "#{@app_id}:#{endpoint}:#{data}:#{expires}"
-      OpenSSL::HMAC.hexdigest("SHA256", @app_secret, string_to_sign)
+      Rails.logger.info "aPaczka string_to_sign (first 200 chars): #{string_to_sign[0..200]}"
+      Rails.logger.info "aPaczka app_secret present: #{@app_secret.present?}"
+      signature = OpenSSL::HMAC.hexdigest("SHA256", @app_secret, string_to_sign)
+      Rails.logger.info "aPaczka generated signature: #{signature}"
+      signature
     end
 
     def sender_config
