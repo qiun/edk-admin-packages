@@ -60,7 +60,7 @@ Rails.application.configure do
 
   # Set production domain for links generated in mailer templates
   config.action_mailer.default_url_options = {
-    host: ENV.fetch("APP_URL", "https://pakiety.edk.org.pl").gsub("https://", "").gsub("http://", "")
+    host: ENV.fetch("APP_URL", "https://wspieram.edk.org.pl").gsub("https://", "").gsub("http://", "")
   }
 
   # Microsoft 365 / Outlook SMTP Configuration
