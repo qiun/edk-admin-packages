@@ -52,12 +52,12 @@ module Apaczka
     private
 
     def build_order_data(source)
-      # Support both Order and Shipment objects
-      receiver_data = if source.is_a?(Shipment)
+      # Support both Order and Donation objects
+      receiver_data = if source.is_a?(Donation)
         {
-          name: source.recipient_name,
-          phone: source.recipient_phone,
-          email: source.recipient_email
+          name: source.full_name,
+          phone: source.phone,
+          email: source.email
         }
       else
         # Order object
