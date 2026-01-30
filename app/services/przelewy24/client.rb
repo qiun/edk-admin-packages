@@ -154,18 +154,19 @@ module Przelewy24
       # Convert to hash with symbol keys to ensure consistent access
       params_hash = params.respond_to?(:to_h) ? params.to_h.symbolize_keys : params
 
+      # Build hash with alphabetically sorted keys (Ruby preserves insertion order)
       sign_data = {
-        "sessionId" => params_hash[:sessionId],
-        "orderId" => params_hash[:orderId].to_i,
         "amount" => params_hash[:amount].to_i,
+        "crc" => crc_key,
         "currency" => params_hash[:currency] || "PLN",
-        "crc" => crc_key
+        "orderId" => params_hash[:orderId].to_i,
+        "sessionId" => params_hash[:sessionId]
       }
 
       # Use JSON.generate to avoid escaping slashes (equivalent to PHP JSON_UNESCAPED_SLASHES)
       json_string = JSON.generate(sign_data)
 
-      Rails.logger.info "Przelewy24 signature JSON: #{json_string}"
+      Rails.logger.info "Przelewy24 signature JSON (alphabetical): #{json_string}"
       generated_sign = Digest::SHA384.hexdigest(json_string)
       Rails.logger.info "Przelewy24 generated signature: #{generated_sign}"
 
