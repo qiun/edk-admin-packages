@@ -40,24 +40,27 @@ module Apaczka
     end
 
     def get_waybill(order_id)
-      response = get("/waybill/#{order_id}/")
+  # aPaczka API v2 uses POST for all endpoints, not GET
+  # Request parameter should be empty array for waybill retrieval
+  response = post("/waybill/#{order_id}/", {})
 
-      if response["status"] == 200
-        Base64.decode64(response["response"]["waybill"])
-      else
-        nil
-      end
-    end
+  if response["status"] == 200
+    Base64.decode64(response["response"]["waybill"])
+  else
+    nil
+  end
+end
 
     def get_order_status(order_id)
-      response = get("/order/#{order_id}/")
+  # aPaczka API v2 uses POST for all endpoints, not GET
+  response = post("/order/#{order_id}/", {})
 
-      if response["status"] == 200
-        response["response"]["status"]
-      else
-        nil
-      end
-    end
+  if response["status"] == 200
+    response["response"]["status"]
+  else
+    nil
+  end
+end
 
     private
 
@@ -189,34 +192,6 @@ module Apaczka
       response_data = JSON.parse(response.body)
       Rails.logger.info "Parsed status: #{response_data['status']}"
       Rails.logger.info "=== End API POST ==="
-
-      response_data
-    end
-
-    def get(endpoint)
-      expires = 30.minutes.from_now.to_i
-      signature = generate_signature(endpoint, "", expires)
-
-      params = {
-        app_id: @app_id,
-        expires: expires,
-        signature: signature
-      }
-
-      Rails.logger.info "=== aPaczka API GET ==="
-      Rails.logger.info "Endpoint: #{BASE_URL}#{endpoint}"
-      Rails.logger.info "Params: #{params.inspect}"
-
-      response = Faraday.get("#{BASE_URL}#{endpoint}", params)
-
-      full_url = response.env.url.to_s
-      Rails.logger.info "Full URL requested: #{full_url}"
-      Rails.logger.info "Response status: #{response.status}"
-      Rails.logger.info "Response body: #{response.body}"
-
-      response_data = JSON.parse(response.body)
-      Rails.logger.info "Parsed status: #{response_data['status']}"
-      Rails.logger.info "=== End API GET ==="
 
       response_data
     end
