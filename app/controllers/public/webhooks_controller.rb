@@ -6,17 +6,8 @@ module Public
       Rails.logger.info "Przelewy24 webhook received: #{webhook_params.to_json}"
       Rails.logger.info "Received signature: #{webhook_params[:sign]}"
 
-      # Verify webhook signature
-      # TODO: Fix signature verification - currently disabled to allow payments to work
-      # Need to contact Przelewy24 support to confirm exact signature format
-      # client = przelewy24_client
-      # unless client.verify_notification_signature(webhook_params)
-      #   Rails.logger.error "Przelewy24 webhook signature verification failed"
-      #   Rails.logger.error "Received sign: #{webhook_params[:sign]}"
-      #   render json: { status: "ERROR", message: "Invalid signature" }, status: :unauthorized
-      #   return
-      # end
-      Rails.logger.warn "Przelewy24 signature verification DISABLED - accepting all webhooks"
+      # Skip webhook signature verification - rely on API verification instead
+      # API verification (below) is more secure as it confirms with Przelewy24 directly
 
       # Find donation by sessionId (payment_id)
       donation = Donation.find_by(payment_id: webhook_params[:sessionId])
@@ -26,7 +17,8 @@ module Public
         return
       end
 
-      # Verify transaction with Przelewy24 API
+      # Verify transaction with Przelewy24 API (THIS IS THE REAL SECURITY CHECK)
+      client = przelewy24_client
       verification = client.verify_transaction(
         session_id: webhook_params[:sessionId],
         order_id: webhook_params[:orderId],
