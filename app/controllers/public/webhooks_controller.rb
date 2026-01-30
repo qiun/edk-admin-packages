@@ -4,7 +4,7 @@ module Public
 
     def przelewy24
       Rails.logger.info "Przelewy24 webhook received: #{webhook_params.to_json}"
-      Rails.logger.debug "Received signature: #{webhook_params[:sign]}"
+      Rails.logger.info "Received signature: #{webhook_params[:sign]}"
 
       # Verify webhook signature
       client = przelewy24_client

@@ -165,9 +165,9 @@ module Przelewy24
       # Use JSON.generate to avoid escaping slashes (equivalent to PHP JSON_UNESCAPED_SLASHES)
       json_string = JSON.generate(sign_data)
 
-      Rails.logger.debug "Przelewy24 signature JSON: #{json_string}"
+      Rails.logger.info "Przelewy24 signature JSON: #{json_string}"
       generated_sign = Digest::SHA384.hexdigest(json_string)
-      Rails.logger.debug "Przelewy24 generated signature: #{generated_sign}"
+      Rails.logger.info "Przelewy24 generated signature: #{generated_sign}"
 
       generated_sign
     end
