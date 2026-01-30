@@ -162,6 +162,176 @@
     </div>
   </div>
 
+  <!-- Package Dimensions -->
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+        Gabaryty paczek dla liderów okręgowych
+      </h3>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Wymiary i maksymalna waga paczek wysyłanych do liderów (duże kartony)
+      </p>
+    </div>
+    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div>
+          <%= f.label :order_package_length, "Długość (cm)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :order_package_length,
+              min: 0,
+              step: 0.1,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "41.0",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              cm
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :order_package_width, "Szerokość (cm)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :order_package_width,
+              min: 0,
+              step: 0.1,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "38.0",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              cm
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :order_package_height, "Wysokość (cm)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :order_package_height,
+              min: 0,
+              step: 0.1,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "64.0",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              cm
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <%= f.label :order_package_max_weight, "Maksymalna waga (kg)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :order_package_max_weight,
+              min: 0,
+              step: 0.01,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "30.00",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              kg
+            </span>
+          </div>
+          <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+            Maksymalna waga pojedynczej paczki do InPost Paczkomat
+          </p>
+        </div>
+      </div>
+
+      <!-- Dimensions Info -->
+      <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+        <h4 class="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">💡 Informacja:</h4>
+        <div class="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+          <p><strong>InPost Paczkomat Size C:</strong> 41×38×64 cm (domyślne dla liderów)</p>
+          <p><strong>InPost Paczkomat Size B:</strong> 19×38×64 cm (używane dla cegiełek)</p>
+          <p><strong>Limit wagi InPost:</strong> do 25 kg (Size C)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Donation Package Dimensions -->
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+        Gabaryty paczek dla cegiełek
+      </h3>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Wymiary i maksymalna waga paczek wysyłanych do darczyńców (małe paczuszki)
+      </p>
+    </div>
+    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div>
+          <%= f.label :donation_package_length, "Długość (cm)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :donation_package_length,
+              min: 0,
+              step: 0.1,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "19.0",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              cm
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :donation_package_width, "Szerokość (cm)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :donation_package_width,
+              min: 0,
+              step: 0.1,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "38.0",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              cm
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :donation_package_height, "Wysokość (cm)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :donation_package_height,
+              min: 0,
+              step: 0.1,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "64.0",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              cm
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <%= f.label :donation_package_max_weight, "Maksymalna waga (kg)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :donation_package_max_weight,
+              min: 0,
+              step: 0.01,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "25.00",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              kg
+            </span>
+          </div>
+          <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+            Maksymalna waga pojedynczej paczki dla cegiełek
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Form Actions -->
   <div class="flex justify-end gap-3">
     <%= link_to "Anuluj",

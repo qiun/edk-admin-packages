@@ -122,7 +122,7 @@ end
 
       Rails.logger.info "aPaczka locker info: #{locker_info.inspect}"
 
-      dims = package_dimensions
+      dims = package_dimensions(source)
 
       # Structure according to aPaczka API v2 documentation
       {
@@ -155,7 +155,7 @@ end
           hours_to: "17:00"
         },
         shipment: [ {
-          weight: calculate_weight(source.quantity),
+          weight: calculate_weight(source.quantity, source),
           dimension1: dims[:length],
           dimension2: dims[:width],
           dimension3: dims[:height]
@@ -242,14 +242,44 @@ end
       }
     end
 
-    def calculate_weight(quantity)
-      # 1 pakiet ~ 150g, karton ~500g
-      ((quantity * 0.15) + 0.5).round(2)
+    def calculate_weight(quantity, source)
+      if source.is_a?(Order)
+        # Dla liderów okręgowych - duże kartony
+        # Zakładamy ~300g na pakiet + karton ~2kg
+        # Limit wagi z edition
+        edition = source.edition
+        max_weight = edition&.order_package_max_weight || 30.0
+        weight = ((quantity * 0.3) + 2.0).round(2)
+        [ weight, max_weight ].min
+      else
+        # Dla cegiełek - małe paczuszki
+        # 1 pakiet ~ 150g, karton ~500g
+        # Limit wagi z edition
+        edition = source.edition
+        max_weight = edition&.donation_package_max_weight || 1.0
+        weight = ((quantity * 0.15) + 0.5).round(2)
+        [ weight, max_weight ].min
+      end
     end
 
-    def package_dimensions
-      # InPost Paczkomat Size B: 19x38x64 cm (standard size)
-      { length: 19, width: 38, height: 64 }
+    def package_dimensions(source)
+      if source.is_a?(Order)
+        # Dla liderów okręgowych - wymiary z edition
+        edition = source.edition
+        {
+          length: (edition&.order_package_length || 41).to_i,
+          width: (edition&.order_package_width || 38).to_i,
+          height: (edition&.order_package_height || 64).to_i
+        }
+      else
+        # Dla cegiełek - wymiary z edition
+        edition = source.edition
+        {
+          length: (edition&.donation_package_length || 19).to_i,
+          width: (edition&.donation_package_width || 38).to_i,
+          height: (edition&.donation_package_height || 64).to_i
+        }
+      end
     end
 
     def format_phone(phone)

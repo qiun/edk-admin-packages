@@ -19,6 +19,14 @@ class Edition < ApplicationRecord
   validates :donor_brick_price, presence: true, numericality: { greater_than: 0 }
   validates :donor_shipping_cost, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :status, presence: true, inclusion: { in: statuses.keys }
+  validates :order_package_length, presence: true, numericality: { greater_than: 0 }
+  validates :order_package_width, presence: true, numericality: { greater_than: 0 }
+  validates :order_package_height, presence: true, numericality: { greater_than: 0 }
+  validates :order_package_max_weight, presence: true, numericality: { greater_than: 0 }
+  validates :donation_package_length, presence: true, numericality: { greater_than: 0 }
+  validates :donation_package_width, presence: true, numericality: { greater_than: 0 }
+  validates :donation_package_height, presence: true, numericality: { greater_than: 0 }
+  validates :donation_package_max_weight, presence: true, numericality: { greater_than: 0 }
 
   validate :only_one_active_edition
 
