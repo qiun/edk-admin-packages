@@ -55,6 +55,34 @@ module Apaczka
 
     private
 
+
+    def parse_locker_info(locker_name, locker_code)
+      # Format: "CODE - Address, POSTAL_CODE City"
+      # Example: "OSC01M - Rataja 9, 88-220 Osięciny"
+      return { address: "", city: "", postal_code: "" } if locker_name.blank?
+
+      # Remove code prefix if present
+      name_without_code = locker_name.sub(/^#{Regexp.escape(locker_code)}\s*-\s*/, "")
+      
+      # Split by comma to separate address from "postal_code city"
+      parts = name_without_code.split(",").map(&:strip)
+      return { address: "", city: "", postal_code: "" } if parts.empty?
+
+      address = parts[0] || ""
+      
+      # Parse "88-220 Osięciny" into postal_code and city
+      postal_and_city = parts[1]&.strip || ""
+      if postal_and_city =~ /^(\d{2}-\d{3})\s+(.+)$/
+        postal_code = $1
+        city = $2
+      else
+        postal_code = ""
+        city = postal_and_city
+      end
+
+      { address: address, city: city, postal_code: postal_code }
+    end
+
     def build_order_data(source)
       # Support both Order and Donation objects
       receiver_data = if source.is_a?(Donation)
@@ -72,6 +100,19 @@ module Apaczka
         }
       end
 
+      # Parse locker info if fields are empty
+      locker_info = if source.locker_address.blank? && source.locker_name.present?
+        parse_locker_info(source.locker_name, source.locker_code)
+      else
+        {
+          address: source.locker_address,
+          city: source.locker_city,
+          postal_code: source.locker_post_code
+        }
+      end
+
+      Rails.logger.info "aPaczka locker info: #{locker_info.inspect}"
+
       {
         order: {
           service_id: "INPOST_COURIER_POINT",
@@ -85,9 +126,9 @@ module Apaczka
             sender_email: sender_config[:email]
           },
           receiver: receiver_data.merge(
-            address: source.locker_address,
-            city: source.locker_city,
-            postal_code: source.locker_post_code,
+            address: locker_info[:address],
+            city: locker_info[:city],
+            postal_code: locker_info[:postal_code],
             foreign_address_id: source.locker_code,
             is_pickup_point: true
           ),
