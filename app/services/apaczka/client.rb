@@ -117,7 +117,7 @@ module Apaczka
 
       {
         order: {
-          service_id: "INPOST_COURIER_POINT",
+          service_id: 41,  # InPost Paczkomat (door_to_point + point_to_point)
           pickup: {
             type: "SELF",
             sender_name: sender_config[:name],
