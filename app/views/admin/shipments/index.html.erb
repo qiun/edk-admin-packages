@@ -76,6 +76,9 @@
                 <% if shipment.tracking_url.present? %>
                   <%= link_to "Śledź", shipment.tracking_url, target: "_blank", class: "text-purple-600 hover:text-purple-700" %>
                 <% end %>
+                <% if shipment.apaczka_order_id.present? && %w[label_printed shipped in_transit delivered].include?(shipment.status) %>
+                  <%= link_to "Etykieta", download_waybill_admin_shipment_path(shipment), class: "text-green-600 hover:text-green-700" %>
+                <% end %>
               </td>
             </tr>
           <% end %>
