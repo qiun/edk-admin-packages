@@ -7,6 +7,14 @@ module Admin
                            .order(created_at: :desc)
 
       @shipments = @shipments.where(status: params[:status]) if params[:status].present?
+
+      # Filter by type (order or donation)
+      case params[:type]
+      when "order"
+        @shipments = @shipments.for_orders
+      when "donation"
+        @shipments = @shipments.for_donations
+      end
     end
 
     def show

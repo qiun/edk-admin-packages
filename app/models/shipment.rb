@@ -15,6 +15,8 @@ class Shipment < ApplicationRecord
   validate :must_have_order_or_donation
 
   scope :recent, -> { order(created_at: :desc) }
+  scope :for_orders, -> { where.not(order_id: nil) }
+  scope :for_donations, -> { where.not(donation_id: nil) }
 
   # Enqueue aPaczka job after record is committed to database
   # This prevents race condition where job runs before transaction commits
