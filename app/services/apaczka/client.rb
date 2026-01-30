@@ -20,7 +20,9 @@ module Apaczka
     end
 
     def create_shipment(order)
-      data = build_order_data(order)
+      order_data = build_order_data(order)
+      # Wrap in 'order' key as required by API
+      data = { order: order_data }
       response = post("/order_send/", data)
 
       if response["status"] == 200
@@ -115,31 +117,45 @@ module Apaczka
 
       Rails.logger.info "aPaczka locker info: #{locker_info.inspect}"
 
+      dims = package_dimensions
+
+      # Structure according to aPaczka API v2 documentation
       {
-        order: {
-          service_id: 41,  # InPost Paczkomat (door_to_point + point_to_point)
-          pickup: {
-            type: "SELF",
-            sender_name: sender_config[:name],
-            sender_address: sender_config[:street],
-            sender_city: sender_config[:city],
-            sender_postal_code: sender_config[:post_code],
-            sender_phone: sender_config[:phone],
-            sender_email: sender_config[:email]
+        service_id: 41,  # InPost Paczkomat (door_to_point + point_to_point)
+        address: {
+          sender: {
+            country_code: "PL",
+            name: sender_config[:name],
+            line1: sender_config[:street],
+            postal_code: sender_config[:post_code],
+            city: sender_config[:city],
+            email: sender_config[:email],
+            phone: sender_config[:phone]
           },
-          receiver: receiver_data.merge(
-            address: locker_info[:address],
-            city: locker_info[:city],
+          receiver: {
+            country_code: "PL",
+            name: receiver_data[:name],
+            line1: locker_info[:address],
             postal_code: locker_info[:postal_code],
-            foreign_address_id: source.locker_code,
-            is_pickup_point: true
-          ),
-          parcels: [ {
-            weight: calculate_weight(source.quantity),
-            dimensions: package_dimensions
-          } ],
-          comment: "Pakiety EDK - #{source.quantity} szt."
-        }
+            city: locker_info[:city],
+            email: receiver_data[:email],
+            phone: receiver_data[:phone],
+            foreign_address_id: source.locker_code
+          }
+        },
+        pickup: {
+          type: "SELF",
+          date: Date.today.strftime("%Y-%m-%d"),
+          hours_from: "09:00",
+          hours_to: "17:00"
+        },
+        shipment: [ {
+          weight: calculate_weight(source.quantity),
+          dimension1: dims[:length],
+          dimension2: dims[:width],
+          dimension3: dims[:height]
+        } ],
+        content: "Pakiety EDK - #{source.quantity} szt."
       }
     end
 
@@ -242,8 +258,8 @@ module Apaczka
     end
 
     def package_dimensions
-      # Karton na 150 pakietów: 40x30x25 cm
-      { length: 40, width: 30, height: 25 }
+      # InPost Paczkomat Size B: 19x38x64 cm (standard size)
+      { length: 19, width: 38, height: 64 }
     end
   end
 end
