@@ -72,7 +72,7 @@ module Przelewy24
         sign: generate_verify_sign(params)
       }
 
-      response = http_post("/api/v1/transaction/verify", verify_data)
+      response = http_put("/api/v1/transaction/verify", verify_data)
 
       {
         success: response.dig("data", "status") == "success",
@@ -107,8 +107,47 @@ module Przelewy24
       request.basic_auth(pos_id.to_s, api_key)
       request.body = data.to_json
 
+      Rails.logger.info "Przelewy24 API POST #{uri} with data: #{data.inspect}"
+      
       response = http.request(request)
+      
+      Rails.logger.info "Przelewy24 API response status: #{response.code}"
+      Rails.logger.info "Przelewy24 API response body: #{response.body[0..500]}" # Log first 500 chars
+      
       JSON.parse(response.body)
+    rescue JSON::ParserError => e
+      Rails.logger.error "Przelewy24 API returned non-JSON response: #{response.body[0..1000]}"
+      raise Error, "API returned invalid response (expected JSON, got HTML). Check API credentials and endpoint."
+    rescue StandardError => e
+      raise Error, "HTTP request failed: #{e.message}"
+    end
+
+    def http_put(endpoint, data)
+      uri = URI.parse("#{base_url}#{endpoint}")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+
+      # TEMPORARY: Skip SSL verification for both sandbox and production during development
+      # TODO: Fix SSL certificate verification for production deployment
+      # IMPORTANT: In production deployment, always verify SSL certificates!
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      request = Net::HTTP::Put.new(uri.request_uri)
+      request["Content-Type"] = "application/json"
+      request.basic_auth(pos_id.to_s, api_key)
+      request.body = data.to_json
+
+      Rails.logger.info "Przelewy24 API PUT #{uri} with data: #{data.inspect}"
+      
+      response = http.request(request)
+      
+      Rails.logger.info "Przelewy24 API response status: #{response.code}"
+      Rails.logger.info "Przelewy24 API response body: #{response.body[0..500]}" # Log first 500 chars
+      
+      JSON.parse(response.body)
+    rescue JSON::ParserError => e
+      Rails.logger.error "Przelewy24 API returned non-JSON response: #{response.body[0..1000]}"
+      raise Error, "API returned invalid response (expected JSON, got HTML). Check API credentials and endpoint."
     rescue StandardError => e
       raise Error, "HTTP request failed: #{e.message}"
     end
