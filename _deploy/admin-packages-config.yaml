@@ -20,7 +20,7 @@ data:
   PRZELEWY24_STATUS_URL: "https://wspieram.edk.org.pl/webhooks/przelewy24"
   
   # aPaczka Configuration (non-sensitive)
-  APACZKA_APP_ID: "2181643_jccCuhw4YdXu6fNnPdOkiPfO"
+  APACZKA_APP_ID: "1924897_5GkLmyke1mmfHjvGbQeB1Uf3"
   APACZKA_SANDBOX: "false"
   
   # Email Configuration (non-sensitive)
