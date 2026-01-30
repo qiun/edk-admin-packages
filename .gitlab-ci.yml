@@ -7,6 +7,10 @@ stages:
 docker-web:
   image: docker:stable
   stage: docker
+  before_script:
+    - apk add --no-cache git
+    - git clean -ffdx
+    - git reset --hard HEAD
   script:
     - ls
     - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.investimetric.io
