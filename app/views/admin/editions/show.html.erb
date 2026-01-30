@@ -39,8 +39,12 @@
           <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= number_to_currency(@edition.default_price, unit: "zł", format: "%n %u") %></dd>
         </div>
         <div class="flex justify-between">
-          <dt class="text-sm text-gray-500 dark:text-gray-400">Cena dla darczyńców</dt>
-          <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= number_to_currency(@edition.donor_price, unit: "zł", format: "%n %u") %></dd>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Cena cegiełki dla darczyńców</dt>
+          <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= number_to_currency(@edition.donor_brick_price, unit: "zł", format: "%n %u") %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Koszt wysyłki dla darczyńców</dt>
+          <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= number_to_currency(@edition.donor_shipping_cost, unit: "zł", format: "%n %u") %></dd>
         </div>
         <div class="flex justify-between">
           <dt class="text-sm text-gray-500 dark:text-gray-400">Zamawianie</dt>

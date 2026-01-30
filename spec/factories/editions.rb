@@ -3,7 +3,8 @@ FactoryBot.define do
     name { "EDK #{year}" }
     year { 2026 }
     default_price { 5.0 }
-    donor_price { 3.0 }
+    donor_brick_price { 30.0 }
+    donor_shipping_cost { 20.0 }
     status { :active }
     is_active { true }
     ordering_locked { false }

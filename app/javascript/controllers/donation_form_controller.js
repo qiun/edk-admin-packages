@@ -8,7 +8,8 @@ export default class extends Controller {
   ]
 
   static values = {
-    pricePerUnit: { type: Number, default: 50 }
+    brickPrice: { type: Number, default: 30 },
+    shippingCost: { type: Number, default: 20 }
   }
 
   connect() {
@@ -31,9 +32,10 @@ export default class extends Controller {
 
   updateTotal() {
     if (!this.hasQuantityTarget || !this.hasTotalTarget) return
-    
+
     const quantity = parseInt(this.quantityTarget.value) || 1
-    const total = quantity * this.pricePerUnitValue
+    // Nowa formuła: wysyłka + (ilość × cena_cegiełki)
+    const total = this.shippingCostValue + (quantity * this.brickPriceValue)
     this.totalTarget.textContent = total
   }
 

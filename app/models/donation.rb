@@ -36,7 +36,9 @@ class Donation < ApplicationRecord
   private
 
   def calculate_amount
-    self.amount = quantity * (edition&.donor_price || 50)
+    brick_price = edition&.donor_brick_price || 30
+    shipping_cost = edition&.donor_shipping_cost || 20
+    self.amount = shipping_cost + (quantity * brick_price)
   end
 
   def set_defaults

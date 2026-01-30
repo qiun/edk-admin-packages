@@ -16,7 +16,8 @@ class Edition < ApplicationRecord
   validates :name, presence: true
   validates :year, presence: true, uniqueness: true, numericality: { only_integer: true, greater_than: 2000 }
   validates :default_price, presence: true, numericality: { greater_than: 0 }
-  validates :donor_price, presence: true, numericality: { greater_than: 0 }
+  validates :donor_brick_price, presence: true, numericality: { greater_than: 0 }
+  validates :donor_shipping_cost, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :status, presence: true, inclusion: { in: statuses.keys }
 
   validate :only_one_active_edition
@@ -48,6 +49,16 @@ class Edition < ApplicationRecord
 
   def unlock_ordering!
     update!(ordering_locked: false)
+  end
+
+  # Oblicza całkowitą cenę dla danej ilości cegiełek
+  def calculate_donor_total(quantity)
+    donor_shipping_cost + (quantity * donor_brick_price)
+  end
+
+  # Zwraca cenę pierwszej cegiełki (z wysyłką)
+  def donor_first_brick_price
+    donor_brick_price + donor_shipping_cost
   end
 
   private

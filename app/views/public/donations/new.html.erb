@@ -1,6 +1,6 @@
 <% content_for :page_title, "Cegiełka na EDK" %>
 
-<main data-controller="donation-form" data-donation-form-price-per-unit-value="<%= @price_per_unit %>">
+<main data-controller="donation-form" data-donation-form-brick-price-value="<%= @brick_price %>" data-donation-form-shipping-cost-value="<%= @shipping_cost %>">
   <!-- Main content area with two-tone background -->
   <div class="relative min-h-screen">
     <!-- Two-tone background for desktop -->
@@ -18,7 +18,7 @@
         <!-- Left Column - Header & Brick Selection -->
         <div class="flex-1 lg:pr-8">
           <%= render "public/donations/header" %>
-          <%= render "public/donations/amount_section", f: f, donation: @donation, price: @price_per_unit %>
+          <%= render "public/donations/amount_section", f: f, donation: @donation, brick_price: @brick_price, shipping_cost: @shipping_cost %>
         </div>
         
         <!-- Right Column - Form -->

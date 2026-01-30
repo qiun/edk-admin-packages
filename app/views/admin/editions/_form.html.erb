@@ -114,21 +114,49 @@
         </div>
 
         <div>
-          <%= f.label :donor_price, "Cena dla darczyńców", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.label :donor_brick_price, "Cena cegiełki dla darczyńców", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
           <div class="relative">
-            <%= f.number_field :donor_price,
+            <%= f.number_field :donor_brick_price,
               min: 0,
               step: 0.01,
               class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
-              placeholder: "50.00",
+              placeholder: "30.00",
               required: true %>
             <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
               zł
             </span>
           </div>
           <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-            Cena za pakiet na stronie cegiełki (darowizny publiczne)
+            Cena za pojedynczą cegiełkę (bez wysyłki)
           </p>
+        </div>
+
+        <div>
+          <%= f.label :donor_shipping_cost, "Koszt wysyłki dla darczyńców", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <div class="relative">
+            <%= f.number_field :donor_shipping_cost,
+              min: 0,
+              step: 0.01,
+              class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+              placeholder: "20.00",
+              required: true %>
+            <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              zł
+            </span>
+          </div>
+          <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+            Jednorazowy koszt wysyłki (doliczany raz, niezależnie od ilości)
+          </p>
+        </div>
+      </div>
+
+      <!-- Pricing Preview -->
+      <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Podgląd cen dla darczyńców:</h4>
+        <div class="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+          <p>1 cegiełka: <strong><%= number_to_currency(@edition.donor_brick_price + @edition.donor_shipping_cost, unit: '', precision: 0) %> zł</strong> (cegiełka + wysyłka)</p>
+          <p>2 cegiełki: <strong><%= number_to_currency((@edition.donor_brick_price * 2) + @edition.donor_shipping_cost, unit: '', precision: 0) %> zł</strong></p>
+          <p>3 cegiełki: <strong><%= number_to_currency((@edition.donor_brick_price * 3) + @edition.donor_shipping_cost, unit: '', precision: 0) %> zł</strong></p>
         </div>
       </div>
     </div>

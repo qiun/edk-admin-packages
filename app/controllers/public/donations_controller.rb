@@ -3,16 +3,19 @@ module Public
     def new
       @donation = Donation.new(quantity: 1, want_gift: true)
       @edition = current_edition
-      @price_per_unit = @edition&.donor_price || 50.0
+      @brick_price = @edition&.donor_brick_price || 30.0
+      @shipping_cost = @edition&.donor_shipping_cost || 20.0
     end
 
     def create
       @edition = current_edition
-      @price_per_unit = @edition&.donor_price || 50.0
+      @brick_price = @edition&.donor_brick_price || 30.0
+      @shipping_cost = @edition&.donor_shipping_cost || 20.0
 
       @donation = Donation.new(donation_params)
       @donation.edition = @edition
-      @donation.amount = @donation.quantity.to_i * @price_per_unit
+      # Nowa formuła: wysyłka + (ilość × cena_cegiełki)
+      @donation.amount = @shipping_cost + (@donation.quantity.to_i * @brick_price)
       @donation.payment_id = generate_payment_id
       @donation.payment_status = "pending"
 
