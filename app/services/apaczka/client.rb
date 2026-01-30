@@ -197,6 +197,10 @@ module Apaczka
       expires = 30.minutes.from_now.to_i
       signature = generate_signature(endpoint, "", expires)
 
+      Rails.logger.info "=== aPaczka API GET ==="
+      Rails.logger.info "Endpoint: #{BASE_URL}#{endpoint}"
+      Rails.logger.info "Params: app_id=#{@app_id}, expires=#{expires}, signature=#{signature}"
+
       response = Faraday.get("#{BASE_URL}#{endpoint}") do |req|
         req.params = {
           app_id: @app_id,
@@ -205,7 +209,14 @@ module Apaczka
         }
       end
 
-      JSON.parse(response.body)
+      Rails.logger.info "Response status: #{response.status}"
+      Rails.logger.info "Response body: #{response.body}"
+
+      response_data = JSON.parse(response.body)
+      Rails.logger.info "Parsed status: #{response_data['status']}"
+      Rails.logger.info "=== End API GET ==="
+
+      response_data
     end
 
     def generate_signature(endpoint, data, expires)
