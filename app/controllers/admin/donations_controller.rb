@@ -1,5 +1,7 @@
 module Admin
   class DonationsController < Admin::BaseController
+    before_action :require_admin! # Only admins, warehouse has their own namespace
+
     def index
       @edition = params[:edition_id] ? Edition.find(params[:edition_id]) : current_edition
       @donations = Donation.for_edition(@edition)

@@ -1,5 +1,7 @@
 module Admin
   class NotificationsController < Admin::BaseController
+    before_action :require_admin! # Only admins can manage notifications
+
     def index
       @notifications = Notification.for_admins.recent.page(params[:page]).per(20)
     end

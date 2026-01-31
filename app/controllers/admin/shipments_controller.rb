@@ -1,5 +1,6 @@
 module Admin
   class ShipmentsController < Admin::BaseController
+    before_action :require_admin! # Only admins, warehouse has their own namespace
     before_action :set_shipment, only: [ :show, :refresh_status, :download_waybill ]
 
     def index

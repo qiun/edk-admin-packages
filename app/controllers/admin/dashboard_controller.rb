@@ -1,5 +1,7 @@
 module Admin
   class DashboardController < Admin::BaseController
+    before_action :require_admin! # Only admins can see admin dashboard
+
     def index
       @edition = current_edition
       @inventory = @edition&.inventory

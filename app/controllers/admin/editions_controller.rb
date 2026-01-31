@@ -1,5 +1,6 @@
 module Admin
   class EditionsController < Admin::BaseController
+    before_action :require_admin! # Only admins can manage editions
     before_action :set_edition, only: [ :show, :edit, :update, :destroy, :activate, :lock_ordering, :unlock_ordering ]
 
     def index

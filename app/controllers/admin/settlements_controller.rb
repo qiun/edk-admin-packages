@@ -1,5 +1,6 @@
 module Admin
   class SettlementsController < Admin::BaseController
+    before_action :require_admin! # Only admins can manage settlements
     before_action :set_settlement, only: [ :show, :mark_paid, :recalculate ]
 
     def index

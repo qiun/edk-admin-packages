@@ -32,6 +32,8 @@
       <!-- Sidebar -->
       <% if current_user.leader? %>
         <%= render "shared/leader_sidebar" %>
+      <% elsif current_user.warehouse? %>
+        <%= render "shared/warehouse_sidebar" %>
       <% else %>
         <%= render "shared/admin_sidebar" %>
       <% end %>

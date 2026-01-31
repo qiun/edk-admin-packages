@@ -1,5 +1,6 @@
 module Admin
   class ReturnsController < Admin::BaseController
+    before_action :require_admin! # Only admins can manage returns
     before_action :set_return, only: [ :show, :update, :approve, :reject, :mark_received ]
 
     def index

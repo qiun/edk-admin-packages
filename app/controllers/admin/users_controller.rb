@@ -1,5 +1,6 @@
 module Admin
   class UsersController < Admin::BaseController
+    before_action :require_admin! # Only admins can manage users
     before_action :set_user, only: [ :show, :edit, :update, :destroy, :lock_ordering, :unlock_ordering ]
 
     def index

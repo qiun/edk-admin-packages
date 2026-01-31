@@ -1,5 +1,6 @@
 module Admin
   class OrdersController < Admin::BaseController
+    before_action :require_admin! # Only admins, warehouse has their own namespace
     before_action :set_order, only: [ :show, :confirm, :cancel, :print_label ]
 
     def index
