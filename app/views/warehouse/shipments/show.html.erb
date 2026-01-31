@@ -1,0 +1,179 @@
+<% content_for :page_title, "Wysyłka ##{@shipment.id}" %>
+
+<!-- Page Header -->
+<div class="mb-6">
+  <div class="flex items-center gap-2">
+    <%= link_to warehouse_shipments_path, class: "text-gray-500 hover:text-gray-700" do %>
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    <% end %>
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Wysyłka #<%= @shipment.id %></h2>
+  </div>
+  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+    Utworzona <%= @shipment.created_at.strftime('%d.%m.%Y o %H:%M') %>
+  </p>
+</div>
+
+<!-- Type Badge -->
+<div class="mb-6">
+  <% if @shipment.order.present? %>
+    <span class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-500/15 dark:text-blue-400">
+      Wysyłka dla lidera okręgowego
+    </span>
+  <% else %>
+    <span class="inline-flex rounded-full bg-purple-50 px-3 py-1 text-sm font-medium text-purple-700 dark:bg-purple-500/15 dark:text-purple-400">
+      Wysyłka cegiełki
+    </span>
+  <% end %>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+  <!-- Shipment Details -->
+  <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Szczegóły wysyłki</h3>
+    <dl class="space-y-3">
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Status</dt>
+        <dd class="mt-1">
+          <% status_classes = {
+            'pending' => 'bg-amber-50 text-amber-700 border-amber-200',
+            'label_printed' => 'bg-blue-50 text-blue-700 border-blue-200',
+            'shipped' => 'bg-green-50 text-green-700 border-green-200',
+            'in_transit' => 'bg-green-50 text-green-700 border-green-200',
+            'delivered' => 'bg-green-50 text-green-700 border-green-200',
+            'failed' => 'bg-red-50 text-red-700 border-red-200'
+          } %>
+          <% status_labels = {
+            'pending' => 'Oczekująca',
+            'label_printed' => 'Etykieta wydrukowana',
+            'shipped' => 'Wysłana',
+            'in_transit' => 'W tranzycie',
+            'delivered' => 'Dostarczona',
+            'failed' => 'Błąd'
+          } %>
+          <span class="inline-flex rounded-lg border px-3 py-1 text-sm font-medium <%= status_classes[@shipment.status] %>">
+            <%= status_labels[@shipment.status] %>
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Nr listu przewozowego</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+          <%= @shipment.waybill_number || '-' %>
+        </dd>
+      </div>
+      <% if @shipment.apaczka_order_id %>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">ID aPaczka</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.apaczka_order_id %>
+          </dd>
+        </div>
+      <% end %>
+      <% if @shipment.shipped_at %>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Data wysyłki</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.shipped_at.strftime('%d.%m.%Y %H:%M') %>
+          </dd>
+        </div>
+      <% end %>
+      <% if @shipment.delivered_at %>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Data dostarczenia</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.delivered_at.strftime('%d.%m.%Y %H:%M') %>
+          </dd>
+        </div>
+      <% end %>
+      <% if @shipment.tracking_url.present? %>
+        <div class="pt-2">
+          <%= link_to @shipment.tracking_url, target: "_blank", class: "inline-flex items-center gap-2 text-sm font-medium text-[#465fff] hover:underline" do %>
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
+            Śledź przesyłkę
+          <% end %>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+
+  <!-- Recipient Information -->
+  <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Odbiorca</h3>
+    <dl class="space-y-3">
+      <% if @shipment.order %>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Lider</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.order.user.first_name %> <%= @shipment.order.user.last_name %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Okręg</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.order.area_group&.name || '-' %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Email</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.order.user.email %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Telefon</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.order.user.phone || '-' %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Paczkomat</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.order.locker_code %> - <%= @shipment.order.locker_name %><br>
+            <%= @shipment.order.locker_address %><br>
+            <%= @shipment.order.locker_post_code %> <%= @shipment.order.locker_city %>
+          </dd>
+        </div>
+      <% elsif @shipment.donation %>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Darczyńca</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.donation.first_name %> <%= @shipment.donation.last_name %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Email</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.donation.email %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Telefon</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.donation.phone || '-' %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Paczkomat</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.donation.locker_code %> - <%= @shipment.donation.locker_name %><br>
+            <%= @shipment.donation.locker_address %><br>
+            <%= @shipment.donation.locker_post_code %> <%= @shipment.donation.locker_city %>
+          </dd>
+        </div>
+        <div class="pt-2">
+          <%= link_to warehouse_donation_path(@shipment.donation), class: "inline-flex items-center gap-2 text-sm font-medium text-[#465fff] hover:underline" do %>
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+            Zobacz cegiełkę
+          <% end %>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+</div>

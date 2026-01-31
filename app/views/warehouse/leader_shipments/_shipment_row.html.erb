@@ -1,0 +1,104 @@
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50" id="shipment_<%= shipment.id %>">
+    <td class="px-5 py-4 text-sm font-medium text-gray-800 dark:text-white">#<%= shipment.id %></td>
+    <td class="px-5 py-4">
+      <p class="text-sm font-medium text-gray-800 dark:text-white">
+        <%= shipment.order.user.first_name %> <%= shipment.order.user.last_name %>
+      </p>
+      <p class="text-xs text-gray-500"><%= shipment.order.area_group&.name || '-' %></p>
+    </td>
+    <td class="px-5 py-4">
+      <p class="text-sm font-medium text-gray-800 dark:text-white">
+        <%= shipment.order.locker_code %>
+      </p>
+      <p class="text-xs text-gray-500"><%= shipment.order.locker_name %></p>
+    </td>
+    <td class="px-5 py-4 text-sm text-gray-600 dark:text-gray-400">
+      <%= shipment.waybill_number || '-' %>
+    </td>
+    <td class="px-5 py-4">
+      <% status_classes = {
+        'pending' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+        'label_printed' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+        'shipped' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+        'in_transit' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+        'delivered' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+        'failed' => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400'
+      } %>
+      <% status_labels = {
+        'pending' => 'Oczekująca',
+        'label_printed' => 'Etykieta wydrukowana',
+        'shipped' => 'Wysłana',
+        'in_transit' => 'W tranzycie',
+        'delivered' => 'Dostarczona',
+        'failed' => 'Błąd'
+      } %>
+      <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium <%= status_classes[shipment.status] || status_classes['pending'] %>">
+        <%= status_labels[shipment.status] || 'Nieznany' %>
+      </span>
+    </td>
+    <td class="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">
+      <%= shipment.created_at.strftime('%d.%m.%Y %H:%M') %>
+    </td>
+    <td class="px-5 py-4 text-center">
+      <% if shipment.status == 'shipped' %>
+        <div class="flex items-center justify-center gap-2">
+          <svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <%= link_to unmark_shipped_warehouse_leader_shipment_path(shipment),
+              method: :post,
+              class: "inline-block p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
+              title: "Cofnij status wysyłki (email został już wysłany)",
+              data: {
+                turbo_method: :post,
+                turbo_stream: true,
+                turbo_confirm: "Czy na pewno cofnąć status wysyłki ##{shipment.id}? UWAGA: Email został już wysłany do lidera i nie można go anulować."
+              } do %>
+            <svg class="h-4 w-4 text-amber-500 hover:text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+            </svg>
+          <% end %>
+        </div>
+      <% elsif shipment.status == 'delivered' %>
+        <svg class="h-5 w-5 mx-auto text-green-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+      <% elsif shipment.waybill_number.present? %>
+        <%= link_to mark_shipped_warehouse_leader_shipment_path(shipment),
+            method: :post,
+            class: "inline-block p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
+            title: "Oznacz jako wysłane",
+            data: {
+              turbo_method: :post,
+              turbo_stream: true,
+              turbo_confirm: "Czy na pewno oznaczyć wysyłkę ##{shipment.id} jako wysłaną? Email zostanie wysłany do lidera."
+            } do %>
+          <svg class="h-5 w-5 text-gray-400 hover:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        <% end %>
+      <% else %>
+        <span class="text-xs text-gray-400">-</span>
+      <% end %>
+    </td>
+    <td class="px-5 py-4 text-right">
+      <div class="flex items-center justify-end gap-2">
+        <!-- Podgląd -->
+        <%= link_to warehouse_shipment_path(shipment), class: "text-gray-400 hover:text-[#465fff]", title: "Zobacz szczegóły" do %>
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        <% end %>
+
+        <!-- Pobierz etykietę -->
+        <% if shipment.apaczka_order_id.present? && %w[label_printed shipped in_transit delivered].include?(shipment.status) %>
+          <%= link_to download_waybill_warehouse_leader_shipment_path(shipment), class: "text-gray-400 hover:text-[#465fff]", title: "Pobierz etykietę" do %>
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          <% end %>
+        <% end %>
+      </div>
+    </td>
+  </tr>

@@ -1,0 +1,155 @@
+<% content_for :page_title, "Wysyłki" %>
+
+<!-- Page Header -->
+<div class="mb-6">
+  <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Wysyłki</h2>
+  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+    Lista wszystkich wysyłek (liderzy + cegiełki)
+  </p>
+</div>
+
+<!-- Filters -->
+<div class="mb-4 space-y-3">
+  <!-- Typ wysyłki -->
+  <div>
+    <p class="mb-2 text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Typ wysyłki</p>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to warehouse_shipments_path, class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:type].blank? && params[:payment_status].blank? ? 'bg-[#465fff] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Opłacone cegiełki (domyślnie)
+      <% end %>
+      <%= link_to warehouse_shipments_path(type: :donation), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:type] == 'donation' ? 'bg-purple-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Wszystkie cegiełki
+      <% end %>
+      <%= link_to warehouse_shipments_path(type: :order), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:type] == 'order' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Paczki do liderów
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Status płatności (dla cegiełek) -->
+  <div>
+    <p class="mb-2 text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Status płatności cegiełek</p>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to warehouse_shipments_path(payment_status: :paid), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:payment_status] == 'paid' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Opłacone
+      <% end %>
+      <%= link_to warehouse_shipments_path(payment_status: :pending), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:payment_status] == 'pending' ? 'bg-yellow-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Oczekujące
+      <% end %>
+      <%= link_to warehouse_shipments_path(payment_status: :failed), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:payment_status] == 'failed' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Nieudane
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Status wysyłki -->
+  <div>
+    <p class="mb-2 text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Status wysyłki</p>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to warehouse_shipments_path(status: :pending), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'pending' ? 'bg-amber-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Oczekująca
+      <% end %>
+      <%= link_to warehouse_shipments_path(status: :shipped), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'shipped' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Wysłana
+      <% end %>
+      <%= link_to warehouse_shipments_path(status: :delivered), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'delivered' ? 'bg-green-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Dostarczona
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Shipments Table -->
+<div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-gray-100 dark:border-gray-800">
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">ID</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Typ</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Odbiorca</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Nr listu</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Status</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Data</th>
+          <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Akcje</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        <% if @shipments.any? %>
+          <% @shipments.each do |shipment| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+              <td class="px-5 py-4 text-sm font-medium text-gray-800 dark:text-white">#<%= shipment.id %></td>
+              <td class="px-5 py-4">
+                <% if shipment.order.present? %>
+                  <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-500/15 dark:text-blue-400">
+                    Lider
+                  </span>
+                <% else %>
+                  <span class="inline-flex rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-medium text-purple-700 dark:bg-purple-500/15 dark:text-purple-400">
+                    Cegiełka
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-5 py-4">
+                <% if shipment.order %>
+                  <p class="text-sm font-medium text-gray-800 dark:text-white">
+                    <%= shipment.order.user.first_name %> <%= shipment.order.user.last_name %>
+                  </p>
+                  <p class="text-xs text-gray-500"><%= shipment.order.area_group&.name || '-' %></p>
+                <% elsif shipment.donation %>
+                  <p class="text-sm font-medium text-gray-800 dark:text-white">
+                    <%= shipment.donation.first_name %> <%= shipment.donation.last_name %>
+                  </p>
+                  <p class="text-xs text-gray-500"><%= shipment.donation.email %></p>
+                <% else %>
+                  <p class="text-sm text-gray-500">-</p>
+                <% end %>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-600 dark:text-gray-400">
+                <%= shipment.waybill_number || '-' %>
+              </td>
+              <td class="px-5 py-4">
+                <% status_classes = {
+                  'pending' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+                  'label_printed' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+                  'shipped' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+                  'in_transit' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+                  'delivered' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+                  'failed' => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400'
+                } %>
+                <% status_labels = {
+                  'pending' => 'Oczekująca',
+                  'label_printed' => 'Etykieta wydrukowana',
+                  'shipped' => 'Wysłana',
+                  'in_transit' => 'W tranzycie',
+                  'delivered' => 'Dostarczona',
+                  'failed' => 'Błąd'
+                } %>
+                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium <%= status_classes[shipment.status] || status_classes['pending'] %>">
+                  <%= status_labels[shipment.status] || 'Nieznany' %>
+                </span>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= shipment.created_at.strftime('%d.%m.%Y %H:%M') %>
+              </td>
+              <td class="px-5 py-4 text-right">
+                <%= link_to warehouse_shipment_path(shipment), class: "text-gray-400 hover:text-[#465fff]" do %>
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="7" class="px-5 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              Brak wysyłek
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

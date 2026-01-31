@@ -1,0 +1,248 @@
+<% content_for :page_title, "Panel Magazynu" %>
+
+<!-- Page Header -->
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Panel Magazynu</h2>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      Witaj, <%= current_user.first_name %>! Zarządzaj zamówieniami i wysyłkami.
+    </p>
+  </div>
+  <%= link_to warehouse_leader_shipments_path, class: "inline-flex items-center gap-2 rounded-lg bg-[#465fff] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#3641f5]" do %>
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+    </svg>
+    Wszystkie Zamówienia
+  <% end %>
+</div>
+
+<!-- Metrics Grid -->
+<div class="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
+  <!-- Oczekujące zamówienia -->
+  <div class="rounded-xl border border-amber-200 bg-amber-50/50 p-5 dark:border-amber-800 dark:bg-amber-900/20">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Oczekujące</p>
+        <p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white"><%= @stats[:pending_orders] %></p>
+      </div>
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+        <svg class="h-6 w-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Potwierdzone dziś -->
+  <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-5 dark:border-blue-800 dark:bg-blue-900/20">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Potwierdzone dziś</p>
+        <p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white"><%= @stats[:confirmed_today] %></p>
+      </div>
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+        <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wysłane dziś -->
+  <div class="rounded-xl border border-green-200 bg-green-50/50 p-5 dark:border-green-800 dark:bg-green-900/20">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Wysłane dziś</p>
+        <p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white"><%= @stats[:shipped_today] %></p>
+      </div>
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+        <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wszystkie wysyłki -->
+  <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Wszystkie wysyłki</p>
+        <p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white"><%= @stats[:total_shipments] %></p>
+      </div>
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+        <svg class="h-6 w-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ostatnie Zamówienia liderów -->
+<div class="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+  <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Zamówienia liderów</h3>
+    <%= link_to "Zobacz wszystkie", warehouse_leader_shipments_path, class: "text-sm text-[#465fff] hover:underline" %>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-gray-100 dark:border-gray-800">
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Lider</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Ilość</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Status</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Data</th>
+          <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Akcje</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        <% if @recent_orders.any? %>
+          <% @recent_orders.each do |order| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#ecf3ff] text-sm font-medium text-[#465fff]">
+                    <%= order.user.first_name.first.upcase %><%= order.user.last_name.first.upcase %>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-800 dark:text-white"><%= order.user.first_name %> <%= order.user.last_name %></p>
+                    <p class="text-xs text-gray-500"><%= order.area_group&.name %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-600 dark:text-gray-400"><%= order.quantity %> szt.</td>
+              <td class="px-5 py-4">
+                <% status_classes = {
+                  'pending' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+                  'confirmed' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400'
+                } %>
+                <% status_labels = {
+                  'pending' => 'Oczekujące',
+                  'confirmed' => 'Potwierdzone'
+                } %>
+                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium <%= status_classes[order.status] %>">
+                  <%= status_labels[order.status] %>
+                </span>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= order.created_at.strftime('%d.%m.%Y %H:%M') %>
+              </td>
+              <td class="px-5 py-4 text-right">
+                <% if order.shipment.present? %>
+                  <%= link_to warehouse_shipment_path(order.shipment), class: "text-gray-400 hover:text-[#465fff]" do %>
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                  <% end %>
+                <% else %>
+                  <svg class="h-5 w-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="px-5 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              Brak zamówień liderów
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="border-t border-gray-100 px-5 py-3 dark:border-gray-800">
+    <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+      Reszta zamówień dostępna w <%= link_to "Wysyłkach liderów", warehouse_leader_shipments_path, class: "text-[#465fff] hover:underline" %>
+    </p>
+  </div>
+</div>
+
+<!-- Ostatnie Cegiełki do przetworzenia -->
+<div class="mt-6 rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+  <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Cegiełki do wysyłki</h3>
+    <%= link_to "Zobacz wszystkie", warehouse_donation_shipments_path, class: "text-sm text-[#465fff] hover:underline" %>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-gray-100 dark:border-gray-800">
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Odbiorca</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Ilość</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Płatność</th>
+          <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Data</th>
+          <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Akcje</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        <% if @recent_donations.any? %>
+          <% @recent_donations.each do |donation| %>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-9 w-9 items-center justify-center rounded-full bg-purple-50 text-sm font-medium text-purple-600 dark:bg-purple-500/15">
+                    <%= donation.first_name.first.upcase %><%= donation.last_name.first.upcase %>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-800 dark:text-white"><%= donation.first_name %> <%= donation.last_name %></p>
+                    <p class="text-xs text-gray-500"><%= donation.email %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-600 dark:text-gray-400"><%= donation.quantity %> szt.</td>
+              <td class="px-5 py-4">
+                <% payment_status_classes = {
+                  'paid' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+                  'pending' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+                  'failed' => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400'
+                } %>
+                <% payment_status_labels = {
+                  'paid' => 'Opłacone',
+                  'pending' => 'Oczekujące',
+                  'failed' => 'Nieudane'
+                } %>
+                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium <%= payment_status_classes[donation.payment_status] %>">
+                  <%= payment_status_labels[donation.payment_status] %>
+                </span>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= donation.created_at.strftime('%d.%m.%Y %H:%M') %>
+              </td>
+              <td class="px-5 py-4 text-right">
+                <% if donation.shipment.present? %>
+                  <%= link_to warehouse_shipment_path(donation.shipment), class: "text-gray-400 hover:text-[#465fff]" do %>
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                  <% end %>
+                <% else %>
+                  <svg class="h-5 w-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="px-5 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              Brak cegiełek do wysyłki
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="border-t border-gray-100 px-5 py-3 dark:border-gray-800">
+    <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+      Reszta cegiełek dostępna w <%= link_to "Wysyłkach cegiełek", warehouse_donation_shipments_path, class: "text-[#465fff] hover:underline" %>
+    </p>
+  </div>
+</div>

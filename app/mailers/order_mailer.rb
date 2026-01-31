@@ -44,4 +44,19 @@ class OrderMailer < ApplicationMailer
       subject: "Status zamówienia #{@order.id} zmienił się: #{I18n.t("order.status.#{new_status}")}"
     )
   end
+
+  # Send shipment notification email when package is sent
+  # @param order [Order] the order record
+  # @param tracking_number [String] the shipment tracking number
+  def shipment_sent(order, tracking_number)
+    @order = order
+    @user = order.user
+    @tracking_number = tracking_number
+    @edition = order.edition
+
+    mail(
+      to: @user.email,
+      subject: "Twoje pakiety EDK zostały przygotowane i są gotowe do wysyłki!"
+    )
+  end
 end

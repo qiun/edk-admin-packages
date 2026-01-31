@@ -1,0 +1,157 @@
+<% content_for :page_title, "Cegiełka ##{@donation.id}" %>
+
+<!-- Page Header -->
+<div class="mb-6">
+  <div class="flex items-center gap-2">
+    <%= link_to warehouse_donations_path, class: "text-gray-500 hover:text-gray-700" do %>
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    <% end %>
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Cegiełka #<%= @donation.id %></h2>
+  </div>
+  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+    Opłacona <%= @donation.created_at.strftime('%d.%m.%Y o %H:%M') %>
+  </p>
+</div>
+
+<!-- Payment Status Badge -->
+<div class="mb-6">
+  <span class="inline-flex rounded-lg border border-green-200 bg-green-50 px-3 py-1 text-sm font-medium text-green-700 dark:border-green-800 dark:bg-green-500/15 dark:text-green-400">
+    Opłacone
+  </span>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+  <!-- Donor Information -->
+  <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Dane darczyńcy</h3>
+    <dl class="space-y-3">
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Imię i nazwisko</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+          <%= @donation.first_name %> <%= @donation.last_name %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Email</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+          <%= @donation.email %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Telefon</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+          <%= @donation.phone || '-' %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Donation Details -->
+  <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Szczegóły darowizny</h3>
+    <dl class="space-y-3">
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Ilość pakietów</dt>
+        <dd class="mt-1 text-2xl font-bold text-[#465fff]">
+          <%= @donation.quantity %> szt.
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Kwota</dt>
+        <dd class="mt-1 text-xl font-semibold text-gray-800 dark:text-white">
+          <%= number_to_currency(@donation.amount, unit: "zł", separator: ",", delimiter: " ", format: "%n %u") %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Data wpłaty</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+          <%= @donation.created_at.strftime('%d.%m.%Y %H:%M') %>
+        </dd>
+      </div>
+      <% if @donation.payment_id %>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">ID płatności</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @donation.payment_id %>
+          </dd>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+
+  <!-- Delivery Information -->
+  <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Adres dostawy</h3>
+    <dl class="space-y-3">
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Paczkomat</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+          <%= @donation.locker_code %> - <%= @donation.locker_name %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm text-gray-500 dark:text-gray-400">Adres</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+          <%= @donation.locker_address %><br>
+          <%= @donation.locker_post_code %> <%= @donation.locker_city %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Shipment Information -->
+  <% if @donation.shipment %>
+    <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+      <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Wysyłka</h3>
+      <dl class="space-y-3">
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Status</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @donation.shipment.status&.titleize || '-' %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Nr listu przewozowego</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @donation.shipment.waybill_number || '-' %>
+          </dd>
+        </div>
+        <% if @donation.shipment.tracking_url.present? %>
+          <div class="pt-2">
+            <%= link_to @donation.shipment.tracking_url, target: "_blank", class: "inline-flex items-center gap-2 text-sm font-medium text-[#465fff] hover:underline" do %>
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+              Śledź przesyłkę
+            <% end %>
+          </div>
+        <% end %>
+        <div class="pt-2">
+          <%= link_to warehouse_shipment_path(@donation.shipment), class: "inline-flex items-center gap-2 text-sm font-medium text-[#465fff] hover:underline" do %>
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Zobacz wysyłkę
+          <% end %>
+        </div>
+      </dl>
+    </div>
+  <% else %>
+    <div class="rounded-xl border border-amber-200 bg-amber-50 p-6 dark:border-amber-800 dark:bg-amber-900/20">
+      <div class="flex items-start gap-3">
+        <svg class="h-6 w-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <div>
+          <h3 class="font-semibold text-amber-800 dark:text-amber-300">Oczekuje na wysyłkę</h3>
+          <p class="mt-1 text-sm text-amber-700 dark:text-amber-400">
+            Ta cegiełka oczekuje na utworzenie wysyłki. Administrator musi najpierw utworzyć wysyłkę w systemie aPaczka.
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "shipment_#{@shipment.id}" do %>
+  <%= render partial: "shipment_row", locals: { shipment: @shipment } %>
+<% end %>

@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  # Admin panel - only for admin users
-  authenticate :user, ->(u) { u.admin? } do
+  # Admin panel - only for admin users (warehouse users have limited access to inventory only)
+  authenticate :user, ->(u) { u.admin? || u.warehouse? } do
     namespace :admin do
       root "dashboard#index"
 
@@ -83,13 +83,22 @@ Rails.application.routes.draw do
   authenticate :user, ->(u) { u.warehouse? || u.admin? } do
     namespace :warehouse do
       root "dashboard#index"
-      resources :orders, only: [ :index, :show ] do
+      resources :shipments, only: [ :index, :show ]
+      resources :donations, only: [ :index, :show ]
+      resources :donation_shipments, only: [ :index, :show ] do
         member do
-          post :confirm
-          get :print_label
+          post :mark_shipped
+          post :unmark_shipped
+          get :download_waybill
         end
       end
-      resources :shipments, only: [ :index, :show ]
+      resources :leader_shipments, only: [ :index, :show ] do
+        member do
+          post :mark_shipped
+          post :unmark_shipped
+          get :download_waybill
+        end
+      end
     end
   end
 
