@@ -38,15 +38,19 @@ module Apaczka
         shipment.update!(label_pdf: label_pdf) if label_pdf
         Rails.logger.info "[CreateShipmentJob] Waybill PDF saved: #{label_pdf.present?}"
 
-        # Aktualizuj magazyn - przenieś z reserved/allocated do shipped
-        if source.is_a?(Order)
-          source.edition.inventory.ship(source.quantity, reference: source)
-          source.update!(status: :shipped)
-        elsif source.is_a?(Donation)
-          # For donations, inventory was already reserved during donation creation
-          source.edition.inventory.ship(source.quantity, reference: source) if source.edition&.inventory
-          # Shipment status is tracked in the Shipment record, not in Donation
-        end
+        # NOTE: Inventory and order status updates have been moved to warehouse shipping action
+        # When the warehouse actually ships the package, they should:
+        # 1. Update shipment status to :shipped
+        # 2. Update order status to :shipped
+        # 3. Move inventory from reserved to shipped
+        #
+        # Keeping this code commented for reference:
+        # if source.is_a?(Order)
+        #   source.edition.inventory.ship(source.quantity, reference: source)
+        #   source.update!(status: :shipped)
+        # elsif source.is_a?(Donation)
+        #   source.edition.inventory.ship(source.quantity, reference: source) if source.edition&.inventory
+        # end
 
         # Wyślij powiadomienie o wysyłce
         Rails.logger.info "[CreateShipmentJob] Sending shipment notification email for shipment ##{shipment.id}"
