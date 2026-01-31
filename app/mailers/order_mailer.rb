@@ -59,4 +59,19 @@ class OrderMailer < ApplicationMailer
       subject: "Twoje pakiety EDK zostały przygotowane i są gotowe do wysyłki!"
     )
   end
+
+  # Notify admins when leader cancels their order
+  # @param order [Order] the cancelled order record
+  def cancelled_by_leader(order)
+    @order = order
+    @user = order.user
+    @edition = order.edition
+
+    admin_emails = User.admin.pluck(:email)
+
+    mail(
+      to: admin_emails,
+      subject: "[PAKIETY EDK] Zamówienie anulowane przez lidera - #{@user.full_name}"
+    )
+  end
 end

@@ -106,7 +106,11 @@ Rails.application.routes.draw do
   authenticate :user, ->(u) { u.leader? } do
     namespace :leader do
       root "dashboard#index"
-      resources :orders, only: [ :index, :new, :create, :show ]
+      resources :orders, only: [ :index, :new, :create, :show, :edit, :update ] do
+        member do
+          post :cancel
+        end
+      end
       resources :sales_reports, only: [ :index, :new, :create ]
       resources :returns, only: [ :index, :new, :create, :show ]
     end

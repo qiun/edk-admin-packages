@@ -44,6 +44,35 @@ class Order < ApplicationRecord
     end
   end
 
+  def update_quantity!(new_quantity)
+    return if new_quantity == quantity
+
+    transaction do
+      difference = new_quantity - quantity
+
+      if difference > 0
+        # Zwiększenie ilości - potrzebna dodatkowa rezerwacja
+        raise Inventory::InsufficientStock, "Niewystarczająca ilość pakietów na magazynie" if edition.inventory.available < difference
+        edition.inventory.reserve(difference, reference: self)
+      elsif difference < 0
+        # Zmniejszenie ilości - zwolnienie części rezerwacji
+        edition.inventory.release_reserved(-difference)
+      end
+
+      self.quantity = new_quantity
+      self.total_amount = new_quantity * price_per_unit
+      save!
+    end
+  end
+
+  def can_be_edited_by_leader?
+    pending?
+  end
+
+  def can_be_cancelled_by_leader?
+    pending?
+  end
+
   private
 
   def ordering_not_locked

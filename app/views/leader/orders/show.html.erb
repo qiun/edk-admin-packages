@@ -8,12 +8,33 @@
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Zamówienie #<%= @order.id %></h1>
       <p class="text-gray-600 dark:text-gray-400">Złożone: <%= @order.created_at.strftime("%d.%m.%Y %H:%M") %></p>
     </div>
-    <%= link_to leader_orders_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors" do %>
-      <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-      </svg>
-      Wróć do listy
-    <% end %>
+    <div class="flex items-center gap-3">
+      <% if @order.can_be_edited_by_leader? %>
+        <%= link_to edit_leader_order_path(@order), class: "inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          Edytuj
+        <% end %>
+
+        <%= button_to cancel_leader_order_path(@order),
+                      method: :post,
+                      form: { data: { turbo_confirm: "Czy na pewno chcesz anulować to zamówienie? Tej operacji nie można cofnąć." } },
+                      class: "inline-flex items-center gap-2 rounded-lg border border-red-600 bg-white px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-600 hover:text-white dark:border-red-500 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white cursor-pointer" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          Anuluj zamówienie
+        <% end %>
+      <% end %>
+
+      <%= link_to leader_orders_path, class: "inline-flex items-center gap-2 rounded-lg border border-stroke px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-stroke-dark dark:text-gray-300" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Wróć do listy
+      <% end %>
+    </div>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
