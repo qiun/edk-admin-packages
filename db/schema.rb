@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_30_231601) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_31_103709) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -235,10 +235,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_231601) do
     t.string "reset_password_token"
     t.string "role", default: "leader", null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "voivodeship_id"
     t.index ["created_by_id"], name: "index_users_on_created_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role"], name: "index_users_on_role"
+    t.index ["voivodeship_id"], name: "index_users_on_voivodeship_id"
+  end
+
+  create_table "voivodeships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_voivodeships_on_name", unique: true
   end
 
   add_foreign_key "area_groups", "editions", name: "area_groups_edition_id_fkey"
@@ -263,4 +272,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_231601) do
   add_foreign_key "shipments", "donations", name: "shipments_donation_id_fkey"
   add_foreign_key "shipments", "orders", name: "shipments_order_id_fkey"
   add_foreign_key "users", "users", column: "created_by_id", name: "users_created_by_id_fkey"
+  add_foreign_key "users", "voivodeships"
 end

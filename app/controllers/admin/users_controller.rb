@@ -140,9 +140,9 @@ module Admin
 
     def user_params
       if action_name == 'create'
-        params.require(:user).permit(:email, :first_name, :last_name, :phone, :role)
+        params.require(:user).permit(:email, :first_name, :last_name, :phone, :voivodeship_id, :role)
       else
-        params.require(:user).permit(:email, :first_name, :last_name, :phone, :role, :password, :password_confirmation)
+        params.require(:user).permit(:email, :first_name, :last_name, :phone, :voivodeship_id, :role, :password, :password_confirmation)
       end
     end
 

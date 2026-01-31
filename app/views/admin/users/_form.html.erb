@@ -59,6 +59,22 @@
       </div>
 
       <div>
+        <%= form.label :voivodeship_id, "Województwo", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+        <div x-data="{ isOptionSelected: <%= user.voivodeship_id.present? ? 'true' : 'false' %> }" class="relative">
+          <%= form.select :voivodeship_id,
+            options_from_collection_for_select(Voivodeship.order(:name), :id, :name, user.voivodeship_id),
+            { include_blank: "Wybierz województwo" },
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            "@change": "isOptionSelected = true" %>
+          <span class="pointer-events-none absolute top-1/2 right-4 z-30 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+            <svg class="stroke-current" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div>
         <%= form.label :role, "Rola", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
         <div x-data="{ isOptionSelected: <%= user.role.present? ? 'true' : 'false' %> }" class="relative">
           <%= form.select :role,

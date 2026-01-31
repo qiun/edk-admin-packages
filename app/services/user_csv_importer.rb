@@ -31,11 +31,16 @@ class UserCsvImporter
     # Use User.generate_secure_password to guarantee all complexity requirements
     random_password = User.generate_secure_password
 
+    # Find voivodeship by name
+    voivodeship_name = row["voivodeship"]&.strip || row["województwo"]&.strip
+    voivodeship = Voivodeship.find_by(name: voivodeship_name) if voivodeship_name.present?
+
     user = User.new(
       email: email,
       first_name: row["first_name"]&.strip || row["imię"]&.strip,
       last_name: row["last_name"]&.strip || row["nazwisko"]&.strip,
       phone: row["phone"]&.strip || row["telefon"]&.strip,
+      voivodeship: voivodeship,
       role: :leader,
       created_by: @created_by,
       password: random_password,
