@@ -47,11 +47,21 @@ module Leader
       orders = current_user.orders.for_edition(edition)
       reports = current_user.sales_reports.where(edition: edition)
 
-      # Can only report sold packages from shipped orders
-      shipped_quantity = orders.where(status: [:shipped, :delivered]).sum(:quantity)
+      # Can report sold packages from orders that have:
+      # - status shipped/delivered OR
+      # - status confirmed with a shipment that has label printed
+      delivered_quantity = orders.where(status: [:shipped, :delivered]).sum(:quantity)
+
+      # Also include confirmed orders with label printed
+      confirmed_with_label = orders.where(status: :confirmed)
+                                   .joins(:shipment)
+                                   .where(shipments: { status: [:label_printed, :shipped, :in_transit, :delivered] })
+                                   .sum(:quantity)
+
+      total_available = delivered_quantity + confirmed_with_label
       already_reported = reports.sum(:quantity_sold)
 
-      shipped_quantity - already_reported
+      total_available - already_reported
     end
   end
 end

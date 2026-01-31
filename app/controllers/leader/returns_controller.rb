@@ -11,8 +11,10 @@ module Leader
       @summary = {
         pending: @returns.where(status: :requested).count,
         approved: @returns.where(status: :approved).count,
-        completed: @returns.where(status: :received).count
+        completed: @returns.where(status: :received).count,
+        total_quantity: @returns.where(status: [:requested, :approved, :shipped, :received]).sum(:quantity)
       }
+      @can_create_return = calculate_max_returnable > 0
     end
 
     def show
@@ -58,12 +60,22 @@ module Leader
       orders = current_user.orders.for_edition(edition)
       returns = current_user.returns.where(edition: edition)
 
-      # Can return packages from shipped/delivered orders
+      # Can return packages from orders that have:
+      # - status shipped/delivered OR
+      # - status confirmed with a shipment that has label printed
       # minus packages already in return process or completed
-      shipped_quantity = orders.where(status: [:shipped, :delivered]).sum(:quantity)
+      delivered_quantity = orders.where(status: [:shipped, :delivered]).sum(:quantity)
+
+      # Also include confirmed orders with label printed
+      confirmed_with_label = orders.where(status: :confirmed)
+                                   .joins(:shipment)
+                                   .where(shipments: { status: [:label_printed, :shipped, :in_transit, :delivered] })
+                                   .sum(:quantity)
+
+      total_available = delivered_quantity + confirmed_with_label
       already_returned = returns.where(status: [:requested, :approved, :shipped, :received]).sum(:quantity)
 
-      shipped_quantity - already_returned
+      total_available - already_returned
     end
   end
 end
