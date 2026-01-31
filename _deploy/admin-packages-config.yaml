@@ -9,7 +9,7 @@ data:
   RAILS_SERVE_STATIC_FILES: "true"
   
   # Application URLs
-  APP_URL: "https://pakiety.edk.org.pl"
+  APP_URL: "https://wspieram.edk.org.pl"
   PUBLIC_DONATION_URL: "https://wspieram.edk.org.pl"
   
   # Przelewy24 Configuration (non-sensitive)
