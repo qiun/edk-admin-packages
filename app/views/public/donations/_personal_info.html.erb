@@ -8,6 +8,8 @@
     <%= f.email_field :email,
         autocomplete: "email",
         placeholder: "np. jan@kowalski.com",
+        pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
+        title: "Podaj poprawny adres email z domeną (np. jan@kowalski.pl)",
         class: "w-full px-4 py-3 border border-gray-300 rounded-lg text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-[#5d1655] focus:border-[#5d1655] outline-none #{donation.errors[:email].present? ? 'border-red-500' : ''}" %>
     <% if donation.errors[:email].present? %>
       <p class="text-xs text-red-600 mt-1"><%= donation.errors[:email].first %></p>

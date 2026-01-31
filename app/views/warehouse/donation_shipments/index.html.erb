@@ -37,6 +37,10 @@
   <div class="flex-1">
     <p class="mb-2 text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Status płatności</p>
     <div class="flex flex-wrap gap-2">
+      <%= link_to warehouse_donation_shipments_path(payment_status: :all, shipment_status: params[:shipment_status]),
+          class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:payment_status] == 'all' ? 'bg-[#465fff] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Wszystkie
+      <% end %>
       <%= link_to warehouse_donation_shipments_path(payment_status: :paid, shipment_status: params[:shipment_status]),
           class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:payment_status].blank? || params[:payment_status] == 'paid' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
         Opłacone

@@ -9,10 +9,14 @@ module Warehouse
                           .where.not(donation_id: nil)
                           .order(created_at: :desc)
 
-      # Filter by payment status - default to paid
+      # Filter by payment status - default to paid, unless "all" is selected
       payment_status = params[:payment_status].presence || "paid"
-      @shipments = @shipments.joins(:donation)
-                            .where(donations: { payment_status: payment_status })
+      unless payment_status == "all"
+        @shipments = @shipments.joins(:donation)
+                              .where(donations: { payment_status: payment_status })
+      else
+        @shipments = @shipments.joins(:donation)
+      end
 
       # Filter by shipment status if provided
       if params[:shipment_status].present?
