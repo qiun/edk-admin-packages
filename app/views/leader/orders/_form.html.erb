@@ -1,0 +1,125 @@
+<%= form_with model: [:leader, @order], data: { controller: "order-calculator", order_calculator_price_value: @price_per_unit } do |f| %>
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <!-- Header -->
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+        <%= @order.persisted? ? "Edytuj zamówienie ##{@order.id}" : "Nowe zamówienie pakietów" %>
+      </h3>
+    </div>
+
+    <!-- Form Content -->
+    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+      <% if @order.errors.any? %>
+        <div class="rounded-lg bg-danger/10 border border-danger px-4 py-3">
+          <div class="flex items-center gap-2 text-danger font-medium mb-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            Wystąpiły błędy:
+          </div>
+          <ul class="list-disc list-inside text-sm text-danger">
+            <% @order.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Informacja o cenie -->
+      <div class="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/30">
+        <div class="flex items-start">
+          <svg class="mt-0.5 mr-3 h-5 w-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <div class="flex-1">
+            <p class="text-sm font-medium text-blue-900 dark:text-blue-200">
+              Cena za pakiet: <strong><%= number_to_currency(@price_per_unit, unit: "zł", format: "%n %u") %></strong>
+            </p>
+            <p class="mt-1 text-xs text-blue-800 dark:text-blue-300">
+              Minimalna ilość: 10 pakietów
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ilość pakietów -->
+      <div>
+        <%= f.label :quantity, "Ilość pakietów", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+        <%= f.number_field :quantity,
+            min: 10,
+            step: 1,
+            required: true,
+            placeholder: "Podaj ilość pakietów (min. 10)",
+            class: "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800",
+            data: { action: "input->order-calculator#calculate" } %>
+        <p class="mt-1.5 text-sm text-gray-600 dark:text-gray-400">
+          Suma do zapłaty: <span data-order-calculator-target="total" class="font-semibold text-brand-600 dark:text-brand-400"><%= @order.persisted? ? number_to_currency(@order.total_amount, unit: "", format: "%n") : "0.00" %></span> zł
+        </p>
+      </div>
+
+      <!-- Wybór paczkomatu -->
+      <div data-controller="parcel-locker">
+        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+          Paczkomat InPost
+        </label>
+
+        <%= f.hidden_field :locker_code, data: { parcel_locker_target: "code" } %>
+        <%= f.hidden_field :locker_name, data: { parcel_locker_target: "name" } %>
+        <%= f.hidden_field :locker_address, data: { parcel_locker_target: "address" } %>
+        <%= f.hidden_field :locker_city, data: { parcel_locker_target: "city" } %>
+        <%= f.hidden_field :locker_post_code, data: { parcel_locker_target: "postCode" } %>
+
+        <div class="rounded-lg border border-gray-300 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+          <!-- Wybrany paczkomat -->
+          <div data-parcel-locker-target="selected" class="<%= @order.locker_code.blank? ? 'hidden' : '' %>">
+            <div class="rounded-lg bg-green-50 p-3 dark:bg-green-900/20 mb-3">
+              <div class="flex items-center">
+                <svg class="mr-3 h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                  <p class="text-sm font-medium text-gray-900 dark:text-white" data-parcel-locker-target="selectedName"><%= @order.locker_name %></p>
+                  <p class="text-xs text-gray-600 dark:text-gray-400" data-parcel-locker-target="selectedAddress">
+                    <%= [@order.locker_city, @order.locker_post_code].compact.reject(&:blank?).join(', ') %>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <button type="button"
+                    data-action="click->parcel-locker#openMap"
+                    class="flex h-11 w-full items-center justify-center rounded-lg bg-yellow-400 px-4 py-2.5 text-sm font-medium text-black transition-colors hover:bg-yellow-500 focus:outline-hidden focus:ring-3 focus:ring-yellow-500/30">
+              <svg class="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+              </svg>
+              Zmień paczkomat
+            </button>
+          </div>
+
+          <!-- Przycisk wyboru -->
+          <button type="button"
+                  data-action="click->parcel-locker#openMap"
+                  data-parcel-locker-target="selectButton"
+                  class="flex h-11 w-full items-center justify-center rounded-lg bg-yellow-400 px-4 py-2.5 text-sm font-medium text-black transition-colors hover:bg-yellow-500 focus:outline-hidden focus:ring-3 focus:ring-yellow-500/30 <%= @order.locker_code.present? ? 'hidden' : '' %>">
+            <svg class="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+            </svg>
+            Wybierz paczkomat na mapie
+          </button>
+
+          <p class="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
+            Dostępne tylko paczkomaty InPost
+          </p>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-4">
+        <%= link_to leader_orders_path, class: "inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-hidden focus:ring-3 focus:ring-gray-300/30 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700" do %>
+          Anuluj
+        <% end %>
+        <%= f.submit @order.persisted? ? "Zapisz zmiany" : "Złóż zamówienie", class: "inline-flex h-11 items-center justify-center rounded-lg bg-brand-500 px-6 text-sm font-medium text-white transition-colors hover:bg-brand-600 focus:outline-hidden focus:ring-3 focus:ring-brand-500/30" %>
+      </div>
+    </div>
+  </div>
+<% end %>
