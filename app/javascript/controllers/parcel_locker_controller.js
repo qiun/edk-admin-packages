@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["code", "name", "address", "city", "postCode", "selected", "selectedName", "selectedAddress"]
+  static targets = ["code", "name", "address", "city", "postCode", "selected", "selectedName", "selectedAddress", "selectButton"]
 
   connect() {
     this.loadFurgonetkaScript()
@@ -56,6 +56,11 @@ export default class extends Controller {
 
     const { code, name, type, address } = params.point
 
+    // Debug: Log the full response to understand the structure
+    console.log('Full Furgonetka response:', JSON.stringify(params, null, 2))
+    console.log('Point data:', params.point)
+    console.log('Address object:', address)
+
     // Weryfikacja czy to paczkomat InPost
     const lockerType = (type || '').toLowerCase()
     if (lockerType !== 'inpost') {
@@ -66,15 +71,50 @@ export default class extends Controller {
     // Zapisz dane paczkomatu
     this.codeTarget.value = code || ''
     this.nameTarget.value = name || ''
-    this.addressTarget.value = address?.street || address?.line2 || ''
-    this.cityTarget.value = address?.city || ''
-    this.postCodeTarget.value = address?.postCode || address?.post_code || ''
+
+    // Sprawdź czy mamy strukturalny address object
+    let street = address?.street || address?.line2 || address?.line1 || ''
+    let city = address?.city || ''
+    let postCode = address?.postCode || address?.post_code || address?.zipCode || address?.zip_code || ''
+
+    // Jeśli nie ma danych w address object, spróbuj wyciągnąć z name
+    // Format name z Furgonetka to często: "KOD - Ulica, kod_pocztowy Miasto"
+    if (!street && !city && !postCode && name) {
+      const nameWithoutCode = name.includes(' - ') ? name.split(' - ')[1] : name
+
+      // Szukaj kodu pocztowego (format XX-XXX)
+      const postCodeMatch = nameWithoutCode.match(/(\d{2}-\d{3})/)
+      if (postCodeMatch) {
+        postCode = postCodeMatch[1]
+
+        // Wszystko po kodzie pocztowym to miasto
+        const afterPostCode = nameWithoutCode.substring(nameWithoutCode.indexOf(postCode) + postCode.length).trim()
+        city = afterPostCode
+
+        // Wszystko przed kodem pocztowym to adres
+        street = nameWithoutCode.substring(0, nameWithoutCode.indexOf(postCode)).replace(/,\s*$/, '').trim()
+      }
+    }
+
+    this.addressTarget.value = street
+    this.cityTarget.value = city
+    this.postCodeTarget.value = postCode
 
     // Pokaż wybrany paczkomat
     this.selectedTarget.classList.remove('hidden')
-    this.selectedNameTarget.textContent = `${code} - ${name}`
-    this.selectedAddressTarget.textContent = `${address?.city || ''}, ${address?.postCode || address?.post_code || ''}`
+    // Name już zawiera kod (np. "KYW01M - Rynek 4, 64-010 Krzywiń")
+    this.selectedNameTarget.textContent = name
+
+    // Stwórz adres tylko jeśli mamy dane
+    const addressParts = [city, postCode].filter(Boolean)
+    this.selectedAddressTarget.textContent = addressParts.join(', ')
+
+    // Ukryj przycisk "Wybierz paczkomat na mapie"
+    if (this.hasSelectButtonTarget) {
+      this.selectButtonTarget.classList.add('hidden')
+    }
 
     console.log('Parcel locker selected:', { code, name, address })
+    console.log('Parsed values:', { street, city, postCode })
   }
 }
