@@ -1,0 +1,152 @@
+<div class="mb-6 flex justify-between items-center">
+  <div>
+    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white"><%= @region.name %></h2>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      Okręg: <%= @region.area_group.name %>
+    </p>
+  </div>
+  <div class="flex gap-2">
+    <%= link_to "Edytuj", edit_leader_region_path(@region),
+                class: "inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90" %>
+    <%= link_to "Wróć", leader_regions_path,
+                class: "inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-center font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800" %>
+  </div>
+</div>
+
+<!-- Informacje o rejonie -->
+<div class="rounded-lg bg-white dark:bg-boxdark shadow p-6 mb-6">
+  <h3 class="text-lg font-semibold mb-4">Informacje</h3>
+
+  <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <% if @region.contact_person.present? %>
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Osoba kontaktowa</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white"><%= @region.contact_person %></dd>
+      </div>
+    <% end %>
+
+    <% if @region.phone.present? %>
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Telefon</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white"><%= @region.phone %></dd>
+      </div>
+    <% end %>
+
+    <% if @region.email.present? %>
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white"><%= @region.email %></dd>
+      </div>
+    <% end %>
+
+    <% if @region.notes.present? %>
+      <div class="md:col-span-2">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Notatki</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white"><%= @region.notes %></dd>
+      </div>
+    <% end %>
+  </dl>
+</div>
+
+<!-- Przydział (jeśli istnieje) -->
+<% if @allocation.present? %>
+  <div class="rounded-lg bg-white dark:bg-boxdark shadow p-6 mb-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold">Przydział pakietów</h3>
+      <%= link_to "Zarządzaj", edit_leader_region_region_allocation_path(@region),
+                  class: "text-primary hover:underline text-sm" %>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Przydzielone</p>
+        <p class="text-2xl font-bold text-primary"><%= @allocation.allocated_quantity %></p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Sprzedane</p>
+        <p class="text-2xl font-bold text-warning"><%= @allocation.sold_quantity %></p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Pozostałe</p>
+        <p class="text-2xl font-bold text-meta-5"><%= @allocation.remaining_quantity %></p>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="rounded-lg bg-white dark:bg-boxdark shadow p-6 mb-6 text-center">
+    <p class="text-gray-500 dark:text-gray-400 mb-4">Brak przydziału pakietów</p>
+    <%= link_to "Dodaj przydział", edit_leader_region_region_allocation_path(@region),
+                class: "inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90" %>
+  </div>
+<% end %>
+
+<!-- Płatności -->
+<div class="rounded-lg bg-white dark:bg-boxdark shadow p-6 mb-6">
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-semibold">Płatności</h3>
+    <%= link_to "Zarządzaj płatnościami", leader_region_regional_payments_path(@region),
+                class: "text-primary hover:underline text-sm" %>
+  </div>
+
+  <% if @payments.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b">
+          <tr>
+            <th class="text-left p-2">Data</th>
+            <th class="text-right p-2">Kwota</th>
+            <th class="text-left p-2">Notatki</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @payments.first(5).each do |payment| %>
+            <tr class="border-b">
+              <td class="p-2"><%= l(payment.payment_date, format: :short) %></td>
+              <td class="p-2 text-right font-semibold"><%= number_to_currency(payment.amount, unit: "zł", precision: 0, format: "%n %u") %></td>
+              <td class="p-2 text-gray-600 dark:text-gray-400"><%= payment.notes&.truncate(50) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="text-gray-500 dark:text-gray-400 text-center py-4">Brak płatności</p>
+  <% end %>
+</div>
+
+<!-- Transfery -->
+<% if @transfers_from.any? || @transfers_to.any? %>
+  <div class="rounded-lg bg-white dark:bg-boxdark shadow p-6">
+    <h3 class="text-lg font-semibold mb-4">Transfery</h3>
+
+    <% if @transfers_from.any? %>
+      <div class="mb-4">
+        <h4 class="font-medium text-sm mb-2">Wychodzące</h4>
+        <ul class="space-y-2">
+          <% @transfers_from.each do |transfer| %>
+            <li class="text-sm text-gray-600 dark:text-gray-400">
+              <span class="font-medium text-danger">-<%= transfer.quantity %></span>
+              do <%= transfer.to_region.name %>
+              (<%= l(transfer.transferred_at, format: :short) if transfer.transferred_at %>)
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if @transfers_to.any? %>
+      <div>
+        <h4 class="font-medium text-sm mb-2">Przychodzące</h4>
+        <ul class="space-y-2">
+          <% @transfers_to.each do |transfer| %>
+            <li class="text-sm text-gray-600 dark:text-gray-400">
+              <span class="font-medium text-success">+<%= transfer.quantity %></span>
+              z <%= transfer.from_region.name %>
+              (<%= l(transfer.transferred_at, format: :short) if transfer.transferred_at %>)
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+<% end %>

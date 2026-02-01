@@ -1,0 +1,184 @@
+<div class="mb-6">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+        Raport regionalny
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        Edycja: <%= @edition.name %>
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "Eksportuj CSV",
+                  leader_export_csv_regional_reports_path,
+                  class: "inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2 text-center font-medium text-white hover:bg-brand-600 transition-colors" %>
+    </div>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+  <div class="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm">
+    <p class="text-sm text-gray-500 dark:text-gray-400">Rejony</p>
+    <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white"><%= @totals[:regions] %></p>
+  </div>
+
+  <div class="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm">
+    <p class="text-sm text-gray-500 dark:text-gray-400">Przydzielone</p>
+    <p class="mt-2 text-2xl font-bold text-brand-500"><%= @totals[:allocated] %></p>
+  </div>
+
+  <div class="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm">
+    <p class="text-sm text-gray-500 dark:text-gray-400">Sprzedane</p>
+    <p class="mt-2 text-2xl font-bold text-green-600"><%= @totals[:sold] %></p>
+  </div>
+
+  <div class="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm">
+    <p class="text-sm text-gray-500 dark:text-gray-400">Pozostałe</p>
+    <p class="mt-2 text-2xl font-bold text-amber-600"><%= @totals[:remaining] %></p>
+  </div>
+
+  <div class="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm">
+    <p class="text-sm text-gray-500 dark:text-gray-400">Płatności</p>
+    <p class="mt-2 text-lg font-bold text-gray-900 dark:text-white">
+      <%= number_to_currency(@totals[:payments], unit: "zł", precision: 0, format: "%n %u") %>
+    </p>
+  </div>
+
+  <div class="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm">
+    <p class="text-sm text-gray-500 dark:text-gray-400">Transfer przychodz.</p>
+    <p class="mt-2 text-2xl font-bold text-green-600"><%= @totals[:transfers_in] %></p>
+  </div>
+
+  <div class="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm">
+    <p class="text-sm text-gray-500 dark:text-gray-400">Transfer wychodz.</p>
+    <p class="mt-2 text-2xl font-bold text-red-600"><%= @totals[:transfers_out] %></p>
+  </div>
+</div>
+
+<!-- Detailed Table -->
+<div class="rounded-xl bg-white dark:bg-gray-800 shadow-sm">
+  <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+    <h3 class="font-medium text-gray-900 dark:text-white">
+      Szczegóły rejonów (<%= @regions.count %>)
+    </h3>
+  </div>
+
+  <% if @report_data.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+            <th class="px-4 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Rejon
+            </th>
+            <th class="px-4 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Osoba kontaktowa
+            </th>
+            <th class="px-4 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Przydzielone
+            </th>
+            <th class="px-4 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Sprzedane
+            </th>
+            <th class="px-4 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Pozostałe
+            </th>
+            <th class="px-4 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Płatności
+            </th>
+            <th class="px-4 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Transfer przychodz.
+            </th>
+            <th class="px-4 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Transfer wychodz.
+            </th>
+            <th class="px-4 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Akcje
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @report_data.each do |data| %>
+            <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900">
+              <td class="px-4 py-4">
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white"><%= data[:region].name %></p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400"><%= data[:region].area_group.name %></p>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm">
+                <% if data[:region].contact_person.present? %>
+                  <p class="text-gray-900 dark:text-white"><%= data[:region].contact_person %></p>
+                  <p class="text-gray-500 dark:text-gray-400"><%= data[:region].phone %></p>
+                <% else %>
+                  <span class="text-gray-400">—</span>
+                <% end %>
+              </td>
+              <td class="px-4 py-4 text-right font-semibold text-brand-500">
+                <%= data[:allocation]&.allocated_quantity || 0 %>
+              </td>
+              <td class="px-4 py-4 text-right font-semibold text-green-600">
+                <%= data[:allocation]&.sold_quantity || 0 %>
+              </td>
+              <td class="px-4 py-4 text-right font-semibold text-amber-600">
+                <%= data[:allocation]&.remaining_quantity || 0 %>
+              </td>
+              <td class="px-4 py-4 text-right">
+                <p class="font-semibold text-gray-900 dark:text-white">
+                  <%= number_to_currency(data[:payments_sum], unit: "zł", precision: 0, format: "%n %u") %>
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  (<%= data[:payments_count] %> płatności)
+                </p>
+              </td>
+              <td class="px-4 py-4 text-right font-semibold text-green-600">
+                <% if data[:transfers_in] > 0 %>
+                  +<%= data[:transfers_in] %>
+                <% else %>
+                  0
+                <% end %>
+              </td>
+              <td class="px-4 py-4 text-right font-semibold text-red-600">
+                <% if data[:transfers_out] > 0 %>
+                  -<%= data[:transfers_out] %>
+                <% else %>
+                  0
+                <% end %>
+              </td>
+              <td class="px-4 py-4">
+                <%= link_to "Szczegóły",
+                            leader_region_path(data[:region]),
+                            class: "text-brand-500 hover:text-brand-600 hover:underline transition-colors" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot class="border-t-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-900">
+          <tr>
+            <td colspan="2" class="px-4 py-4 font-bold text-gray-900 dark:text-white">SUMA</td>
+            <td class="px-4 py-4 text-right font-bold text-brand-500"><%= @totals[:allocated] %></td>
+            <td class="px-4 py-4 text-right font-bold text-green-600"><%= @totals[:sold] %></td>
+            <td class="px-4 py-4 text-right font-bold text-amber-600"><%= @totals[:remaining] %></td>
+            <td class="px-4 py-4 text-right font-bold text-gray-900 dark:text-white">
+              <%= number_to_currency(@totals[:payments], unit: "zł", precision: 0, format: "%n %u") %>
+            </td>
+            <td class="px-4 py-4 text-right font-bold text-green-600">
+              <% if @totals[:transfers_in] > 0 %>+<% end %><%= @totals[:transfers_in] %>
+            </td>
+            <td class="px-4 py-4 text-right font-bold text-red-600">
+              <% if @totals[:transfers_out] > 0 %>-<% end %><%= @totals[:transfers_out] %>
+            </td>
+            <td class="px-4 py-4"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  <% else %>
+    <div class="px-6 py-8 text-center">
+      <p class="text-gray-600 dark:text-gray-400">
+        Brak rejonów do wyświetlenia
+      </p>
+    </div>
+  <% end %>
+</div>

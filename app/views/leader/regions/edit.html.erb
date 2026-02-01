@@ -1,0 +1,15 @@
+<div class="mb-6 flex justify-between items-center">
+  <div>
+    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Edycja rejonu</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+      <%= @region.name %> (Edycja: <%= @edition.name %>)
+    </p>
+  </div>
+  <%= button_to "Usuń rejon",
+                leader_region_path(@region),
+                method: :delete,
+                form: { data: { turbo_confirm: "Czy na pewno chcesz usunąć ten rejon? Tej operacji nie można cofnąć." } },
+                class: "inline-flex items-center justify-center rounded-md bg-danger px-4 py-2 text-center font-medium text-white hover:bg-opacity-90" %>
+</div>
+
+<%= render "form", region: @region %>

@@ -1,0 +1,132 @@
+<div class="mb-6">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+        Szczegóły transferu
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <%= @transfer.from_region.name %> → <%= @transfer.to_region.name %>
+      </p>
+    </div>
+    <% if @transfer.pending? %>
+      <%= button_to "Usuń transfer",
+                    leader_region_transfer_path(@transfer),
+                    method: :delete,
+                    form: { data: { turbo_confirm: "Czy na pewno chcesz usunąć ten transfer?" } },
+                    class: "inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-center font-medium text-white hover:bg-red-700 transition-colors" %>
+    <% end %>
+  </div>
+
+  <%= link_to "← Powrót do listy",
+              leader_region_transfers_path,
+              class: "text-brand-500 hover:text-brand-600 hover:underline transition-colors" %>
+</div>
+
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+  <!-- Informacje podstawowe -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+    <h3 class="mb-4 font-medium text-gray-900 dark:text-white">
+      Informacje podstawowe
+    </h3>
+
+    <dl class="space-y-3">
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
+        <dd class="mt-1">
+          <% if @transfer.pending? %>
+            <span class="inline-flex rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-sm font-medium text-amber-600 dark:text-amber-400">
+              Oczekujący
+            </span>
+          <% elsif @transfer.approved? %>
+            <span class="inline-flex rounded-full bg-green-100 dark:bg-green-900/30 px-3 py-1 text-sm font-medium text-green-600 dark:text-green-400">
+              Zatwierdzony
+            </span>
+          <% else %>
+            <span class="inline-flex rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1 text-sm font-medium text-red-600 dark:text-red-400">
+              Anulowany
+            </span>
+          <% end %>
+        </dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Ilość pakietów</dt>
+        <dd class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+          <%= @transfer.quantity %>
+        </dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Data utworzenia</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+          <%= l(@transfer.created_at, format: :long) %>
+        </dd>
+      </div>
+
+      <% if @transfer.transferred_at.present? %>
+        <div>
+          <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Data zatwierdzenia</dt>
+          <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+            <%= l(@transfer.transferred_at, format: :long) %>
+          </dd>
+        </div>
+      <% end %>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Utworzył</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+          <%= @transfer.transferred_by.full_name %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Rejony -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+    <h3 class="mb-4 font-medium text-gray-900 dark:text-white">
+      Rejony
+    </h3>
+
+    <div class="mb-6">
+      <h4 class="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+        Z rejonu (źródło)
+      </h4>
+      <%= link_to @transfer.from_region.name,
+                  leader_region_path(@transfer.from_region),
+                  class: "text-lg font-semibold text-brand-500 hover:text-brand-600 hover:underline transition-colors" %>
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        <%= @transfer.from_region.area_group.name %>
+      </p>
+    </div>
+
+    <div class="flex items-center justify-center my-4">
+      <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+      </svg>
+    </div>
+
+    <div>
+      <h4 class="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+        Do rejonu (cel)
+      </h4>
+      <%= link_to @transfer.to_region.name,
+                  leader_region_path(@transfer.to_region),
+                  class: "text-lg font-semibold text-brand-500 hover:text-brand-600 hover:underline transition-colors" %>
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        <%= @transfer.to_region.area_group.name %>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Powód -->
+<% if @transfer.reason.present? %>
+  <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+    <h3 class="mb-4 font-medium text-gray-900 dark:text-white">
+      Powód transferu
+    </h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      <%= @transfer.reason %>
+    </p>
+  </div>
+<% end %>

@@ -1,0 +1,78 @@
+<% input_class = "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white outline-none transition focus:border-brand-500 dark:focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" %>
+
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+  <%= form_with model: [:leader, region], class: "space-y-6" do |f| %>
+    <% if region.errors.any? %>
+      <div class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 mb-4">
+        <h3 class="text-red-800 dark:text-red-400 font-medium mb-2">
+          <%= pluralize(region.errors.count, "błąd", "błędy", "błędów") %> uniemożliwiają zapisanie:
+        </h3>
+        <ul class="list-disc list-inside text-sm text-red-700 dark:text-red-400">
+          <% region.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
+        Nazwa rejonu <span class="text-red-600">*</span>
+      </label>
+      <%= f.text_field :name, class: input_class,
+                      placeholder: "np. Parafia MB Częstochowskiej", required: true %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
+        Okręg <span class="text-red-600">*</span>
+      </label>
+      <%= f.collection_select :area_group_id,
+                             current_user.area_groups, :id, :name,
+                             { prompt: "Wybierz okręg" },
+                             class: input_class, required: true %>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Wybierz okręg, do którego należy ten rejon
+      </p>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
+        Osoba kontaktowa
+      </label>
+      <%= f.text_field :contact_person, class: input_class,
+                      placeholder: "np. ks. Jan Kowalski" %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
+        Telefon
+      </label>
+      <%= f.text_field :phone, class: input_class, placeholder: "np. 123456789" %>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Tylko cyfry, minimum 9 znaków
+      </p>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
+        Email
+      </label>
+      <%= f.email_field :email, class: input_class, placeholder: "np. kontakt@example.com" %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
+        Notatki
+      </label>
+      <%= f.text_area :notes, rows: 4, class: input_class,
+                     placeholder: "Dodatkowe informacje o rejonie..." %>
+    </div>
+
+    <div class="flex gap-4">
+      <%= f.submit "Zapisz", class: "inline-flex items-center justify-center rounded-lg bg-brand-500 px-6 py-3 text-center font-medium text-white hover:bg-brand-600 transition-colors" %>
+      <%= link_to "Anuluj", region.persisted? ? leader_region_path(region) : leader_regions_path,
+                  class: "inline-flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-600 px-6 py-3 text-center font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" %>
+    </div>
+  <% end %>
+</div>

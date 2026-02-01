@@ -1,0 +1,84 @@
+<% input_class = "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white outline-none transition focus:border-brand-500 dark:focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" %>
+
+<div class="mb-6">
+  <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+    Nowy transfer pakietów
+  </h2>
+  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+    Edycja: <%= @edition.name %>
+  </p>
+  <%= link_to "← Powrót do listy",
+              leader_region_transfers_path,
+              class: "text-brand-500 hover:text-brand-600 hover:underline mt-2 inline-block transition-colors" %>
+</div>
+
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+  <h3 class="font-medium text-gray-900 dark:text-white mb-6">
+    Formularz transferu
+  </h3>
+
+  <%= form_with model: @transfer,
+                url: leader_region_transfers_path,
+                method: :post,
+                class: "space-y-6" do |f| %>
+    <% if @transfer.errors.any? %>
+      <div class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+        <h3 class="text-red-800 dark:text-red-400 font-medium mb-2">
+          <%= pluralize(@transfer.errors.count, "błąd", "błędy", "błędów") %> uniemożliwiają zapisanie:
+        </h3>
+        <ul class="list-disc list-inside text-sm text-red-700 dark:text-red-400">
+          <% @transfer.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :from_region_id, "Z rejonu",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.collection_select :from_region_id,
+                              @available_regions,
+                              :id,
+                              :display_name,
+                              { prompt: "Wybierz rejon źródłowy" },
+                              class: input_class %>
+    </div>
+
+    <div>
+      <%= f.label :to_region_id, "Do rejonu",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.collection_select :to_region_id,
+                              @available_regions,
+                              :id,
+                              :display_name,
+                              { prompt: "Wybierz rejon docelowy" },
+                              class: input_class %>
+    </div>
+
+    <div>
+      <%= f.label :quantity, "Ilość pakietów",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.number_field :quantity,
+                         min: 1,
+                         class: input_class %>
+    </div>
+
+    <div>
+      <%= f.label :reason, "Powód transferu (opcjonalnie)",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.text_area :reason,
+                      rows: 3,
+                      placeholder: "Np. nadwyżka w jednym rejonie, zapotrzebowanie w drugim...",
+                      class: input_class %>
+    </div>
+
+    <div class="flex gap-4">
+      <%= f.submit "Utwórz transfer",
+                   class: "inline-flex items-center justify-center rounded-lg bg-brand-500 px-6 py-3 text-center font-medium text-white hover:bg-brand-600 transition-colors" %>
+      <%= link_to "Anuluj",
+                  leader_region_transfers_path,
+                  class: "inline-flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-600 px-6 py-3 text-center font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" %>
+    </div>
+  <% end %>
+</div>

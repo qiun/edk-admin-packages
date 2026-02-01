@@ -1,0 +1,98 @@
+<div class="mb-6">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+        Historia zmian przydziału
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <%= @region.name %> (Edycja: <%= @edition.name %>)
+      </p>
+    </div>
+    <%= link_to "Edytuj przydzielenie",
+                edit_leader_region_region_allocation_path(@region),
+                class: "inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-center font-medium text-white hover:bg-opacity-90" %>
+  </div>
+
+  <%= link_to "← Powrót do rejonu",
+              leader_region_path(@region),
+              class: "text-primary hover:underline" %>
+</div>
+
+<div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+  <div class="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
+    <h3 class="font-medium text-black dark:text-white">
+      Historia zmian (ostatnie <%= @changes.count %>)
+    </h3>
+  </div>
+
+  <% if @changes.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-stroke dark:border-strokedark">
+            <th class="px-4 py-4 text-left font-medium text-black dark:text-white">
+              Data zmiany
+            </th>
+            <th class="px-4 py-4 text-left font-medium text-black dark:text-white">
+              Zmienił
+            </th>
+            <th class="px-4 py-4 text-left font-medium text-black dark:text-white">
+              Zmiany
+            </th>
+            <th class="px-4 py-4 text-left font-medium text-black dark:text-white">
+              Powód
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @changes.each do |change| %>
+            <tr class="border-b border-stroke dark:border-strokedark">
+              <td class="px-4 py-4">
+                <%= l(change.created_at, format: :long) %>
+              </td>
+              <td class="px-4 py-4">
+                <%= change.changed_by.full_name %>
+              </td>
+              <td class="px-4 py-4">
+                <%= change.formatted_change %>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                <%= change.reason.presence || "—" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="px-6.5 py-8 text-center">
+      <p class="text-gray-600 dark:text-gray-400">
+        Brak historii zmian dla tego przydziału
+      </p>
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-6 rounded-sm border border-stroke bg-white p-6.5 shadow-default dark:border-strokedark dark:bg-boxdark">
+  <h3 class="mb-4 font-medium text-black dark:text-white">Aktualny stan</h3>
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Przydzielone</p>
+      <p class="text-2xl font-bold text-black dark:text-white">
+        <%= @allocation.allocated_quantity %>
+      </p>
+    </div>
+    <div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Sprzedane</p>
+      <p class="text-2xl font-bold text-black dark:text-white">
+        <%= @allocation.sold_quantity %>
+      </p>
+    </div>
+    <div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Pozostało</p>
+      <p class="text-2xl font-bold text-black dark:text-white">
+        <%= @allocation.remaining_quantity %>
+      </p>
+    </div>
+  </div>
+</div>

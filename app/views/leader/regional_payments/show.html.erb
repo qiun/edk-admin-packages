@@ -1,0 +1,124 @@
+<div class="mb-6">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+        Szczegóły płatności
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <%= @region.name %> (Edycja: <%= @edition.name %>)
+      </p>
+    </div>
+    <%= button_to "Usuń płatność",
+                  leader_region_regional_payment_path(@region, @payment),
+                  method: :delete,
+                  form: { data: { turbo_confirm: "Czy na pewno chcesz usunąć tę płatność?" } },
+                  class: "inline-flex items-center justify-center rounded-md bg-red-600 hover:bg-red-700 px-4 py-2 text-center font-medium text-white hover:bg-opacity-90" %>
+  </div>
+
+  <%= link_to "← Powrót do płatności",
+              leader_region_regional_payments_path(@region),
+              class: "text-brand-500 hover:text-brand-600 hover:underline transition-colors" %>
+</div>
+
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+  <!-- Informacje o płatności -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+    <h3 class="mb-4 font-medium text-gray-900 dark:text-white">
+      Informacje o płatności
+    </h3>
+
+    <dl class="space-y-3">
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Kwota</dt>
+        <dd class="mt-1 text-3xl font-bold text-gray-900 dark:text-white">
+          <%= number_to_currency(@payment.amount, unit: "zł", precision: 0, format: "%n %u") %>
+        </dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Data płatności</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+          <%= l(@payment.payment_date, format: :long) %>
+        </dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Data rejestracji</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+          <%= l(@payment.created_at, format: :long) %>
+        </dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Zarejestrował</dt>
+        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+          <%= @payment.recorded_by.full_name %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Potwierdzenie -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+    <h3 class="mb-4 font-medium text-gray-900 dark:text-white">
+      Potwierdzenie płatności
+    </h3>
+
+    <% if @payment.confirmation.attached? %>
+      <div class="space-y-4">
+        <div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Nazwa pliku:</p>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">
+            <%= @payment.confirmation.filename %>
+          </p>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Rozmiar:</p>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">
+            <%= number_to_human_size(@payment.confirmation.byte_size) %>
+          </p>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Typ pliku:</p>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">
+            <%= @payment.confirmation.content_type %>
+          </p>
+        </div>
+
+        <div class="pt-4">
+          <%= link_to "Pobierz potwierdzenie",
+                      rails_blob_path(@payment.confirmation, disposition: "attachment"),
+                      class: "inline-flex items-center justify-center rounded-md bg-brand-500 px-4 py-2 text-center font-medium text-white hover:bg-brand-600 transition-colors" %>
+        </div>
+
+        <% if @payment.confirmation.representable? %>
+          <div class="mt-4 border-t border-stroke pt-4 dark:border-strokedark">
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Podgląd:</p>
+            <%= image_tag @payment.confirmation.variant(resize_to_limit: [ 400, 400 ]),
+                          class: "rounded border border-gray-200 dark:border-gray-700" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-8">
+        <p class="text-gray-600 dark:text-gray-400">
+          Brak załączonego potwierdzenia
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Notatki -->
+<% if @payment.notes.present? %>
+  <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+    <h3 class="mb-4 font-medium text-gray-900 dark:text-white">
+      Notatki
+    </h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      <%= @payment.notes %>
+    </p>
+  </div>
+<% end %>

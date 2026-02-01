@@ -1,0 +1,82 @@
+<% input_class = "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white outline-none transition focus:border-brand-500 dark:focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" %>
+
+<div class="mb-6">
+  <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+    Nowa płatność
+  </h2>
+  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+    <%= @region.name %> (Edycja: <%= @edition.name %>)
+  </p>
+  <%= link_to "← Powrót do płatności",
+              leader_region_regional_payments_path(@region),
+              class: "text-brand-500 hover:text-brand-600 hover:underline mt-2 inline-block transition-colors" %>
+</div>
+
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+  <h3 class="font-medium text-gray-900 dark:text-white mb-6">
+    Formularz płatności
+  </h3>
+
+  <%= form_with model: @payment,
+                url: leader_region_regional_payments_path(@region),
+                method: :post,
+                class: "space-y-6" do |f| %>
+    <% if @payment.errors.any? %>
+      <div class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+        <h3 class="text-red-800 dark:text-red-400 font-medium mb-2">
+          <%= pluralize(@payment.errors.count, "błąd", "błędy", "błędów") %> uniemożliwiają zapisanie:
+        </h3>
+        <ul class="list-disc list-inside text-sm text-red-700 dark:text-red-400">
+          <% @payment.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :amount, "Kwota (zł)",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.number_field :amount,
+                         step: 1,
+                         min: 1,
+                         placeholder: "0",
+                         class: input_class %>
+    </div>
+
+    <div>
+      <%= f.label :payment_date, "Data płatności",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.date_field :payment_date,
+                       class: input_class %>
+    </div>
+
+    <div>
+      <%= f.label :confirmation, "Potwierdzenie płatności (PDF, JPG, PNG)",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.file_field :confirmation,
+                       accept: "application/pdf,image/jpeg,image/jpg,image/png",
+                       class: "w-full cursor-pointer rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white outline-none transition file:mr-4 file:cursor-pointer file:border-0 file:bg-gray-100 dark:file:bg-gray-600 file:px-4 file:py-2 file:rounded-md file:text-sm file:font-medium file:text-gray-700 dark:file:text-gray-300 hover:file:bg-gray-200 dark:hover:file:bg-gray-500 focus:border-brand-500 dark:focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" %>
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        Zalecane: Dołącz skan przelewu lub potwierdzenie wpłaty
+      </p>
+    </div>
+
+    <div>
+      <%= f.label :notes, "Notatki (opcjonalnie)",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.text_area :notes,
+                      rows: 3,
+                      placeholder: "Np. numer przelewu, dodatkowe informacje...",
+                      class: input_class %>
+    </div>
+
+    <div class="flex gap-4">
+      <%= f.submit "Zapisz płatność",
+                   class: "inline-flex items-center justify-center rounded-lg bg-brand-500 px-6 py-3 text-center font-medium text-white hover:bg-brand-600 transition-colors" %>
+      <%= link_to "Anuluj",
+                  leader_region_regional_payments_path(@region),
+                  class: "inline-flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-600 px-6 py-3 text-center font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" %>
+    </div>
+  <% end %>
+</div>

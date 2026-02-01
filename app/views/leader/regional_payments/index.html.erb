@@ -1,0 +1,99 @@
+<div class="mb-6">
+  <div class="flex justify-between items-center mb-4">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+        Płatności rejonu
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <%= @region.name %> (Edycja: <%= @edition.name %>)
+      </p>
+    </div>
+    <%= link_to "Dodaj płatność",
+                new_leader_region_regional_payment_path(@region),
+                class: "inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2 text-center font-medium text-white hover:bg-brand-600 transition-colors" %>
+  </div>
+
+  <%= link_to "← Powrót do rejonu",
+              leader_region_path(@region),
+              class: "text-brand-500 hover:text-brand-600 hover:underline transition-colors" %>
+</div>
+
+<div class="rounded-xl bg-white dark:bg-gray-800 shadow-sm">
+  <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+    <h3 class="font-medium text-gray-900 dark:text-white">
+      Lista płatności (<%= @payments.count %>)
+    </h3>
+  </div>
+
+  <% if @payments.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+            <th class="px-4 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Data płatności
+            </th>
+            <th class="px-4 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Kwota
+            </th>
+            <th class="px-4 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Potwierdzenie
+            </th>
+            <th class="px-4 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Notatki
+            </th>
+            <th class="px-4 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+              Akcje
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @payments.each do |payment| %>
+            <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900">
+              <td class="px-4 py-4 text-gray-900 dark:text-white">
+                <%= l(payment.payment_date, format: :long) %>
+              </td>
+              <td class="px-4 py-4 text-right font-semibold text-gray-900 dark:text-white">
+                <%= number_to_currency(payment.amount, unit: "zł", precision: 0, format: "%n %u") %>
+              </td>
+              <td class="px-4 py-4">
+                <% if payment.confirmation.attached? %>
+                  <span class="inline-flex rounded-full bg-green-100 dark:bg-green-900/30 px-3 py-1 text-sm font-medium text-green-600 dark:text-green-400">
+                    ✓ Załączono
+                  </span>
+                <% else %>
+                  <span class="text-gray-400">Brak</span>
+                <% end %>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                <%= payment.notes&.truncate(50) || "—" %>
+              </td>
+              <td class="px-4 py-4">
+                <%= link_to "Szczegóły",
+                            leader_region_regional_payment_path(@region, payment),
+                            class: "text-brand-500 hover:text-brand-600 hover:underline transition-colors" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+      <div class="flex justify-between items-center">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Suma płatności:
+        </p>
+        <p class="text-2xl font-bold text-gray-900 dark:text-white">
+          <%= number_to_currency(@payments.sum(:amount), unit: "zł", precision: 0, format: "%n %u") %>
+        </p>
+      </div>
+    </div>
+  <% else %>
+    <div class="px-6 py-8 text-center">
+      <p class="text-gray-600 dark:text-gray-400">
+        Brak płatności dla tego rejonu
+      </p>
+    </div>
+  <% end %>
+</div>
