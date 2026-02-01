@@ -13,6 +13,7 @@ class Order < ApplicationRecord
   }
 
   validates :quantity, presence: true, numericality: { greater_than_or_equal_to: 10 }
+  validates :poster_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_nil: false
   validates :locker_code, :locker_name, presence: true
 
   validate :ordering_not_locked, on: :create
@@ -71,6 +72,16 @@ class Order < ApplicationRecord
 
   def can_be_cancelled_by_leader?
     pending?
+  end
+
+  def has_posters?
+    poster_quantity.to_i > 0
+  end
+
+  def content_summary
+    parts = ["#{quantity} pakietów"]
+    parts << "#{poster_quantity} plakatów" if has_posters?
+    parts.join(", ")
   end
 
   private

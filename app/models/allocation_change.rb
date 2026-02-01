@@ -9,12 +9,21 @@ class AllocationChange < ApplicationRecord
 
   def formatted_change
     changes = []
+
     if previous_allocated != new_allocated
-      changes << "Przydzielone: #{previous_allocated} → #{new_allocated}"
+      changes << "Przydzielone pakiety: #{previous_allocated} → #{new_allocated}"
     end
     if previous_sold != new_sold
-      changes << "Sprzedane: #{previous_sold} → #{new_sold}"
+      changes << "Sprzedane pakiety: #{previous_sold} → #{new_sold}"
     end
+
+    if previous_allocated_posters.present? || new_allocated_posters.present?
+      changes << "Przydzielone plakaty: #{previous_allocated_posters || 0} → #{new_allocated_posters || 0}"
+    end
+    if previous_distributed_posters.present? || new_distributed_posters.present?
+      changes << "Wydane plakaty: #{previous_distributed_posters || 0} → #{new_distributed_posters || 0}"
+    end
+
     changes.join(", ")
   end
 end

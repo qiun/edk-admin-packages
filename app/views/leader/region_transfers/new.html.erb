@@ -65,6 +65,18 @@
     </div>
 
     <div>
+      <%= f.label :poster_quantity, "Ilość plakatów (opcjonalnie)",
+                  class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
+      <%= f.number_field :poster_quantity,
+                         min: 0,
+                         value: 0,
+                         class: input_class %>
+      <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">
+        Możesz przenieść plakaty między rejonami
+      </p>
+    </div>
+
+    <div>
       <%= f.label :reason, "Powód transferu (opcjonalnie)",
                   class: "block text-sm font-medium mb-2 text-gray-900 dark:text-white" %>
       <%= f.text_area :reason,

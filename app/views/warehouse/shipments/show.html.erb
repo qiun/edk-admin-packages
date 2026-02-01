@@ -88,6 +88,14 @@
           </dd>
         </div>
       <% end %>
+      <% if @shipment.order && @shipment.order.has_posters? %>
+        <div>
+          <dt class="text-sm text-gray-500 dark:text-gray-400">Zawartość</dt>
+          <dd class="mt-1 text-sm font-medium text-gray-800 dark:text-white">
+            <%= @shipment.order.quantity %> pakietów, <%= @shipment.order.poster_quantity %> plakatów
+          </dd>
+        </div>
+      <% end %>
       <% if @shipment.tracking_url.present? %>
         <div class="pt-2">
           <%= link_to @shipment.tracking_url, target: "_blank", class: "inline-flex items-center gap-2 text-sm font-medium text-[#465fff] hover:underline" do %>

@@ -45,15 +45,22 @@ module Leader
     def update
       old_quantity = @order.quantity
       new_quantity = order_params[:quantity].to_i
+      old_poster_quantity = @order.poster_quantity
+      new_poster_quantity = order_params[:poster_quantity].to_i
 
       begin
-        # Najpierw aktualizuj ilość (z obsługą rezerwacji)
+        # Najpierw aktualizuj ilość pakietów
         if new_quantity != old_quantity
           @order.update_quantity!(new_quantity)
         end
 
+        # Potem aktualizuj ilość plakatów (bez rezerwacji)
+        if new_poster_quantity != old_poster_quantity
+          @order.poster_quantity = new_poster_quantity
+        end
+
         # Potem zaktualizuj dane paczkomatu
-        if @order.update(order_params.except(:quantity))
+        if @order.update(order_params.except(:quantity, :poster_quantity))
           redirect_to leader_order_path(@order), notice: "Zamówienie zostało zaktualizowane"
         else
           @price_per_unit = @order.price_per_unit
@@ -84,6 +91,7 @@ module Leader
     def order_params
       params.require(:order).permit(
         :quantity,
+        :poster_quantity,
         :locker_code,
         :locker_name,
         :locker_address,

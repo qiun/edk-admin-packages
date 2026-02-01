@@ -57,6 +57,20 @@
         </p>
       </div>
 
+      <!-- Ilość plakatów -->
+      <div>
+        <%= f.label :poster_quantity, "Ilość plakatów (opcjonalnie)", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+        <%= f.number_field :poster_quantity,
+            min: 0,
+            step: 1,
+            value: @order.poster_quantity || 0,
+            placeholder: "Podaj ilość plakatów (opcjonalnie)",
+            class: "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" %>
+        <p class="mt-1.5 text-sm text-gray-600 dark:text-gray-400">
+          Plakaty są bezpłatne i zostaną wysłane w tej samej paczce co pakiety
+        </p>
+      </div>
+
       <!-- Wybór paczkomatu -->
       <div data-controller="parcel-locker">
         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">

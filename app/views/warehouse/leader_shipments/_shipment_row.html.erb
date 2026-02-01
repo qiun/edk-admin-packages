@@ -12,6 +12,16 @@
       </p>
       <p class="text-xs text-gray-500"><%= shipment.order.locker_name %></p>
     </td>
+    <td class="px-5 py-4">
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        <%= shipment.order.quantity %> pakietów
+      </p>
+      <% if shipment.order.has_posters? %>
+        <p class="text-xs text-gray-500 dark:text-gray-500">
+          + <%= shipment.order.poster_quantity %> plakatów
+        </p>
+      <% end %>
+    </td>
     <td class="px-5 py-4 text-sm text-gray-600 dark:text-gray-400">
       <%= shipment.waybill_number || '-' %>
     </td>

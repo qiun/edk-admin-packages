@@ -58,6 +58,8 @@ module Leader
       params.require(:region_allocation).permit(
         :allocated_quantity,
         :sold_quantity,
+        :allocated_posters,
+        :distributed_posters,
         :change_reason
       )
     end

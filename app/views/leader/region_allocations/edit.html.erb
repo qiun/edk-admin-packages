@@ -61,6 +61,32 @@
       </p>
     </div>
 
+    <!-- Plakaty -->
+    <div class="mt-6 pt-4 border-t border-stroke dark:border-strokedark">
+      <h4 class="mb-4 text-lg font-medium text-black dark:text-white">Plakaty</h4>
+
+      <div class="mb-4.5">
+        <%= f.label :allocated_posters, "Przydzielona ilość plakatów",
+                    class: "mb-2.5 block text-black dark:text-white" %>
+        <%= f.number_field :allocated_posters,
+                           min: 0,
+                           value: @allocation.allocated_posters || 0,
+                           class: "w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" %>
+      </div>
+
+      <div class="mb-4.5">
+        <%= f.label :distributed_posters, "Wydana ilość plakatów",
+                    class: "mb-2.5 block text-black dark:text-white" %>
+        <%= f.number_field :distributed_posters,
+                           min: 0,
+                           value: @allocation.distributed_posters || 0,
+                           class: "w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" %>
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          Pozostało: <%= @allocation.remaining_posters %> plakatów
+        </p>
+      </div>
+    </div>
+
     <div class="mb-6">
       <%= f.label :change_reason, "Powód zmiany (opcjonalnie)",
                   class: "mb-2.5 block text-black dark:text-white" %>
@@ -83,7 +109,10 @@
 <% if @allocation.persisted? %>
   <div class="mt-6 rounded-sm border border-stroke bg-white p-6.5 shadow-default dark:border-strokedark dark:bg-boxdark">
     <h3 class="mb-4 font-medium text-black dark:text-white">Statystyki</h3>
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+
+    <!-- Pakiety -->
+    <h4 class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Pakiety</h4>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
       <div>
         <p class="text-sm text-gray-600 dark:text-gray-400">Przydzielone</p>
         <p class="text-2xl font-bold text-black dark:text-white">
@@ -103,5 +132,30 @@
         </p>
       </div>
     </div>
+
+    <!-- Plakaty -->
+    <% if @allocation.has_posters? %>
+      <h4 class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Plakaty</h4>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Przydzielone</p>
+          <p class="text-2xl font-bold text-black dark:text-white">
+            <%= @allocation.allocated_posters %>
+          </p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Wydane</p>
+          <p class="text-2xl font-bold text-black dark:text-white">
+            <%= @allocation.distributed_posters %>
+          </p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Pozostało</p>
+          <p class="text-2xl font-bold text-black dark:text-white">
+            <%= @allocation.remaining_posters %>
+          </p>
+        </div>
+      </div>
+    <% end %>
   </div>
 <% end %>

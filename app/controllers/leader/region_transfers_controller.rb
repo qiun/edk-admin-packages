@@ -89,8 +89,13 @@ module Leader
     end
 
     def transfer_params
-      params.require(:region_transfer).permit(:from_region_id, :to_region_id,
-                                              :quantity, :reason)
+      params.require(:region_transfer).permit(
+        :from_region_id,
+        :to_region_id,
+        :quantity,
+        :poster_quantity,
+        :reason
+      )
     end
   end
 end

@@ -7,6 +7,7 @@ class RegionTransfer < ApplicationRecord
   enum :status, { pending: "pending", approved: "approved", cancelled: "cancelled" }
 
   validates :quantity, numericality: { greater_than: 0 }
+  validates :poster_quantity, numericality: { greater_than_or_equal_to: 0 }
   validate :regions_must_be_different
   validate :regions_must_be_in_same_area_group
   validate :regions_must_be_for_same_edition
@@ -20,6 +21,17 @@ class RegionTransfer < ApplicationRecord
 
   def cancel!
     update!(status: :cancelled)
+  end
+
+  def has_posters?
+    poster_quantity.to_i > 0
+  end
+
+  def content_summary
+    parts = []
+    parts << "#{quantity} pakietów" if quantity > 0
+    parts << "#{poster_quantity} plakatów" if has_posters?
+    parts.join(", ")
   end
 
   private

@@ -26,6 +26,18 @@ class Shipment < ApplicationRecord
     order || donation
   end
 
+  def poster_quantity
+    order&.poster_quantity || 0
+  end
+
+  def content_summary
+    return "Cegiełka" if donation.present?
+
+    parts = ["#{order.quantity} pakietów"]
+    parts << "#{order.poster_quantity} plakatów" if order.has_posters?
+    parts.join(", ")
+  end
+
   private
 
   def must_have_order_or_donation

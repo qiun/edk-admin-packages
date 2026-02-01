@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_01_143441) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -18,8 +18,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_143441) do
     t.bigint "changed_by_id", null: false
     t.datetime "created_at", null: false
     t.integer "new_allocated"
+    t.integer "new_allocated_posters"
+    t.integer "new_distributed_posters"
     t.integer "new_sold"
     t.integer "previous_allocated"
+    t.integer "previous_allocated_posters"
+    t.integer "previous_distributed_posters"
     t.integer "previous_sold"
     t.text "reason"
     t.bigint "region_allocation_id", null: false
@@ -156,6 +160,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_143441) do
     t.string "locker_code"
     t.string "locker_name"
     t.string "locker_post_code"
+    t.integer "poster_quantity", default: 0, null: false
     t.decimal "price_per_unit", precision: 8, scale: 2
     t.integer "quantity", null: false
     t.string "status", default: "pending"
@@ -165,19 +170,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_143441) do
     t.index ["area_group_id"], name: "index_orders_on_area_group_id"
     t.index ["edition_id", "status"], name: "index_orders_on_edition_id_and_status"
     t.index ["edition_id"], name: "index_orders_on_edition_id"
+    t.index ["poster_quantity"], name: "index_orders_on_poster_quantity"
     t.index ["status"], name: "index_orders_on_status"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "region_allocations", force: :cascade do |t|
+    t.integer "allocated_posters", default: 0, null: false
     t.integer "allocated_quantity", default: 0, null: false
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false
+    t.integer "distributed_posters", default: 0, null: false
     t.bigint "edition_id", null: false
     t.bigint "region_id", null: false
     t.integer "sold_quantity", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.index ["allocated_posters"], name: "index_region_allocations_on_allocated_posters"
     t.index ["created_by_id"], name: "index_region_allocations_on_created_by_id"
+    t.index ["distributed_posters"], name: "index_region_allocations_on_distributed_posters"
     t.index ["edition_id"], name: "index_region_allocations_on_edition_id"
     t.index ["region_id", "edition_id"], name: "index_region_allocations_on_region_edition", unique: true
     t.index ["region_id"], name: "index_region_allocations_on_region_id"
@@ -187,6 +197,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_143441) do
     t.datetime "created_at", null: false
     t.bigint "edition_id", null: false
     t.bigint "from_region_id", null: false
+    t.integer "poster_quantity", default: 0, null: false
     t.integer "quantity", null: false
     t.text "reason"
     t.string "status", default: "pending", null: false
@@ -196,6 +207,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_143441) do
     t.datetime "updated_at", null: false
     t.index ["edition_id"], name: "index_region_transfers_on_edition_id"
     t.index ["from_region_id"], name: "index_region_transfers_on_from_region_id"
+    t.index ["poster_quantity"], name: "index_region_transfers_on_poster_quantity"
     t.index ["to_region_id"], name: "index_region_transfers_on_to_region_id"
     t.index ["transferred_by_id"], name: "index_region_transfers_on_transferred_by_id"
   end
