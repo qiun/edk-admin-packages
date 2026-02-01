@@ -30,4 +30,5 @@ data:
   SMTP_USER_NAME: "pakiety@edk.org.pl"
   SMTP_AUTHENTICATION: "login"
   SMTP_ENABLE_STARTTLS_AUTO: "true"
+  MAILER_SENDER: "pakiety@edk.org.pl"
   LEADER_EMAIL_FROM: "pakiety@edk.org.pl"
