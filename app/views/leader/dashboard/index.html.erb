@@ -242,7 +242,12 @@
           <% @recent_orders.each do |order| %>
             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
               <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">#<%= order.id %></td>
-              <td class="px-6 py-4 text-center text-sm text-gray-900 dark:text-white"><%= order.quantity %></td>
+              <td class="px-6 py-4 text-center text-sm text-gray-900 dark:text-white">
+                <div class="font-medium"><%= order.quantity %> pakietów</div>
+                <% if order.has_posters? %>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">+ <%= order.poster_quantity %> plakatów</div>
+                <% end %>
+              </td>
               <td class="px-6 py-4"><%= status_badge(order.status) %></td>
               <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= order.created_at.strftime("%d.%m.%Y") %></td>
               <td class="px-6 py-4 text-right">
