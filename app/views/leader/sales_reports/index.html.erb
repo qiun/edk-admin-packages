@@ -38,7 +38,7 @@
         <div>
           <p class="text-sm text-gray-500 dark:text-gray-400">Do zapłaty</p>
           <p class="mt-2 text-3xl font-bold text-brand-600 dark:text-brand-400">
-            <%= number_to_currency(@settlement.amount_due || 0, unit: "zł", format: "%n %u") %>
+            <%= number_to_currency(@settlement.amount_due || 0, unit: "zł", precision: 0, format: "%n %u") %>
           </p>
         </div>
         <div class="p-3 rounded-lg bg-blue-100 dark:bg-blue-900/30">
