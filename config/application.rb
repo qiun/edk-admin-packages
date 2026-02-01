@@ -36,6 +36,10 @@ module EdkAdminPackages
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # Set default locale to Polish
+    config.i18n.default_locale = :pl
+    config.i18n.available_locales = [:pl, :en]
+
     # Don't generate system test files.
     config.generators.system_tests = nil
   end
