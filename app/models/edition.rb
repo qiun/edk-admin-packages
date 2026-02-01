@@ -11,6 +11,10 @@ class Edition < ApplicationRecord
   has_many :settlements, dependent: :destroy
   has_many :returns, dependent: :destroy
   has_many :sales_reports, dependent: :destroy
+  has_many :regions, dependent: :destroy
+  has_many :region_allocations, dependent: :destroy
+  has_many :region_transfers, dependent: :destroy
+  has_many :regional_payments, dependent: :destroy
 
   # Validations
   validates :name, presence: true

@@ -113,6 +113,22 @@ Rails.application.routes.draw do
       end
       resources :sales_reports, only: [ :index, :new, :create ]
       resources :returns, only: [ :index, :new, :create, :show ]
+
+      resources :regions do
+        resource :region_allocation, only: [ :edit, :update ] do
+          get :history
+        end
+
+        resources :regional_payments, only: [ :index, :new, :create, :show, :destroy ]
+
+        get 'allocation_summary', to: 'regions#allocation_summary'
+      end
+
+      resources :region_transfers, only: [ :index, :new, :create, :show, :destroy ]
+
+      get 'regional_reports', to: 'regional_reports#show', as: :regional_reports
+      get 'regional_reports/export_csv', to: 'regional_reports#export_csv', as: :export_csv_regional_reports
+      get 'regional_reports/export_pdf', to: 'regional_reports#export_pdf', as: :export_pdf_regional_reports
     end
   end
 

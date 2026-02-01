@@ -21,6 +21,16 @@ class User < ApplicationRecord
   has_many :settlements, dependent: :destroy
   has_many :returns, dependent: :destroy
   has_many :leader_settings, dependent: :destroy
+  has_many :created_regions, class_name: "Region",
+           foreign_key: :created_by_id, dependent: :nullify
+  has_many :created_allocations, class_name: "RegionAllocation",
+           foreign_key: :created_by_id, dependent: :nullify
+  has_many :allocation_changes, class_name: "AllocationChange",
+           foreign_key: :changed_by_id, dependent: :nullify
+  has_many :transferred_packages, class_name: "RegionTransfer",
+           foreign_key: :transferred_by_id, dependent: :nullify
+  has_many :recorded_payments, class_name: "RegionalPayment",
+           foreign_key: :recorded_by_id, dependent: :nullify
 
   # Validations
   validates :first_name, :last_name, presence: true
@@ -52,9 +62,9 @@ class User < ApplicationRecord
   # - At least one digit (0-9)
   def self.generate_secure_password
     # Guarantee each required character type
-    uppercase = ('A'..'Z').to_a.sample
-    lowercase = ('a'..'z').to_a.sample
-    digit = ('0'..'9').to_a.sample
+    uppercase = ("A".."Z").to_a.sample
+    lowercase = ("a".."z").to_a.sample
+    digit = ("0".."9").to_a.sample
 
     # Generate remaining 17 random alphanumeric characters
     remaining = SecureRandom.alphanumeric(17)
