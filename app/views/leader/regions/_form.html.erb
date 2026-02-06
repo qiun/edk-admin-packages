@@ -1,4 +1,5 @@
 <% input_class = "w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white outline-none transition focus:border-brand-500 dark:focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" %>
+<% leader_area_groups = current_user.area_groups.where(edition: @edition) %>
 
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
   <%= form_with model: [:leader, region], class: "space-y-6" do |f| %>
@@ -23,18 +24,29 @@
                       placeholder: "np. Parafia MB Częstochowskiej", required: true %>
     </div>
 
-    <div>
-      <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
-        Okręg <span class="text-red-600">*</span>
-      </label>
-      <%= f.collection_select :area_group_id,
-                             current_user.area_groups, :id, :name,
-                             { prompt: "Wybierz okręg" },
-                             class: input_class, required: true %>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-        Wybierz okręg, do którego należy ten rejon
-      </p>
-    </div>
+    <% if leader_area_groups.size == 1 %>
+      <%= f.hidden_field :area_group_id, value: leader_area_groups.first.id %>
+      <div>
+        <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Okręg</label>
+        <p class="px-4 py-3 text-gray-900 dark:text-white"><%= leader_area_groups.first.name %></p>
+      </div>
+    <% elsif leader_area_groups.size > 1 %>
+      <div>
+        <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
+          Okręg <span class="text-red-600">*</span>
+        </label>
+        <%= f.collection_select :area_group_id,
+                               leader_area_groups, :id, :name,
+                               { prompt: "Wybierz okręg" },
+                               class: input_class, required: true %>
+      </div>
+    <% else %>
+      <div class="rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-4">
+        <p class="text-sm text-yellow-800 dark:text-yellow-400">
+          Nie jesteś przypisany do żadnego okręgu w tej edycji. Skontaktuj się z administratorem.
+        </p>
+      </div>
+    <% end %>
 
     <div>
       <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
