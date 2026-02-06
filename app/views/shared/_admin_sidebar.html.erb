@@ -68,6 +68,16 @@
         </h3>
 
         <ul class="mb-6 flex flex-col gap-1">
+          <!-- Okręgi -->
+          <li>
+            <%= link_to admin_area_groups_path, class: "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium #{request.path.start_with?('/admin/area_groups') ? 'bg-[#ecf3ff] text-[#465fff] dark:bg-[#465fff]/10 dark:text-[#7592ff]' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'}" do %>
+              <svg class="h-5 w-5 <%= request.path.start_with?('/admin/area_groups') ? 'fill-[#465fff]' : 'fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400' %>" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 7A3.75 3.75 0 017 3.25h10A3.75 3.75 0 0120.75 7v10A3.75 3.75 0 0117 20.75H7A3.75 3.75 0 013.25 17V7zM7 4.75A2.25 2.25 0 004.75 7v10A2.25 2.25 0 007 19.25h10A2.25 2.25 0 0019.25 17V7A2.25 2.25 0 0017 4.75H7zm5 3a.75.75 0 01.75.75v3.75h3.75a.75.75 0 010 1.5h-3.75v3.75a.75.75 0 01-1.5 0v-3.75H7.5a.75.75 0 010-1.5h3.75V8.5A.75.75 0 0112 7.75z"/>
+              </svg>
+              <span>Okręgi</span>
+            <% end %>
+          </li>
+
           <!-- Zamówienia -->
           <li>
             <%= link_to admin_orders_path, class: "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium #{request.path.start_with?('/admin/orders') ? 'bg-[#ecf3ff] text-[#465fff] dark:bg-[#465fff]/10 dark:text-[#7592ff]' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'}" do %>

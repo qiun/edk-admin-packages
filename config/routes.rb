@@ -25,6 +25,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :area_groups, except: [ :show ]
+
       resource :inventory, only: [ :show, :edit, :update ] do
         post :add_stock
         get :movements

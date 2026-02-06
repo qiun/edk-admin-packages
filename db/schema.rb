@@ -10,13 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_06_151539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
   create_table "allocation_changes", force: :cascade do |t|
     t.bigint "changed_by_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.integer "new_allocated"
     t.integer "new_allocated_posters"
     t.integer "new_distributed_posters"
@@ -27,19 +55,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
     t.integer "previous_sold"
     t.text "reason"
     t.bigint "region_allocation_id", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["changed_by_id"], name: "index_allocation_changes_on_changed_by_id"
     t.index ["region_allocation_id"], name: "index_allocation_changes_on_region_allocation_id"
   end
 
   create_table "area_groups", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
+    t.string "description"
     t.bigint "edition_id", null: false
     t.bigint "leader_id"
     t.string "name", null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "voivodeship_id"
     t.index ["edition_id"], name: "index_area_groups_on_edition_id"
     t.index ["leader_id"], name: "index_area_groups_on_leader_id"
+    t.index ["voivodeship_id"], name: "index_area_groups_on_voivodeship_id"
   end
 
   create_table "donations", force: :cascade do |t|
@@ -178,13 +209,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
   create_table "region_allocations", force: :cascade do |t|
     t.integer "allocated_posters", default: 0, null: false
     t.integer "allocated_quantity", default: 0, null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.bigint "created_by_id", null: false
     t.integer "distributed_posters", default: 0, null: false
     t.bigint "edition_id", null: false
     t.bigint "region_id", null: false
     t.integer "sold_quantity", default: 0, null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["allocated_posters"], name: "index_region_allocations_on_allocated_posters"
     t.index ["created_by_id"], name: "index_region_allocations_on_created_by_id"
     t.index ["distributed_posters"], name: "index_region_allocations_on_distributed_posters"
@@ -194,7 +225,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
   end
 
   create_table "region_transfers", force: :cascade do |t|
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.bigint "edition_id", null: false
     t.bigint "from_region_id", null: false
     t.integer "poster_quantity", default: 0, null: false
@@ -202,9 +233,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
     t.text "reason"
     t.string "status", default: "pending", null: false
     t.bigint "to_region_id", null: false
-    t.datetime "transferred_at"
+    t.datetime "transferred_at", precision: nil
     t.bigint "transferred_by_id", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["edition_id"], name: "index_region_transfers_on_edition_id"
     t.index ["from_region_id"], name: "index_region_transfers_on_from_region_id"
     t.index ["poster_quantity"], name: "index_region_transfers_on_poster_quantity"
@@ -214,13 +245,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
 
   create_table "regional_payments", force: :cascade do |t|
     t.decimal "amount", precision: 10, scale: 2, null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.bigint "edition_id", null: false
     t.text "notes"
     t.date "payment_date", null: false
     t.bigint "recorded_by_id", null: false
     t.bigint "region_id", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["edition_id"], name: "index_regional_payments_on_edition_id"
     t.index ["recorded_by_id"], name: "index_regional_payments_on_recorded_by_id"
     t.index ["region_id"], name: "index_regional_payments_on_region_id"
@@ -229,14 +260,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
   create_table "regions", force: :cascade do |t|
     t.bigint "area_group_id", null: false
     t.string "contact_person"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.bigint "created_by_id", null: false
     t.bigint "edition_id", null: false
     t.string "email"
     t.string "name", null: false
     t.text "notes"
     t.string "phone"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["area_group_id", "edition_id", "name"], name: "index_regions_on_area_edition_name", unique: true
     t.index ["area_group_id"], name: "index_regions_on_area_group_id"
     t.index ["created_by_id"], name: "index_regions_on_created_by_id"
@@ -332,16 +363,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
   end
 
   create_table "voivodeships", force: :cascade do |t|
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["name"], name: "index_voivodeships_on_name", unique: true
   end
 
-  add_foreign_key "allocation_changes", "region_allocations"
-  add_foreign_key "allocation_changes", "users", column: "changed_by_id"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "allocation_changes", "region_allocations", name: "allocation_changes_region_allocation_id_fkey"
+  add_foreign_key "allocation_changes", "users", column: "changed_by_id", name: "allocation_changes_changed_by_id_fkey"
   add_foreign_key "area_groups", "editions", name: "area_groups_edition_id_fkey"
   add_foreign_key "area_groups", "users", column: "leader_id", name: "area_groups_leader_id_fkey"
+  add_foreign_key "area_groups", "voivodeships"
   add_foreign_key "donations", "editions", name: "donations_edition_id_fkey"
   add_foreign_key "inventories", "editions", name: "inventories_edition_id_fkey"
   add_foreign_key "inventory_moves", "inventories", name: "inventory_moves_inventory_id_fkey"
@@ -353,19 +387,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
   add_foreign_key "orders", "area_groups", name: "orders_area_group_id_fkey"
   add_foreign_key "orders", "editions", name: "orders_edition_id_fkey"
   add_foreign_key "orders", "users", name: "orders_user_id_fkey"
-  add_foreign_key "region_allocations", "editions"
-  add_foreign_key "region_allocations", "regions"
-  add_foreign_key "region_allocations", "users", column: "created_by_id"
-  add_foreign_key "region_transfers", "editions"
-  add_foreign_key "region_transfers", "regions", column: "from_region_id"
-  add_foreign_key "region_transfers", "regions", column: "to_region_id"
-  add_foreign_key "region_transfers", "users", column: "transferred_by_id"
-  add_foreign_key "regional_payments", "editions"
-  add_foreign_key "regional_payments", "regions"
-  add_foreign_key "regional_payments", "users", column: "recorded_by_id"
-  add_foreign_key "regions", "area_groups"
-  add_foreign_key "regions", "editions"
-  add_foreign_key "regions", "users", column: "created_by_id"
+  add_foreign_key "region_allocations", "editions", name: "region_allocations_edition_id_fkey"
+  add_foreign_key "region_allocations", "regions", name: "region_allocations_region_id_fkey"
+  add_foreign_key "region_allocations", "users", column: "created_by_id", name: "region_allocations_created_by_id_fkey"
+  add_foreign_key "region_transfers", "editions", name: "region_transfers_edition_id_fkey"
+  add_foreign_key "region_transfers", "regions", column: "from_region_id", name: "region_transfers_from_region_id_fkey"
+  add_foreign_key "region_transfers", "regions", column: "to_region_id", name: "region_transfers_to_region_id_fkey"
+  add_foreign_key "region_transfers", "users", column: "transferred_by_id", name: "region_transfers_transferred_by_id_fkey"
+  add_foreign_key "regional_payments", "editions", name: "regional_payments_edition_id_fkey"
+  add_foreign_key "regional_payments", "regions", name: "regional_payments_region_id_fkey"
+  add_foreign_key "regional_payments", "users", column: "recorded_by_id", name: "regional_payments_recorded_by_id_fkey"
+  add_foreign_key "regions", "area_groups", name: "regions_area_group_id_fkey"
+  add_foreign_key "regions", "editions", name: "regions_edition_id_fkey"
+  add_foreign_key "regions", "users", column: "created_by_id", name: "regions_created_by_id_fkey"
   add_foreign_key "returns", "editions", name: "returns_edition_id_fkey"
   add_foreign_key "returns", "users", name: "returns_user_id_fkey"
   add_foreign_key "sales_reports", "editions", name: "sales_reports_edition_id_fkey"
@@ -375,5 +409,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_01_162441) do
   add_foreign_key "shipments", "donations", name: "shipments_donation_id_fkey"
   add_foreign_key "shipments", "orders", name: "shipments_order_id_fkey"
   add_foreign_key "users", "users", column: "created_by_id", name: "users_created_by_id_fkey"
-  add_foreign_key "users", "voivodeships"
+  add_foreign_key "users", "voivodeships", name: "users_voivodeship_id_fkey"
 end

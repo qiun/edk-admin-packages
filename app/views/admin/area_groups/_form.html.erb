@@ -1,0 +1,74 @@
+<% input_class = "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" %>
+
+<%= form_with model: [:admin, @area_group], class: "space-y-6" do |f| %>
+  <% if @area_group.errors.any? %>
+    <div class="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+      <h3 class="mb-2 font-medium text-red-800 dark:text-red-400">
+        Nie udało się zapisać:
+      </h3>
+      <ul class="list-inside list-disc text-sm text-red-700 dark:text-red-400">
+        <% @area_group.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Nazwa okręgu -->
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+      Nazwa okręgu <span class="text-red-600">*</span>
+    </label>
+    <%= f.text_field :name, class: input_class, placeholder: "np. Okręg Krakowski", required: true %>
+  </div>
+
+  <!-- Opis -->
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+      Opis
+    </label>
+    <%= f.text_field :description, class: input_class, placeholder: "np. dolnośląskie - Jan Kowalski" %>
+  </div>
+
+  <!-- Województwo -->
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+      Województwo
+    </label>
+    <%= f.collection_select :voivodeship_id, Voivodeship.order(:name), :id, :name,
+        { include_blank: "-- Wybierz województwo --" },
+        class: input_class %>
+  </div>
+
+  <!-- Edycja -->
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+      Edycja <span class="text-red-600">*</span>
+    </label>
+    <%= f.collection_select :edition_id, Edition.order(created_at: :desc), :id, :name,
+        { prompt: "Wybierz edycję" },
+        class: input_class, required: true %>
+  </div>
+
+  <!-- Lider okręgowy -->
+  <div>
+    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+      Lider okręgowy
+    </label>
+    <%= f.collection_select :leader_id, @leaders, :id,
+        ->(u) { "#{u.last_name} #{u.first_name} (#{u.email})" },
+        { include_blank: "-- Brak lidera --" },
+        class: input_class %>
+    <p class="mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+      Lider będzie mógł zarządzać rejonami w tym okręgu
+    </p>
+  </div>
+
+  <!-- Przyciski -->
+  <div class="flex items-center gap-3 pt-2">
+    <%= f.submit @area_group.persisted? ? "Zapisz zmiany" : "Utwórz okręg",
+        class: "inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600" %>
+    <%= link_to "Anuluj", admin_area_groups_path,
+        class: "inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/5" %>
+  </div>
+<% end %>
