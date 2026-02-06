@@ -1,0 +1,82 @@
+pl:
+  date:
+    formats:
+      default: "%d.%m.%Y"
+      short: "%d %b"
+      long: "%d %B %Y"
+    day_names:
+      - niedziela
+      - poniedziałek
+      - wtorek
+      - środa
+      - czwartek
+      - piątek
+      - sobota
+    abbr_day_names:
+      - ndz
+      - pon
+      - wt
+      - śr
+      - czw
+      - pt
+      - sob
+    month_names:
+      - ~
+      - stycznia
+      - lutego
+      - marca
+      - kwietnia
+      - maja
+      - czerwca
+      - lipca
+      - sierpnia
+      - września
+      - października
+      - listopada
+      - grudnia
+    abbr_month_names:
+      - ~
+      - sty
+      - lut
+      - mar
+      - kwi
+      - maj
+      - cze
+      - lip
+      - sie
+      - wrz
+      - paź
+      - lis
+      - gru
+    order:
+      - :day
+      - :month
+      - :year
+  time:
+    formats:
+      default: "%d.%m.%Y %H:%M"
+      short: "%d %b %H:%M"
+      long: "%d %B %Y %H:%M"
+  number:
+    format:
+      separator: ","
+      delimiter: " "
+      precision: 2
+    currency:
+      format:
+        format: "%n %u"
+        unit: "zł"
+        separator: ","
+        delimiter: " "
+        precision: 2
+  activerecord:
+    errors:
+      messages:
+        blank: "nie może być puste"
+        taken: "jest już zajęte"
+        too_short: "jest za krótkie (minimum %{count} znaków)"
+        too_long: "jest za długie (maximum %{count} znaków)"
+        invalid: "jest nieprawidłowe"
+        not_a_number: "nie jest liczbą"
+        greater_than_or_equal_to: "musi być większe lub równe %{count}"
+        less_than_or_equal_to: "musi być mniejsze lub równe %{count}"
