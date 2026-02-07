@@ -66,7 +66,12 @@ module Admin
     end
 
     def edition_params
-      params.require(:edition).permit(:name, :year, :status, :default_price, :donor_brick_price, :donor_shipping_cost, :ordering_locked, :check_donation_inventory)
+      params.require(:edition).permit(
+        :name, :year, :status, :default_price, :donor_brick_price, :donor_shipping_cost,
+        :ordering_locked, :check_donation_inventory,
+        :order_package_length, :order_package_width, :order_package_height, :order_package_max_weight,
+        :donation_package_length, :donation_package_width, :donation_package_height, :donation_package_max_weight
+      )
     end
   end
 end

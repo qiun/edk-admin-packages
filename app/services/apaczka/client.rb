@@ -243,17 +243,15 @@ end
     end
 
     def calculate_weight(quantity, source)
-      # InPost Paczkomat twardy limit: 25 kg
-      INPOST_MAX_WEIGHT = 25.0
-
       if source.is_a?(Order)
-        # Dla liderów okręgowych - paczki zawsze pakowane do max 25 kg
+        # Paczki do liderów zawsze pakowane do max 25 kg
+        # aPaczka/InPost limit: waga < 25 kg (nie może równać się 25)
         weight = ((quantity * 0.3) + 2.0).round(2)
-        [ weight, INPOST_MAX_WEIGHT ].min
+        [ weight, 24.9 ].min
       else
-        # Dla cegiełek - małe paczuszki
+        # Cegiełki - małe paczuszki
         weight = ((quantity * 0.15) + 0.5).round(2)
-        [ weight, INPOST_MAX_WEIGHT ].min
+        [ weight, 24.9 ].min
       end
     end
 
