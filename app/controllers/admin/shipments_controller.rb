@@ -1,7 +1,7 @@
 module Admin
   class ShipmentsController < Admin::BaseController
     before_action :require_admin! # Only admins, warehouse has their own namespace
-    before_action :set_shipment, only: [ :show, :refresh_status, :download_waybill, :retry_shipment ]
+    before_action :set_shipment, only: [ :show, :refresh_status, :download_waybill, :download_label, :retry_shipment ]
 
     def index
       @shipments = Shipment.includes(:order, :donation)
@@ -48,6 +48,18 @@ module Admin
       Apaczka::CreateShipmentJob.perform_later(@shipment)
 
       redirect_to admin_shipment_path(@shipment), notice: "Wysyłka została ponowiona"
+    end
+
+    def download_label
+      unless @shipment.label_pdf.present?
+        redirect_to admin_shipment_path(@shipment), alert: "Brak etykiety PDF"
+        return
+      end
+
+      send_data @shipment.label_pdf,
+                filename: "etykieta_#{@shipment.id}.pdf",
+                type: "application/pdf",
+                disposition: "inline"
     end
 
     def download_waybill

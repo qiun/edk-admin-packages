@@ -45,6 +45,7 @@ Rails.application.routes.draw do
           post :refresh_status
           post :retry_shipment
           get :download_waybill
+          get :download_label
         end
       end
 
