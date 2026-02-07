@@ -27,7 +27,7 @@ gem "devise", "~> 4.9"
 gem "pundit", "~> 2.3"
 
 # Pagination
-gem "pagy", "~> 43.0"
+gem "pagy", "~> 43.2"
 
 # Excel/CSV import
 gem "csv", "~> 3.3"
