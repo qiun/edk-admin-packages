@@ -31,7 +31,7 @@ gem "pagy", "~> 43.0"
 
 # Excel/CSV import
 gem "csv", "~> 3.3"
-gem "roo", "~> 2.10"
+gem "roo", "~> 3.0"
 
 # HTTP client for API integrations
 gem "faraday", "~> 2.13"
