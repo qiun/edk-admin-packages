@@ -244,11 +244,9 @@ end
 
     def calculate_weight(quantity, source)
       if source.is_a?(Order)
-        # Dla liderów okręgowych - duże kartony
-        # Zakładamy ~300g na pakiet + karton ~2kg
-        # Limit wagi z edition
+        # Dla liderów okręgowych - paczki zawsze pakowane do max 25 kg (limit InPost)
         edition = source.edition
-        max_weight = edition&.order_package_max_weight || 30.0
+        max_weight = edition&.order_package_max_weight || 25.0
         weight = ((quantity * 0.3) + 2.0).round(2)
         [ weight, max_weight ].min
       else

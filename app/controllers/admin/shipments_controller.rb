@@ -1,7 +1,7 @@
 module Admin
   class ShipmentsController < Admin::BaseController
     before_action :require_admin! # Only admins, warehouse has their own namespace
-    before_action :set_shipment, only: [ :show, :refresh_status, :download_waybill ]
+    before_action :set_shipment, only: [ :show, :refresh_status, :download_waybill, :retry_shipment ]
 
     def index
       @shipments = Shipment.includes(:order, :donation)
@@ -36,6 +36,18 @@ module Admin
       else
         redirect_to admin_shipment_path(@shipment), alert: "Nie udało się pobrać statusu z aPaczka"
       end
+    end
+
+    def retry_shipment
+      unless @shipment.status == "failed"
+        redirect_to admin_shipment_path(@shipment), alert: "Tylko nieudane wysyłki można ponowić"
+        return
+      end
+
+      @shipment.update!(status: "pending", apaczka_response: nil)
+      Apaczka::CreateShipmentJob.perform_later(@shipment)
+
+      redirect_to admin_shipment_path(@shipment), notice: "Wysyłka została ponowiona"
     end
 
     def download_waybill
