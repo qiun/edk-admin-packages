@@ -52,15 +52,17 @@ module Apaczka
 end
 
     def get_order_status(order_id)
-  # aPaczka API v2 uses POST for all endpoints, not GET
-  response = post("/order/#{order_id}/", {})
+      response = post("/order/#{order_id}/", {})
 
-  if response["status"] == 200
-    response["response"]["status"]
-  else
-    nil
-  end
-end
+      Rails.logger.info "aPaczka get_order_status response: #{response.inspect}"
+
+      if response["status"] == 200
+        order_data = response["response"]["order"] || response["response"]
+        order_data["status"] || order_data["status_name"]
+      else
+        nil
+      end
+    end
 
     def cancel_order(order_id)
       response = post("/cancel_order/#{order_id}/", {})
