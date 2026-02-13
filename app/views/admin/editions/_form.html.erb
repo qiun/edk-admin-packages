@@ -332,6 +332,122 @@
     </div>
   </div>
 
+  <!-- Order Sender Address -->
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+        Adres nadawcy — zamówienia liderów
+      </h3>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Adres nadawcy na etykietach wysyłkowych dla paczek do liderów okręgowych (Magazyn EDK)
+      </p>
+    </div>
+    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <%= f.label :order_sender_name, "Nazwa nadawcy", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :order_sender_name,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "Magazyn EDK - Rafał Wojtkiewicz",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :order_sender_street, "Ulica", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :order_sender_street,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "ul. Konarskiego 8",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :order_sender_city, "Miasto", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :order_sender_city,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "Świebodzin",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :order_sender_post_code, "Kod pocztowy", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :order_sender_post_code,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "66-200",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :order_sender_phone, "Telefon", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :order_sender_phone,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "602736554",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :order_sender_email, "Email", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.email_field :order_sender_email,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "pakiety@edk.org.pl",
+            required: true %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Donation Sender Address -->
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="px-5 py-4 sm:px-6 sm:py-5">
+      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
+        Adres nadawcy — cegiełki
+      </h3>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Adres nadawcy na etykietach wysyłkowych dla cegiełek zamawianych przez darczyńców (Sklep EDK)
+      </p>
+    </div>
+    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <%= f.label :donation_sender_name, "Nazwa nadawcy", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :donation_sender_name,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "Sklep EDK - Rafał Wojtkiewicz",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :donation_sender_street, "Ulica", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :donation_sender_street,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "ul. Sobieskiego 19",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :donation_sender_city, "Miasto", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :donation_sender_city,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "Świebodzin",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :donation_sender_post_code, "Kod pocztowy", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :donation_sender_post_code,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "66-200",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :donation_sender_phone, "Telefon", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.text_field :donation_sender_phone,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "602736554",
+            required: true %>
+        </div>
+        <div>
+          <%= f.label :donation_sender_email, "Email", class: "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400" %>
+          <%= f.email_field :donation_sender_email,
+            class: "shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30",
+            placeholder: "pakiety@edk.org.pl",
+            required: true %>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Form Actions -->
   <div class="flex justify-end gap-3">
     <%= link_to "Anuluj",

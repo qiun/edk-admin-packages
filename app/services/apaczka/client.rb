@@ -239,10 +239,33 @@ end
     end
 
     def sender_config(source)
+      edition = source.edition
       if source.is_a?(Order)
-        Rails.application.credentials.dig(:apaczka, :order_sender) || default_order_sender_config
+        if edition&.order_sender_name.present?
+          {
+            name: edition.order_sender_name,
+            street: edition.order_sender_street,
+            city: edition.order_sender_city,
+            post_code: edition.order_sender_post_code,
+            phone: edition.order_sender_phone,
+            email: edition.order_sender_email
+          }
+        else
+          default_order_sender_config
+        end
       else
-        Rails.application.credentials.dig(:apaczka, :donation_sender) || default_donation_sender_config
+        if edition&.donation_sender_name.present?
+          {
+            name: edition.donation_sender_name,
+            street: edition.donation_sender_street,
+            city: edition.donation_sender_city,
+            post_code: edition.donation_sender_post_code,
+            phone: edition.donation_sender_phone,
+            email: edition.donation_sender_email
+          }
+        else
+          default_donation_sender_config
+        end
       end
     end
 

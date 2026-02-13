@@ -17,8 +17,6 @@ RSpec.describe Apaczka::Client do
     allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :app_id).and_return('test_app_id')
     allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :app_secret).and_return('test_secret')
     allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :sandbox).and_return(false)
-    allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :order_sender).and_return(nil)
-    allow(Rails.application.credentials).to receive(:dig).with(:apaczka, :donation_sender).and_return(nil)
   end
 
   describe '#generate_signature' do

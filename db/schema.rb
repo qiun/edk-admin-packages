@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_06_151539) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_13_145630) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -108,6 +108,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_151539) do
     t.decimal "donation_package_length", precision: 5, scale: 1, default: "19.0", null: false
     t.decimal "donation_package_max_weight", precision: 5, scale: 2, default: "1.0", null: false
     t.decimal "donation_package_width", precision: 5, scale: 1, default: "38.0", null: false
+    t.string "donation_sender_city", default: "Świebodzin", null: false
+    t.string "donation_sender_email", default: "pakiety@edk.org.pl", null: false
+    t.string "donation_sender_name", default: "Sklep EDK - Rafał Wojtkiewicz", null: false
+    t.string "donation_sender_phone", default: "602736554", null: false
+    t.string "donation_sender_post_code", default: "66-200", null: false
+    t.string "donation_sender_street", default: "ul. Sobieskiego 19", null: false
     t.decimal "donor_brick_price", precision: 8, scale: 2, default: "50.0"
     t.decimal "donor_shipping_cost", precision: 8, scale: 2, default: "20.0", null: false
     t.boolean "is_active", default: false
@@ -116,6 +122,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_151539) do
     t.decimal "order_package_length", precision: 5, scale: 1, default: "41.0", null: false
     t.decimal "order_package_max_weight", precision: 5, scale: 2, default: "30.0", null: false
     t.decimal "order_package_width", precision: 5, scale: 1, default: "38.0", null: false
+    t.string "order_sender_city", default: "Świebodzin", null: false
+    t.string "order_sender_email", default: "pakiety@edk.org.pl", null: false
+    t.string "order_sender_name", default: "Magazyn EDK - Rafał Wojtkiewicz", null: false
+    t.string "order_sender_phone", default: "602736554", null: false
+    t.string "order_sender_post_code", default: "66-200", null: false
+    t.string "order_sender_street", default: "ul. Konarskiego 8", null: false
     t.boolean "ordering_locked", default: false
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", precision: nil, null: false

@@ -70,7 +70,11 @@ module Admin
         :name, :year, :status, :default_price, :donor_brick_price, :donor_shipping_cost,
         :ordering_locked, :check_donation_inventory,
         :order_package_length, :order_package_width, :order_package_height, :order_package_max_weight,
-        :donation_package_length, :donation_package_width, :donation_package_height, :donation_package_max_weight
+        :donation_package_length, :donation_package_width, :donation_package_height, :donation_package_max_weight,
+        :order_sender_name, :order_sender_street, :order_sender_city,
+        :order_sender_post_code, :order_sender_phone, :order_sender_email,
+        :donation_sender_name, :donation_sender_street, :donation_sender_city,
+        :donation_sender_post_code, :donation_sender_phone, :donation_sender_email
       )
     end
   end

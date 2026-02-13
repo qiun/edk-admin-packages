@@ -31,6 +31,10 @@ class Edition < ApplicationRecord
   validates :donation_package_width, presence: true, numericality: { greater_than: 0 }
   validates :donation_package_height, presence: true, numericality: { greater_than: 0 }
   validates :donation_package_max_weight, presence: true, numericality: { greater_than: 0 }
+  validates :order_sender_name, :order_sender_street, :order_sender_city,
+            :order_sender_post_code, :order_sender_phone, :order_sender_email, presence: true
+  validates :donation_sender_name, :donation_sender_street, :donation_sender_city,
+            :donation_sender_post_code, :donation_sender_phone, :donation_sender_email, presence: true
 
   validate :only_one_active_edition
 
