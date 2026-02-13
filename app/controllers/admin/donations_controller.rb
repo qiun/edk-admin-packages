@@ -49,42 +49,46 @@ module Admin
       redirect_to admin_donation_path(@donation), notice: "Wysyłka została ponowiona"
     end
 
-    def mark_as_paid
+    def mark_shipped
       @donation = Donation.find(params[:id])
+      shipment = @donation.shipment
 
-      if @donation.payment_paid?
-        redirect_to admin_donation_path(@donation), alert: "Darowizna jest już oznaczona jako opłacona"
+      if shipment.nil?
+        redirect_to admin_donation_path(@donation), alert: "Brak wysyłki"
         return
       end
 
-      ActiveRecord::Base.transaction do
-        @donation.update!(payment_status: :paid)
-
-        # Send confirmation email
+      if shipment.update(status: "shipped", shipped_at: Time.current)
         begin
-          DonationMailer.confirmation(@donation).deliver_later
+          DonationMailer.shipment_sent(@donation, shipment.waybill_number).deliver_later
         rescue => e
-          Rails.logger.error "Failed to send confirmation email: #{e.message}"
+          Rails.logger.error "Failed to send shipment email: #{e.message}"
         end
 
-        # Create shipment if gift was requested and doesn't exist yet
-        if @donation.want_gift? && @donation.locker_code.present? && @donation.shipment.nil?
-          begin
-            shipment = Shipment.create!(
-              donation: @donation,
-              status: "pending"
-            )
+        redirect_to admin_donation_path(@donation), notice: "Wysyłka oznaczona jako wysłana"
+      else
+        redirect_to admin_donation_path(@donation), alert: "Nie udało się oznaczyć wysyłki"
+      end
+    end
 
-            Apaczka::CreateShipmentJob.perform_later(shipment)
-            Rails.logger.info "Created shipment ##{shipment.id} for donation ##{@donation.id}"
-          rescue => e
-            Rails.logger.error "Failed to create shipment: #{e.message}"
-            Rails.logger.error e.backtrace.join("\n")
-          end
+    def cancel
+      @donation = Donation.find(params[:id])
+
+      # Cancel aPaczka shipment if exists
+      if @donation.shipment.present? && @donation.shipment.apaczka_order_id.present?
+        cancellation = ensure_old_shipment_cancelled(@donation.shipment)
+        unless cancellation[:success]
+          redirect_to admin_donation_path(@donation), alert: "Nie udało się anulować wysyłki w aPaczka: #{cancellation[:error]}"
+          return
         end
+        @donation.shipment.update!(status: "failed")
+      elsif @donation.shipment.present?
+        @donation.shipment.update!(status: "failed")
       end
 
-      redirect_to admin_donation_path(@donation), notice: "Darowizna została oznaczona jako opłacona"
+      @donation.update!(payment_status: :refunded)
+      redirect_to admin_donation_path(@donation), notice: "Cegiełka została anulowana"
     end
+
   end
 end

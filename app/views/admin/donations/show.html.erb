@@ -9,15 +9,14 @@
       <p class="text-gray-600 dark:text-gray-400">Utworzona: <%= @donation.created_at.strftime("%d.%m.%Y %H:%M") %></p>
     </div>
     <div class="flex items-center gap-2">
-      <% if @donation.payment_pending? %>
-        <%= button_to mark_as_paid_admin_donation_path(@donation),
-            method: :post,
-            class: "inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500",
-            data: { confirm: "Czy na pewno chcesz oznaczyć tę darowiznę jako opłaconą? Zostanie wysłany email potwierdzający." } do %>
+      <% if @donation.shipment.present? && @donation.shipment.status == "pending" %>
+        <%= button_to mark_shipped_admin_donation_path(@donation), method: :post,
+            data: { turbo_confirm: "Czy na pewno oznaczyć wysyłkę jako wysłaną? Email zostanie wysłany do darczyńcy." },
+            class: "inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
           <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
           </svg>
-          Oznacz jako opłaconą
+          Oznacz jako wysłaną
         <% end %>
       <% end %>
       <% if @donation.shipment.present? && @donation.shipment.status != "pending" %>
@@ -28,6 +27,16 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
           Ponów wysyłkę
+        <% end %>
+      <% end %>
+      <% unless @donation.payment_refunded? %>
+        <%= button_to cancel_admin_donation_path(@donation), method: :post,
+            data: { turbo_confirm: "Czy na pewno chcesz anulować tę cegiełkę? Wysyłka w aPaczka zostanie anulowana." },
+            class: "inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
+          <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          Anuluj cegiełkę
         <% end %>
       <% end %>
     </div>

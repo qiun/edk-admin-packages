@@ -65,6 +65,8 @@
           class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'paid' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
       <%= link_to "Nieudane", admin_donations_path(status: :failed),
           class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'failed' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Zwrócone", admin_donations_path(status: :refunded),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'refunded' ? 'bg-gray-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
     </div>
   </div>
 

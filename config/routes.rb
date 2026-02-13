@@ -62,8 +62,9 @@ Rails.application.routes.draw do
 
       resources :donations, only: [ :index, :show ] do
         member do
-          post :mark_as_paid
+          post :mark_shipped
           post :retry_shipment
+          post :cancel
         end
       end
       resources :returns, only: [ :index, :show, :update ] do
