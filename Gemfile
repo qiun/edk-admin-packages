@@ -34,7 +34,7 @@ gem "csv", "~> 3.3"
 gem "roo", "~> 2.10"
 
 # HTTP client for API integrations
-gem "faraday", "~> 2.13"
+gem "faraday", "~> 2.14"
 
 # JSON serialization
 gem "blueprinter", "~> 1.1"
