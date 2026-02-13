@@ -62,17 +62,16 @@ module Leader
 
       # Can return packages from orders that have:
       # - status shipped/delivered OR
-      # - status confirmed with a shipment that has label printed
+      # - status confirmed with a shipment that is shipped/delivered
       # minus packages already in return process or completed
       delivered_quantity = orders.where(status: [:shipped, :delivered]).sum(:quantity)
 
-      # Also include confirmed orders with label printed
-      confirmed_with_label = orders.where(status: :confirmed)
-                                   .joins(:shipment)
-                                   .where(shipments: { status: [:label_printed, :shipped, :in_transit, :delivered] })
-                                   .sum(:quantity)
+      confirmed_with_shipment = orders.where(status: :confirmed)
+                                      .joins(:shipment)
+                                      .where(shipments: { status: [:shipped, :delivered] })
+                                      .sum(:quantity)
 
-      total_available = delivered_quantity + confirmed_with_label
+      total_available = delivered_quantity + confirmed_with_shipment
       already_returned = returns.where(status: [:requested, :approved, :shipped, :received]).sum(:quantity)
 
       total_available - already_returned

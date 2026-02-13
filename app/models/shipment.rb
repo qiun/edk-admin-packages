@@ -4,9 +4,7 @@ class Shipment < ApplicationRecord
 
   enum :status, {
     pending: "pending",
-    label_printed: "label_printed",
     shipped: "shipped",
-    in_transit: "in_transit",
     delivered: "delivered",
     failed: "failed"
   }

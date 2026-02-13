@@ -33,17 +33,13 @@
     <td class="px-5 py-4">
       <% status_classes = {
         'pending' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-        'label_printed' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
-        'shipped' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
-        'in_transit' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+        'shipped' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
         'delivered' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
         'failed' => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400'
       } %>
       <% status_labels = {
         'pending' => 'Oczekująca',
-        'label_printed' => 'Etykieta wydrukowana',
-        'shipped' => 'Wysłana',
-        'in_transit' => 'W tranzycie',
+        'shipped' => 'Nadana',
         'delivered' => 'Dostarczona',
         'failed' => 'Błąd'
       } %>
@@ -107,7 +103,7 @@
         <% end %>
 
         <!-- Pobierz etykietę -->
-        <% if shipment.apaczka_order_id.present? && %w[label_printed shipped in_transit delivered].include?(shipment.status) %>
+        <% if shipment.apaczka_order_id.present? && %w[shipped delivered].include?(shipment.status) %>
           <%= link_to download_waybill_warehouse_donation_shipment_path(shipment), class: "text-gray-400 hover:text-[#465fff]", title: "Pobierz etykietę" do %>
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>

@@ -94,22 +94,15 @@ module Admin
     end
 
     def map_apaczka_status(apaczka_status)
-      # Map aPaczka status to our internal status enum
       case apaczka_status.to_s.downcase
       when "new", "pending"
         "pending"
-      when "confirmed", "label_created"
-        "label_printed"
-      when "sent", "dispatched"
-        "shipped"
-      when "in_transit", "out_for_delivery"
-        "in_transit"
-      when "delivered"
+      when "delivered", "ready_to_pickup"
         "delivered"
       when "cancelled", "failed", "returned"
         "failed"
       else
-        "pending" # Default fallback
+        "shipped"
       end
     end
   end

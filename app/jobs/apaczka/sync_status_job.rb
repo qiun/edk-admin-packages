@@ -5,7 +5,7 @@ module Apaczka
     def perform
       client = ::Apaczka::Client.new
 
-      Shipment.where(status: %w[label_printed shipped in_transit]).find_each do |shipment|
+      Shipment.where(status: "shipped").find_each do |shipment|
         begin
           apaczka_status = client.get_order_status(shipment.apaczka_order_id)
           next unless apaczka_status
@@ -37,10 +37,6 @@ module Apaczka
 
     def map_apaczka_status(apaczka_status)
       case apaczka_status.to_s.upcase
-      when "READY_TO_SHIP"
-        "label_printed"
-      when "PICKED_UP", "IN_TRANSIT"
-        "in_transit"
       when "DELIVERED", "READY_TO_PICKUP"
         "delivered"
       when "RETURNED"

@@ -51,7 +51,7 @@ module Warehouse
     end
 
     def unmark_shipped
-      if @shipment.update(status: "label_printed", shipped_at: nil)
+      if @shipment.update(shipped_at: nil)
         respond_to do |format|
           format.html { redirect_to warehouse_donation_shipments_path, notice: "Status wysyłki został cofnięty. UWAGA: Email został już wysłany do darczyńcy." }
           format.turbo_stream

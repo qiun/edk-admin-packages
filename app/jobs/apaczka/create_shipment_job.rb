@@ -28,7 +28,7 @@ module Apaczka
           apaczka_order_id: result[:order_id],
           waybill_number: result[:waybill_number],
           tracking_url: result[:tracking_url],
-          status: "label_printed"
+          status: "shipped"
         )
         Rails.logger.info "[CreateShipmentJob] Shipment ##{shipment.id} updated successfully - new status: #{shipment.reload.status}"
 
@@ -37,20 +37,6 @@ module Apaczka
         label_pdf = client.get_waybill(result[:order_id])
         shipment.update!(label_pdf: label_pdf) if label_pdf
         Rails.logger.info "[CreateShipmentJob] Waybill PDF saved: #{label_pdf.present?}"
-
-        # NOTE: Inventory and order status updates have been moved to warehouse shipping action
-        # When the warehouse actually ships the package, they should:
-        # 1. Update shipment status to :shipped
-        # 2. Update order status to :shipped
-        # 3. Move inventory from reserved to shipped
-        #
-        # Keeping this code commented for reference:
-        # if source.is_a?(Order)
-        #   source.edition.inventory.ship(source.quantity, reference: source)
-        #   source.update!(status: :shipped)
-        # elsif source.is_a?(Donation)
-        #   source.edition.inventory.ship(source.quantity, reference: source) if source.edition&.inventory
-        # end
 
         # Wyślij powiadomienie o wysyłce
         Rails.logger.info "[CreateShipmentJob] Sending shipment notification email for shipment ##{shipment.id}"
