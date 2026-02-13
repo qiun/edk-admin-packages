@@ -1,7 +1,9 @@
 module Admin
   class OrdersController < Admin::BaseController
+    include RetryShipmentHandler
+
     before_action :require_admin! # Only admins, warehouse has their own namespace
-    before_action :set_order, only: [ :show, :confirm, :cancel, :print_label ]
+    before_action :set_order, only: [ :show, :confirm, :cancel, :print_label, :retry_shipment ]
 
     def index
       @orders = Order.for_edition(current_edition)
@@ -30,6 +32,29 @@ module Admin
       else
         redirect_to admin_order_path(@order), alert: "Nie można anulować zamówienia o statusie: #{@order.status}"
       end
+    end
+
+    def retry_shipment
+      shipment = @order.shipment
+
+      if shipment.nil?
+        redirect_to admin_order_path(@order), alert: "Brak wysyłki do ponowienia"
+        return
+      end
+
+      if shipment.status == "pending"
+        redirect_to admin_order_path(@order), alert: "Wysyłka jest już w trakcie przetwarzania"
+        return
+      end
+
+      cancellation = ensure_old_shipment_cancelled(shipment)
+      unless cancellation[:success]
+        redirect_to admin_order_path(@order), alert: cancellation[:error]
+        return
+      end
+
+      reset_and_retry_shipment(shipment)
+      redirect_to admin_order_path(@order), notice: "Wysyłka została ponowiona"
     end
 
     def print_label

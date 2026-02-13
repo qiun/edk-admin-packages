@@ -62,6 +62,16 @@ end
   end
 end
 
+    def cancel_order(order_id)
+      response = post("/cancel_order/#{order_id}/", {})
+
+      if response["status"] == 200
+        { success: true }
+      else
+        { success: false, error: response["message"] || "Nieznany błąd" }
+      end
+    end
+
     private
 
 

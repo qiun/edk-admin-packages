@@ -1,5 +1,7 @@
 module Admin
   class ShipmentsController < Admin::BaseController
+    include RetryShipmentHandler
+
     before_action :require_admin! # Only admins, warehouse has their own namespace
     before_action :set_shipment, only: [ :show, :refresh_status, :download_waybill, :download_label, :retry_shipment ]
 
@@ -39,14 +41,18 @@ module Admin
     end
 
     def retry_shipment
-      unless @shipment.status == "failed"
-        redirect_to admin_shipment_path(@shipment), alert: "Tylko nieudane wysyłki można ponowić"
+      if @shipment.status == "pending"
+        redirect_to admin_shipment_path(@shipment), alert: "Wysyłka jest już w trakcie przetwarzania"
         return
       end
 
-      @shipment.update!(status: "pending", apaczka_response: nil)
-      Apaczka::CreateShipmentJob.perform_later(@shipment)
+      cancellation = ensure_old_shipment_cancelled(@shipment)
+      unless cancellation[:success]
+        redirect_to admin_shipment_path(@shipment), alert: cancellation[:error]
+        return
+      end
 
+      reset_and_retry_shipment(@shipment)
       redirect_to admin_shipment_path(@shipment), notice: "Wysyłka została ponowiona"
     end
 

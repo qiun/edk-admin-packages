@@ -1,5 +1,7 @@
 module Admin
   class DonationsController < Admin::BaseController
+    include RetryShipmentHandler
+
     before_action :require_admin! # Only admins, warehouse has their own namespace
 
     def index
@@ -19,6 +21,30 @@ module Admin
 
     def show
       @donation = Donation.find(params[:id])
+    end
+
+    def retry_shipment
+      @donation = Donation.find(params[:id])
+      shipment = @donation.shipment
+
+      if shipment.nil?
+        redirect_to admin_donation_path(@donation), alert: "Brak wysyłki do ponowienia"
+        return
+      end
+
+      if shipment.status == "pending"
+        redirect_to admin_donation_path(@donation), alert: "Wysyłka jest już w trakcie przetwarzania"
+        return
+      end
+
+      cancellation = ensure_old_shipment_cancelled(shipment)
+      unless cancellation[:success]
+        redirect_to admin_donation_path(@donation), alert: cancellation[:error]
+        return
+      end
+
+      reset_and_retry_shipment(shipment)
+      redirect_to admin_donation_path(@donation), notice: "Wysyłka została ponowiona"
     end
 
     def mark_as_paid

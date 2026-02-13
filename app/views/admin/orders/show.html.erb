@@ -13,6 +13,16 @@
         <%= button_to "Potwierdź zamówienie", confirm_admin_order_path(@order), method: :post, class: "inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors" %>
         <%= button_to "Anuluj", cancel_admin_order_path(@order), method: :post, class: "inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors", data: { turbo_confirm: "Czy na pewno anulować?" } %>
       <% end %>
+      <% if @order.shipment.present? && @order.shipment.status != "pending" %>
+        <%= button_to retry_shipment_admin_order_path(@order), method: :post,
+            data: { turbo_confirm: "Czy na pewno chcesz ponowić wysyłkę? Poprzednie dane z aPaczka zostaną usunięte." },
+            class: "inline-flex items-center px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors" do %>
+          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Ponów wysyłkę
+        <% end %>
+      <% end %>
       <% if @order.shipment&.label_pdf.present? %>
         <%= link_to print_label_admin_order_path(@order), target: "_blank", class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg hover:bg-gray-50" do %>
           <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

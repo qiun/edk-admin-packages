@@ -36,6 +36,7 @@ Rails.application.routes.draw do
         member do
           post :confirm
           post :cancel
+          post :retry_shipment
           get :print_label
         end
       end
@@ -62,6 +63,7 @@ Rails.application.routes.draw do
       resources :donations, only: [ :index, :show ] do
         member do
           post :mark_as_paid
+          post :retry_shipment
         end
       end
       resources :returns, only: [ :index, :show, :update ] do
