@@ -17,8 +17,32 @@
     </div>
   <% end %>
 
+  <!-- Section Navigation -->
+  <nav class="sticky top-0 z-10 -mx-1 rounded-2xl border border-gray-200 bg-white/95 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/95">
+    <div class="flex flex-wrap gap-1 px-3 py-2.5">
+      <a href="#section-basic" class="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
+        Podstawowe
+      </a>
+      <a href="#section-pricing" class="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
+        Cennik
+      </a>
+      <a href="#section-order-dimensions" class="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
+        Gabaryty liderzy
+      </a>
+      <a href="#section-donation-dimensions" class="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
+        Gabaryty cegiełki
+      </a>
+      <a href="#section-order-sender" class="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
+        Nadawca liderzy
+      </a>
+      <a href="#section-donation-sender" class="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
+        Nadawca cegiełki
+      </a>
+    </div>
+  </nav>
+
   <!-- Basic Information -->
-  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+  <div id="section-basic" class="scroll-mt-16 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
     <div class="px-5 py-4 sm:px-6 sm:py-5">
       <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
         Podstawowe informacje
@@ -84,7 +108,7 @@
   </div>
 
   <!-- Pricing -->
-  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+  <div id="section-pricing" class="scroll-mt-16 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
     <div class="px-5 py-4 sm:px-6 sm:py-5">
       <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
         Cennik
@@ -163,7 +187,7 @@
   </div>
 
   <!-- Package Dimensions -->
-  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+  <div id="section-order-dimensions" class="scroll-mt-16 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
     <div class="px-5 py-4 sm:px-6 sm:py-5">
       <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
         Gabaryty paczek dla liderów okręgowych
@@ -253,7 +277,7 @@
   </div>
 
   <!-- Donation Package Dimensions -->
-  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+  <div id="section-donation-dimensions" class="scroll-mt-16 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
     <div class="px-5 py-4 sm:px-6 sm:py-5">
       <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
         Gabaryty paczek dla cegiełek
@@ -333,7 +357,7 @@
   </div>
 
   <!-- Order Sender Address -->
-  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+  <div id="section-order-sender" class="scroll-mt-16 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
     <div class="px-5 py-4 sm:px-6 sm:py-5">
       <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
         Adres nadawcy — zamówienia liderów
@@ -391,7 +415,7 @@
   </div>
 
   <!-- Donation Sender Address -->
-  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+  <div id="section-donation-sender" class="scroll-mt-16 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
     <div class="px-5 py-4 sm:px-6 sm:py-5">
       <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
         Adres nadawcy — cegiełki
