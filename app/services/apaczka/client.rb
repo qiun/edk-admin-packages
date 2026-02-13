@@ -123,6 +123,7 @@ end
       Rails.logger.info "aPaczka locker info: #{locker_info.inspect}"
 
       dims = package_dimensions(source)
+      sender = sender_config(source)
 
       # Structure according to aPaczka API v2 documentation
       {
@@ -130,12 +131,12 @@ end
         address: {
           sender: {
             country_code: "PL",
-            name: sender_config[:name],
-            line1: sender_config[:street],
-            postal_code: sender_config[:post_code],
-            city: sender_config[:city],
-            email: sender_config[:email],
-            phone: format_phone(sender_config[:phone])
+            name: sender[:name],
+            line1: sender[:street],
+            postal_code: sender[:post_code],
+            city: sender[:city],
+            email: sender[:email],
+            phone: format_phone(sender[:phone])
           },
           receiver: {
             country_code: "PL",
@@ -227,18 +228,33 @@ end
       signature
     end
 
-    def sender_config
-      Rails.application.credentials.dig(:apaczka, :sender) || default_sender_config
+    def sender_config(source)
+      if source.is_a?(Order)
+        Rails.application.credentials.dig(:apaczka, :order_sender) || default_order_sender_config
+      else
+        Rails.application.credentials.dig(:apaczka, :donation_sender) || default_donation_sender_config
+      end
     end
 
-    def default_sender_config
+    def default_order_sender_config
       {
-        name: "EDK Koordynacja",
-        street: "ul. Przykładowa 1",
-        city: "Warszawa",
-        post_code: "00-001",
-        phone: "123456789",
-        email: "kontakt@edk.pl"
+        name: "Magazyn EDK - Rafał Wojtkiewicz",
+        street: "ul. Konarskiego 8",
+        city: "Świebodzin",
+        post_code: "66-200",
+        phone: "602736554",
+        email: "pakiety@edk.org.pl"
+      }
+    end
+
+    def default_donation_sender_config
+      {
+        name: "Sklep EDK - Rafał Wojtkiewicz",
+        street: "ul. Sobieskiego 19",
+        city: "Świebodzin",
+        post_code: "66-200",
+        phone: "602736554",
+        email: "pakiety@edk.org.pl"
       }
     end
 
