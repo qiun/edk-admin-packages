@@ -10,7 +10,9 @@ module Admin
                      .includes(:user, :shipment, :area_group)
                      .order(created_at: :desc)
 
-      @orders = @orders.where(status: params[:status]) if params[:status].present?
+      # Default to pending orders (not yet shipped) unless explicitly set
+      status_filter = params[:status].presence || "pending"
+      @orders = @orders.where(status: status_filter) unless status_filter == "all"
     end
 
     def show

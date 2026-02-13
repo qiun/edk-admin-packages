@@ -9,7 +9,9 @@ module Admin
       @shipments = Shipment.includes(:order, :donation)
                            .order(created_at: :desc)
 
-      @shipments = @shipments.where(status: params[:status]) if params[:status].present?
+      # Default to pending shipments unless explicitly set
+      status_filter = params[:status].presence || "pending"
+      @shipments = @shipments.where(status: status_filter) unless status_filter == "all"
 
       # Filter by type (order or donation)
       case params[:type]

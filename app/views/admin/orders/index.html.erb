@@ -12,10 +12,10 @@
   <!-- Filters -->
   <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
     <div class="flex flex-wrap gap-2">
-      <%= link_to "Wszystkie", admin_orders_path, 
-          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status].blank? ? 'bg-brand-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
-      <%= link_to "Oczekujące", admin_orders_path(status: :pending), 
-          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'pending' ? 'bg-yellow-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Wszystkie", admin_orders_path(status: :all),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'all' ? 'bg-brand-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Oczekujące", admin_orders_path(status: :pending),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status].blank? || params[:status] == 'pending' ? 'bg-yellow-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
       <%= link_to "Potwierdzone", admin_orders_path(status: :confirmed), 
           class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'confirmed' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
       <%= link_to "Wysłane", admin_orders_path(status: :shipped), 
