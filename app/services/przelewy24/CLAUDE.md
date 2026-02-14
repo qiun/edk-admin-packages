@@ -101,7 +101,7 @@ Environment controlled via `PRZELEWY24_SANDBOX` ENV variable.
   "sessionId": "DON-1234567890-abcd1234",
   "amount": 10000,
   "currency": "PLN",
-  "description": "Cegiełka EDK 2025 - 10 pakiet(y)",
+  "description": "Cegiełka EDK 2026 - 10 pakiet(y)",
   "email": "donor@example.com",
   "country": "PL",
   "language": "pl",
