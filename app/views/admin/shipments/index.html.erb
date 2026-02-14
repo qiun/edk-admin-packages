@@ -16,10 +16,18 @@
           class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'all' ? 'bg-brand-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
       <%= link_to "Oczekujące", admin_shipments_path(type: params[:type], status: :pending),
           class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status].blank? || params[:status] == 'pending' ? 'bg-yellow-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
-      <%= link_to "Nadane", admin_shipments_path(type: params[:type], status: :shipped),
-          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'shipped' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Etykieta gotowa", admin_shipments_path(type: params[:type], status: :label_ready),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'label_ready' ? 'bg-indigo-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Odebrana przez kuriera", admin_shipments_path(type: params[:type], status: :picked_up),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'picked_up' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "W transporcie", admin_shipments_path(type: params[:type], status: :in_transit),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'in_transit' ? 'bg-cyan-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Gotowa do odbioru", admin_shipments_path(type: params[:type], status: :ready_for_pickup),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'ready_for_pickup' ? 'bg-teal-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
       <%= link_to "Dostarczone", admin_shipments_path(type: params[:type], status: :delivered),
           class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'delivered' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
+      <%= link_to "Zwrócone", admin_shipments_path(type: params[:type], status: :returned),
+          class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'returned' ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
       <%= link_to "Nieudane", admin_shipments_path(type: params[:type], status: :failed),
           class: "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors #{params[:status] == 'failed' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}" %>
     </div>
@@ -68,7 +76,10 @@
                 <% end %>
               </td>
               <td class="px-6 py-4"><%= status_badge(shipment.status) %></td>
-              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400"><%= shipment.created_at.strftime("%d.%m.%Y") %></td>
+              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <%= shipment.created_at.strftime("%d.%m.%Y") %><br>
+                <%= shipment.created_at.strftime("%H:%M:%S") %>
+              </td>
               <td class="px-6 py-4 text-right text-sm font-medium">
                 <div class="flex items-center justify-end gap-1">
                   <%= link_to admin_shipment_path(shipment), class: "inline-flex p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 rounded-lg transition-colors", title: "Zobacz szczegóły" do %>
@@ -85,7 +96,7 @@
                       </svg>
                     <% end %>
                   <% end %>
-                  <% if shipment.apaczka_order_id.present? && %w[shipped delivered].include?(shipment.status) %>
+                  <% if shipment.apaczka_order_id.present? && %w[label_ready picked_up in_transit ready_for_pickup delivered].include?(shipment.status) %>
                     <%= link_to download_waybill_admin_shipment_path(shipment), class: "inline-flex p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 rounded-lg transition-colors", title: "Pobierz etykietę" do %>
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>

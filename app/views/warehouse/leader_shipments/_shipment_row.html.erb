@@ -28,14 +28,22 @@
     <td class="px-5 py-4">
       <% status_classes = {
         'pending' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-        'shipped' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+        'label_ready' => 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-400',
+        'picked_up' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+        'in_transit' => 'bg-cyan-50 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-400',
+        'ready_for_pickup' => 'bg-teal-50 text-teal-700 dark:bg-teal-500/15 dark:text-teal-400',
         'delivered' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+        'returned' => 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400',
         'failed' => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400'
       } %>
       <% status_labels = {
         'pending' => 'Oczekująca',
-        'shipped' => 'Nadana',
+        'label_ready' => 'Etykieta gotowa',
+        'picked_up' => 'Odebrana przez kuriera',
+        'in_transit' => 'W transporcie',
+        'ready_for_pickup' => 'Gotowa do odbioru',
         'delivered' => 'Dostarczona',
+        'returned' => 'Zwrócona',
         'failed' => 'Błąd'
       } %>
       <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium <%= status_classes[shipment.status] || status_classes['pending'] %>">
@@ -46,7 +54,7 @@
       <%= shipment.created_at.strftime('%d.%m.%Y %H:%M') %>
     </td>
     <td class="px-5 py-4 text-center">
-      <% if shipment.status == 'shipped' %>
+      <% if %w[picked_up in_transit ready_for_pickup].include?(shipment.status) %>
         <div class="flex items-center justify-center gap-2">
           <svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -98,7 +106,7 @@
         <% end %>
 
         <!-- Pobierz etykietę -->
-        <% if shipment.apaczka_order_id.present? && %w[shipped delivered].include?(shipment.status) %>
+        <% if shipment.apaczka_order_id.present? && %w[label_ready picked_up in_transit ready_for_pickup delivered].include?(shipment.status) %>
           <%= link_to download_waybill_warehouse_leader_shipment_path(shipment), class: "text-gray-400 hover:text-[#465fff]", title: "Pobierz etykietę" do %>
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>

@@ -4,10 +4,17 @@ class Shipment < ApplicationRecord
 
   enum :status, {
     pending: "pending",
-    shipped: "shipped",
+    label_ready: "label_ready",
+    picked_up: "picked_up",
+    in_transit: "in_transit",
+    ready_for_pickup: "ready_for_pickup",
     delivered: "delivered",
+    returned: "returned",
     failed: "failed"
   }
+
+  scope :active, -> { where(status: %w[label_ready picked_up in_transit ready_for_pickup]) }
+  scope :trackable, -> { where.not(apaczka_order_id: nil).where(status: %w[label_ready picked_up in_transit ready_for_pickup]) }
 
   validates :status, presence: true
   validate :must_have_order_or_donation

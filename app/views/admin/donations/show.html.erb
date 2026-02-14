@@ -9,7 +9,7 @@
       <p class="text-gray-600 dark:text-gray-400">Utworzona: <%= @donation.created_at.strftime("%d.%m.%Y %H:%M") %></p>
     </div>
     <div class="flex items-center gap-2">
-      <% if @donation.shipment.present? && @donation.shipment.status == "pending" %>
+      <% if @donation.shipment.present? && %w[pending label_ready].include?(@donation.shipment.status) %>
         <%= button_to mark_shipped_admin_donation_path(@donation), method: :post,
             data: { turbo_confirm: "Czy na pewno oznaczyć wysyłkę jako wysłaną? Email zostanie wysłany do darczyńcy." },
             class: "inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>

@@ -32,21 +32,32 @@ module ApplicationHelper
       pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
       confirmed: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
       shipped: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+      label_ready: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+      picked_up: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
+      in_transit: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
+      ready_for_pickup: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400",
       delivered: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+      returned: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
       cancelled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
       paid: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
       requested: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
       approved: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
       received: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
       rejected: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-      refunded: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
+      refunded: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+      abandoned: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
     }
 
     translations = {
       pending: "Oczekujące",
       confirmed: "Potwierdzone",
-      shipped: "Nadana",
+      shipped: "W realizacji",
+      label_ready: "Etykieta gotowa",
+      picked_up: "Odebrana przez kuriera",
+      in_transit: "W drodze",
+      ready_for_pickup: "Gotowa do odbioru",
       delivered: "Dostarczone",
+      returned: "Zwrot do nadawcy",
       cancelled: "Anulowane",
       paid: "Opłacone",
       failed: "Nieudane",
@@ -56,7 +67,8 @@ module ApplicationHelper
       approved: "Zatwierdzone",
       received: "Odebrane",
       rejected: "Odrzucone",
-      refunded: "Zwrócone"
+      refunded: "Zwrócone",
+      abandoned: "Porzucone"
     }
 
     color_class = colors[status.to_sym] || "bg-gray-100 text-gray-800"

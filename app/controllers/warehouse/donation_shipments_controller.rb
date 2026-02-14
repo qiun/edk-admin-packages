@@ -30,7 +30,7 @@ module Warehouse
     end
 
     def mark_shipped
-      if @shipment.update(status: "shipped", shipped_at: Time.current)
+      if @shipment.update(status: "picked_up", shipped_at: Time.current)
         # Send email to donor
         begin
           DonationMailer.shipment_sent(

@@ -28,7 +28,7 @@ module Apaczka
           apaczka_order_id: result[:order_id],
           waybill_number: result[:waybill_number],
           tracking_url: result[:tracking_url],
-          status: "shipped"
+          status: "label_ready"
         )
         Rails.logger.info "[CreateShipmentJob] Shipment ##{shipment.id} updated successfully - new status: #{shipment.reload.status}"
 
@@ -37,6 +37,11 @@ module Apaczka
         label_pdf = client.get_waybill(result[:order_id])
         shipment.update!(label_pdf: label_pdf) if label_pdf
         Rails.logger.info "[CreateShipmentJob] Waybill PDF saved: #{label_pdf.present?}"
+
+        # Zsynchronizuj status zamówienia
+        if source.is_a?(Order) && (source.confirmed? || source.pending?)
+          source.update!(status: :shipped)
+        end
 
         # Wyślij powiadomienie o wysyłce
         Rails.logger.info "[CreateShipmentJob] Sending shipment notification email for shipment ##{shipment.id}"

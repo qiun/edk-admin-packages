@@ -39,14 +39,22 @@
         <dd class="mt-1">
           <% status_classes = {
             'pending' => 'bg-amber-50 text-amber-700 border-amber-200',
-            'shipped' => 'bg-blue-50 text-blue-700 border-blue-200',
+            'label_ready' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+            'picked_up' => 'bg-blue-50 text-blue-700 border-blue-200',
+            'in_transit' => 'bg-cyan-50 text-cyan-700 border-cyan-200',
+            'ready_for_pickup' => 'bg-teal-50 text-teal-700 border-teal-200',
             'delivered' => 'bg-green-50 text-green-700 border-green-200',
+            'returned' => 'bg-orange-50 text-orange-700 border-orange-200',
             'failed' => 'bg-red-50 text-red-700 border-red-200'
           } %>
           <% status_labels = {
             'pending' => 'Oczekująca',
-            'shipped' => 'Nadana',
+            'label_ready' => 'Etykieta gotowa',
+            'picked_up' => 'Odebrana przez kuriera',
+            'in_transit' => 'W transporcie',
+            'ready_for_pickup' => 'Gotowa do odbioru',
             'delivered' => 'Dostarczona',
+            'returned' => 'Zwrócona',
             'failed' => 'Błąd'
           } %>
           <span class="inline-flex rounded-lg border px-3 py-1 text-sm font-medium <%= status_classes[@shipment.status] %>">

@@ -54,7 +54,7 @@ module Leader
 
       confirmed_with_shipment = orders.where(status: :confirmed)
                                       .joins(:shipment)
-                                      .where(shipments: { status: [:shipped, :delivered] })
+                                      .where(shipments: { status: %w[label_ready picked_up in_transit ready_for_pickup delivered] })
                                       .sum(:quantity)
 
       total_available = delivered_quantity + confirmed_with_shipment

@@ -18,13 +18,33 @@
           class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status].blank? ? 'bg-[#465fff] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
         Wszystkie
       <% end %>
-      <%= link_to warehouse_donation_shipments_path(payment_status: params[:payment_status], shipment_status: :shipped),
-          class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status] == 'shipped' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
-        Nadane
+      <%= link_to warehouse_donation_shipments_path(payment_status: params[:payment_status], shipment_status: :label_ready),
+          class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status] == 'label_ready' ? 'bg-indigo-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Etykieta gotowa
+      <% end %>
+      <%= link_to warehouse_donation_shipments_path(payment_status: params[:payment_status], shipment_status: :picked_up),
+          class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status] == 'picked_up' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Odebrana
+      <% end %>
+      <%= link_to warehouse_donation_shipments_path(payment_status: params[:payment_status], shipment_status: :in_transit),
+          class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status] == 'in_transit' ? 'bg-cyan-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        W transporcie
+      <% end %>
+      <%= link_to warehouse_donation_shipments_path(payment_status: params[:payment_status], shipment_status: :ready_for_pickup),
+          class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status] == 'ready_for_pickup' ? 'bg-teal-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Gotowa do odbioru
       <% end %>
       <%= link_to warehouse_donation_shipments_path(payment_status: params[:payment_status], shipment_status: :delivered),
           class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status] == 'delivered' ? 'bg-green-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
         Dostarczone
+      <% end %>
+      <%= link_to warehouse_donation_shipments_path(payment_status: params[:payment_status], shipment_status: :returned),
+          class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status] == 'returned' ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Zwrócone
+      <% end %>
+      <%= link_to warehouse_donation_shipments_path(payment_status: params[:payment_status], shipment_status: :failed),
+          class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:shipment_status] == 'failed' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Nieudane
       <% end %>
     </div>
   </div>

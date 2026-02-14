@@ -7,7 +7,8 @@ class Donation < ApplicationRecord
     pending: "pending",
     paid: "paid",
     failed: "failed",
-    refunded: "refunded"
+    refunded: "refunded",
+    abandoned: "abandoned"
   }, prefix: :payment
 
   # Basic validations

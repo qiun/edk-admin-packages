@@ -96,16 +96,7 @@ module Admin
     end
 
     def map_apaczka_status(apaczka_status)
-      case apaczka_status.to_s.downcase
-      when "new", "pending"
-        "pending"
-      when "delivered", "ready_to_pickup"
-        "delivered"
-      when "cancelled", "failed", "returned"
-        "failed"
-      else
-        "shipped"
-      end
+      Apaczka::SyncStatusJob::APACZKA_STATUS_MAP[apaczka_status.to_s.upcase] || "label_ready"
     end
   end
 end

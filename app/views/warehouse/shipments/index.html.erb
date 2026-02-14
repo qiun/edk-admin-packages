@@ -49,11 +49,26 @@
       <%= link_to warehouse_shipments_path(status: :pending), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'pending' ? 'bg-amber-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
         Oczekująca
       <% end %>
-      <%= link_to warehouse_shipments_path(status: :shipped), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'shipped' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
-        Wysłana
+      <%= link_to warehouse_shipments_path(status: :label_ready), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'label_ready' ? 'bg-indigo-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Etykieta gotowa
+      <% end %>
+      <%= link_to warehouse_shipments_path(status: :picked_up), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'picked_up' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Odebrana
+      <% end %>
+      <%= link_to warehouse_shipments_path(status: :in_transit), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'in_transit' ? 'bg-cyan-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        W transporcie
+      <% end %>
+      <%= link_to warehouse_shipments_path(status: :ready_for_pickup), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'ready_for_pickup' ? 'bg-teal-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Gotowa do odbioru
       <% end %>
       <%= link_to warehouse_shipments_path(status: :delivered), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'delivered' ? 'bg-green-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
         Dostarczona
+      <% end %>
+      <%= link_to warehouse_shipments_path(status: :returned), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'returned' ? 'bg-orange-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Zwrócona
+      <% end %>
+      <%= link_to warehouse_shipments_path(status: :failed), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium #{params[:status] == 'failed' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}" do %>
+        Nieudana
       <% end %>
     </div>
   </div>
@@ -111,14 +126,22 @@
               <td class="px-5 py-4">
                 <% status_classes = {
                   'pending' => 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-                  'shipped' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+                  'label_ready' => 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-400',
+                  'picked_up' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+                  'in_transit' => 'bg-cyan-50 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-400',
+                  'ready_for_pickup' => 'bg-teal-50 text-teal-700 dark:bg-teal-500/15 dark:text-teal-400',
                   'delivered' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+                  'returned' => 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400',
                   'failed' => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400'
                 } %>
                 <% status_labels = {
                   'pending' => 'Oczekująca',
-                  'shipped' => 'Nadana',
+                  'label_ready' => 'Etykieta gotowa',
+                  'picked_up' => 'Odebrana przez kuriera',
+                  'in_transit' => 'W transporcie',
+                  'ready_for_pickup' => 'Gotowa do odbioru',
                   'delivered' => 'Dostarczona',
+                  'returned' => 'Zwrócona',
                   'failed' => 'Błąd'
                 } %>
                 <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium <%= status_classes[shipment.status] || status_classes['pending'] %>">

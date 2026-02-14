@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_13_164423) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_14_174339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
     t.bigint "record_id", null: false
     t.string "record_type", null: false
@@ -28,7 +28,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_13_164423) do
     t.bigint "byte_size", null: false
     t.string "checksum"
     t.string "content_type"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "filename", null: false
     t.string "key", null: false
     t.text "metadata"
@@ -381,13 +381,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_13_164423) do
     t.index ["name"], name: "index_voivodeships_on_name", unique: true
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id", name: "active_storage_attachments_blob_id_fkey"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id", name: "active_storage_variant_records_blob_id_fkey"
   add_foreign_key "allocation_changes", "region_allocations", name: "allocation_changes_region_allocation_id_fkey"
   add_foreign_key "allocation_changes", "users", column: "changed_by_id", name: "allocation_changes_changed_by_id_fkey"
   add_foreign_key "area_groups", "editions", name: "area_groups_edition_id_fkey"
   add_foreign_key "area_groups", "users", column: "leader_id", name: "area_groups_leader_id_fkey"
-  add_foreign_key "area_groups", "voivodeships"
+  add_foreign_key "area_groups", "voivodeships", name: "area_groups_voivodeship_id_fkey"
   add_foreign_key "donations", "editions", name: "donations_edition_id_fkey"
   add_foreign_key "inventories", "editions", name: "inventories_edition_id_fkey"
   add_foreign_key "inventory_moves", "inventories", name: "inventory_moves_inventory_id_fkey"

@@ -58,7 +58,7 @@ module Admin
         return
       end
 
-      if shipment.update(status: "shipped", shipped_at: Time.current)
+      if shipment.update(status: "picked_up", shipped_at: Time.current)
         begin
           DonationMailer.shipment_sent(@donation, shipment.waybill_number).deliver_later
         rescue => e
