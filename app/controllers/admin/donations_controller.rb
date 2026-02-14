@@ -10,8 +10,7 @@ module Admin
                            .includes(:shipment)
                            .order(created_at: :desc)
 
-      # Default to pending donations unless explicitly set
-      status_filter = params[:status].presence || "pending"
+      status_filter = params[:status].presence || "all"
       @donations = @donations.where(payment_status: status_filter) unless status_filter == "all"
 
       @summary = {

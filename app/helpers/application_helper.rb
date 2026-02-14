@@ -49,7 +49,7 @@ module ApplicationHelper
     }
 
     translations = {
-      pending: "Oczekujące",
+      pending: "Oczekiwanie na płatność P24",
       confirmed: "Potwierdzone",
       shipped: "W realizacji",
       label_ready: "Etykieta gotowa",
