@@ -137,6 +137,20 @@
 
   --color-theme-purple-500: #7a5af8;
 
+  /* TailAdmin v2/v3 legacy color aliases (used in leader panel views) */
+  --color-primary: #465fff;
+  --color-primary-dark: #3641f5;
+  --color-stroke: #e4e7ec;
+  --color-stroke-dark: #344054;
+  --color-strokedark: #344054;
+  --color-boxdark: #1d2939;
+  --color-whiter: #f9fafb;
+  --color-form-strokedark: #344054;
+  --color-form-input: #1d2939;
+  --color-danger: #f04438;
+  --color-meta-4: #344054;
+  --color-meta-5: #0ba5ec;
+
   --shadow-theme-md: 0px 4px 8px -2px rgba(16, 24, 40, 0.1),
     0px 2px 4px -2px rgba(16, 24, 40, 0.06);
   --shadow-theme-lg: 0px 12px 16px -4px rgba(16, 24, 40, 0.08),
