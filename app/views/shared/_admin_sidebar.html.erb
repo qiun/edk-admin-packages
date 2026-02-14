@@ -161,12 +161,56 @@
 
         <ul class="mb-6 flex flex-col gap-1">
           <!-- Edycje -->
-          <li>
-            <%= link_to admin_editions_path, class: "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium #{request.path.start_with?('/admin/editions') ? 'bg-[#ecf3ff] text-[#465fff] dark:bg-[#465fff]/10 dark:text-[#7592ff]' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'}" do %>
-              <svg class="h-5 w-5 <%= request.path.start_with?('/admin/editions') ? 'fill-[#465fff]' : 'fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400' %>" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 2C8.41421 2 8.75 2.33579 8.75 2.75V3.75H15.25V2.75C15.25 2.33579 15.5858 2 16 2C16.4142 2 16.75 2.33579 16.75 2.75V3.75H18.5C19.7426 3.75 20.75 4.75736 20.75 6V9V19C20.75 20.2426 19.7426 21.25 18.5 21.25H5.5C4.25736 21.25 3.25 20.2426 3.25 19V9V6C3.25 4.75736 4.25736 3.75 5.5 3.75H7.25V2.75C7.25 2.33579 7.58579 2 8 2ZM8 5.25H5.5C5.08579 5.25 4.75 5.58579 4.75 6V8.25H19.25V6C19.25 5.58579 18.9142 5.25 18.5 5.25H16H8ZM19.25 9.75H4.75V19C4.75 19.4142 5.08579 19.75 5.5 19.75H18.5C18.9142 19.75 19.25 19.4142 19.25 19V9.75Z"/>
-              </svg>
-              <span>Edycje</span>
+          <% editing_edition = request.path.match?(%r{/admin/editions/\d+/edit}) %>
+          <li x-data="{ open: <%= editing_edition %> }">
+            <div class="flex items-center">
+              <%= link_to admin_editions_path, class: "group relative flex flex-1 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium #{request.path.start_with?('/admin/editions') ? 'bg-[#ecf3ff] text-[#465fff] dark:bg-[#465fff]/10 dark:text-[#7592ff]' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'}" do %>
+                <svg class="h-5 w-5 <%= request.path.start_with?('/admin/editions') ? 'fill-[#465fff]' : 'fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400' %>" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M8 2C8.41421 2 8.75 2.33579 8.75 2.75V3.75H15.25V2.75C15.25 2.33579 15.5858 2 16 2C16.4142 2 16.75 2.33579 16.75 2.75V3.75H18.5C19.7426 3.75 20.75 4.75736 20.75 6V9V19C20.75 20.2426 19.7426 21.25 18.5 21.25H5.5C4.25736 21.25 3.25 20.2426 3.25 19V9V6C3.25 4.75736 4.25736 3.75 5.5 3.75H7.25V2.75C7.25 2.33579 7.58579 2 8 2ZM8 5.25H5.5C5.08579 5.25 4.75 5.58579 4.75 6V8.25H19.25V6C19.25 5.58579 18.9142 5.25 18.5 5.25H16H8ZM19.25 9.75H4.75V19C4.75 19.4142 5.08579 19.75 5.5 19.75H18.5C18.9142 19.75 19.25 19.4142 19.25 19V9.75Z"/>
+                </svg>
+                <span>Edycje</span>
+              <% end %>
+              <% if editing_edition %>
+                <button @click="open = !open" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-white/5 transition-colors">
+                  <svg class="h-4 w-4 transition-transform duration-200" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </button>
+              <% end %>
+            </div>
+            <% if editing_edition %>
+              <ul x-show="open" x-transition.duration.200ms class="ml-8 mt-1 flex flex-col gap-0.5 border-l border-gray-200 dark:border-gray-700">
+                <li>
+                  <a href="#section-basic" data-turbo="false" class="block rounded-r-lg py-1.5 pl-3 pr-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 transition-colors">
+                    Podstawowe
+                  </a>
+                </li>
+                <li>
+                  <a href="#section-pricing" data-turbo="false" class="block rounded-r-lg py-1.5 pl-3 pr-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 transition-colors">
+                    Cennik
+                  </a>
+                </li>
+                <li>
+                  <a href="#section-order-dimensions" data-turbo="false" class="block rounded-r-lg py-1.5 pl-3 pr-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 transition-colors">
+                    Gabaryty liderzy
+                  </a>
+                </li>
+                <li>
+                  <a href="#section-donation-dimensions" data-turbo="false" class="block rounded-r-lg py-1.5 pl-3 pr-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 transition-colors">
+                    Gabaryty cegiełki
+                  </a>
+                </li>
+                <li>
+                  <a href="#section-order-sender" data-turbo="false" class="block rounded-r-lg py-1.5 pl-3 pr-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 transition-colors">
+                    Nadawca liderzy
+                  </a>
+                </li>
+                <li>
+                  <a href="#section-donation-sender" data-turbo="false" class="block rounded-r-lg py-1.5 pl-3 pr-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 transition-colors">
+                    Nadawca cegiełki
+                  </a>
+                </li>
+              </ul>
             <% end %>
           </li>
         </ul>
