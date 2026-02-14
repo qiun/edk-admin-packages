@@ -104,10 +104,10 @@
               <td class="px-6 py-4 text-right text-sm font-semibold text-gray-900 dark:text-white">
                 <%= number_to_currency(donation.amount, unit: "zł", format: "%n %u") %>
               </td>
-              <td class="px-6 py-4"><%= status_badge(donation.payment_status) %></td>
+              <td class="px-6 py-4"><%= status_badge(donation.payment_status, :payment) %></td>
               <td class="px-6 py-4">
                 <% if donation.shipment.present? %>
-                  <%= status_badge(donation.shipment.status) %>
+                  <%= status_badge(donation.shipment.status, :shipment) %>
                 <% else %>
                   <span class="text-xs text-gray-400 dark:text-gray-500">Brak</span>
                 <% end %>

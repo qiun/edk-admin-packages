@@ -48,8 +48,36 @@ module ApplicationHelper
       abandoned: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
     }
 
-    translations = {
-      pending: "Oczekiwanie na płatność P24",
+    # Kontekstowe tłumaczenia — "pending" ma inne znaczenie w zamówieniach, płatnościach i wysyłkach
+    context_translations = {
+      order: {
+        pending: "Oczekuje na potwierdzenie",
+        confirmed: "Potwierdzone",
+        shipped: "W realizacji",
+        delivered: "Dostarczone",
+        cancelled: "Anulowane"
+      },
+      payment: {
+        pending: "Oczekiwanie na płatność P24",
+        paid: "Opłacone",
+        failed: "Płatność nieudana",
+        refunded: "Zwrócone",
+        abandoned: "Porzucone"
+      },
+      shipment: {
+        pending: "Oczekuje na etykietę",
+        label_ready: "Etykieta gotowa",
+        picked_up: "Odebrana przez kuriera",
+        in_transit: "W drodze",
+        ready_for_pickup: "Gotowa do odbioru",
+        delivered: "Dostarczona",
+        returned: "Zwrot do nadawcy",
+        failed: "Błąd wysyłki"
+      }
+    }
+
+    default_translations = {
+      pending: "Oczekujące",
       confirmed: "Potwierdzone",
       shipped: "W realizacji",
       label_ready: "Etykieta gotowa",
@@ -72,7 +100,8 @@ module ApplicationHelper
     }
 
     color_class = colors[status.to_sym] || "bg-gray-100 text-gray-800"
-    label = translations[status.to_sym] || status.humanize
+    translations = context_translations[type] || {}
+    label = translations[status.to_sym] || default_translations[status.to_sym] || status.humanize
 
     content_tag(:span, label, class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium #{color_class}")
   end
