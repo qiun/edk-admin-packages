@@ -23,6 +23,10 @@ data:
   APACZKA_APP_ID: "1924897_5GkLmyke1mmfHjvGbQeB1Uf3"
   APACZKA_SANDBOX: "false"
   
+  # Synerise CRM Configuration (non-sensitive)
+  SYNERISE_ENABLED: "true"
+  SYNERISE_WORKSPACE_GUID: "1df12647-33a2-499d-9471-5306ef7324ec"
+
   # Email Configuration (non-sensitive)
   SMTP_ADDRESS: "smtp-mail.outlook.com"
   SMTP_PORT: "587"

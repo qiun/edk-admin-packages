@@ -46,6 +46,9 @@ module Public
 
         # Send confirmation email
         DonationMailer.confirmation(donation).deliver_later
+
+        # Send donation data to Synerise CRM
+        Synerise::SendDonationEventJob.perform_later(donation)
       end
 
       Rails.logger.info "Przelewy24 payment confirmed for donation ##{donation.id}"
